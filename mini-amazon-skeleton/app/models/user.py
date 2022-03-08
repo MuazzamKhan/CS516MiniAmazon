@@ -15,9 +15,9 @@ class User(UserMixin):
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-SELECT password, id, email, firstname, lastname
-FROM Users
-WHERE email = :email
+select password, id, email, firstname, lastname
+from users
+where email = :email
 """,
                               email=email)
         if not rows:  # email not found
@@ -49,6 +49,29 @@ RETURNING id
                                   email=email,
                                   password=generate_password_hash(password),
                                   firstname=firstname, lastname=lastname)
+            id = rows[0][0]
+            return User.get(id)
+        except Exception as e:
+            # likely email already in use; better error checking and reporting needed;
+            # the following simply prints the error to the console:
+            print(str(e))
+            return None
+    
+
+    @staticmethod
+    def update_profile(id, email, firstname, lastname):
+        try:
+            rows = app.db.execute("""
+UPDATE Users
+SET email = :email, firstname = :firstname, lastname = :lastname
+WHERE id = :id
+RETURNING id
+""",
+                                  email=email,
+                                  firstname=firstname, 
+                                  lastname=lastname,
+                                  id=id)
+            print(id)
             id = rows[0][0]
             return User.get(id)
         except Exception as e:
