@@ -13,6 +13,7 @@ from flask import Blueprint
 bp = Blueprint('users', __name__)
 
 
+# This is to store user information 
 curr_user = User(0, "", "", "")
 
 class LoginForm(FlaskForm):
@@ -105,8 +106,10 @@ def profile():
         if User.update_profile(curr_user.id, form.email.data,
                          form.firstname.data,
                          form.lastname.data):
-            # flash('Your user profile has been updated!')
-            return redirect(url_for('index.index'))
+            flash('Your user profile has been updated!')
+            # return redirect(url_for('index.index'))
+            # return redirect(url_for('users.profile')), {"Refresh": "1; url="+str(url_for('index.index'))}
+            return render_template('profile.html', title='Profile', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
     return render_template('profile.html', title='Profile', form=form)
 
 

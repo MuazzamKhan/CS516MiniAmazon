@@ -71,7 +71,6 @@ RETURNING id
                                   firstname=firstname, 
                                   lastname=lastname,
                                   id=id)
-            print(id)
             id = rows[0][0]
             return User.get(id)
         except Exception as e:
