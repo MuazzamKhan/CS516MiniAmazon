@@ -2,30 +2,30 @@
 
 {% block content %}
 
-<h1>Reset Password</h1>
+<h1>User Balance</h1>
 
 <form action="" method="post">
   {{ form.hidden_tag() }}
+    <p>
+    Current balance<br/>
+    {{ current_balance }}<br/>
+  </p>
+
   <p>
-    Current Password<br/>
-    {{ form.old_password(size=32) }}<br/>
-    {% for error in form.old_password.errors %}
+    Amount to deposit<br/>
+    {{ form.deposit(size=32) }}<br/>
+    {% for error in form.deposit.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>
   <p>
-    New password<br/>
-    {{ form.new_password(size=32) }}<br/>
-    {% for error in form.new_password.errors %}
+    Amount to withdraw<br/>
+    {{ form.withdraw(size=32) }}<br/>
+    {% for error in form.withdraw.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>
   <p>
-    New password<br/>
-    {{ form.new_password2(size=32) }}<br/>
-    {% for error in form.new_password2.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
     
     {% with messages = get_flashed_messages() %}
     {% if messages %}

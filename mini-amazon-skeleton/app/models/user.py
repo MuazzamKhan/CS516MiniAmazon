@@ -12,6 +12,7 @@ class User(UserMixin):
         self.firstname = firstname
         self.lastname = lastname
     
+
     def set_profile(self, email, firstname, lastname):
         self.email = email 
         self.firstname = firstname
@@ -115,6 +116,27 @@ RETURNING id
                                   id=id)
         id = rows[0][0]
         return User.get(id)
+    
+
+    @staticmethod
+    def update_balance(id, deposit, withdraw):
+        try:
+            rows = app.db.execute("""
+UPDATE Users
+SET balance = balance + :diff
+WHERE id = :id
+RETURNING id
+""",
+                                  diff=(deposit-withdraw),
+                                  id=id)
+            id = rows[0][0]
+            return User.get(id)
+        
+        except Exception as e:
+            # it is possible that balance after deposit/withdraw is less than 0
+            # it is checked by database system constraint
+            print(e)
+            return None
 
     @staticmethod
     @login.user_loader
@@ -126,3 +148,14 @@ WHERE id = :id
 """,
                               id=id)
         return User(*(rows[0])) if rows else None
+
+    
+    @staticmethod
+    def get_balance(id):
+        rows = app.db.execute("""
+SELECT balance
+FROM Users
+WHERE id = :id
+""",
+                              id=id)
+        return rows[0][0]
