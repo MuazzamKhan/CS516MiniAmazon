@@ -102,7 +102,7 @@ def profile():
     elif request.method == "POST":
         form = UpdateProfileForm()
     if form.validate_on_submit():
-        curr_user = User(curr_user.id, form.email.data, form.firstname.data, form.lastname.data)
+        curr_user.set_profile(form.email.data, form.firstname.data, form.lastname.data)
         if User.update_profile(curr_user.id, form.email.data,
                          form.firstname.data,
                          form.lastname.data):
@@ -111,6 +111,33 @@ def profile():
             # return redirect(url_for('users.profile')), {"Refresh": "1; url="+str(url_for('index.index'))}
             return render_template('profile.html', title='Profile', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
     return render_template('profile.html', title='Profile', form=form)
+
+
+
+class UpdatePasswordForm(FlaskForm):
+    
+
+    old_password = PasswordField('First Name', validators=[DataRequired()]) 
+    new_password = PasswordField('Password', validators=[DataRequired()])
+    new_password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Update Profile')
+
+
+
+@bp.route('/password', methods=['GET', 'POST'])
+def password():
+    global curr_user
+    form = UpdatePasswordForm()
+    if form.validate_on_submit():
+        if User.check_password(curr_user.email, form.old_password.data):
+            
+            User.update_password(curr_user.id, form.new_password.data)
+            flash('Your password has been changed successfully!')
+            
+            return render_template('password.html', title='Password', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
+        else:
+            flash('Old password is incorrect.')
+    return render_template('password.html', title='Password', form=form)
 
 
 

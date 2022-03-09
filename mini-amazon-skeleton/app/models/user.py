@@ -11,6 +11,28 @@ class User(UserMixin):
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
+    
+    def set_profile(self, email, firstname, lastname):
+        self.email = email 
+        self.firstname = firstname
+        self.lastname = lastname
+
+    @staticmethod
+    def check_password(email, password):
+        rows = app.db.execute("""
+select password, id, email, firstname, lastname
+from users
+where email = :email
+""",
+                              email=email)
+        
+        if not rows:  # email not found
+            return None
+        elif check_password_hash(rows[0][0], password):
+            # correct password
+            return True
+        else:
+            return False
 
     @staticmethod
     def get_by_auth(email, password):
@@ -78,6 +100,21 @@ RETURNING id
             # the following simply prints the error to the console:
             print(str(e))
             return None
+    
+
+    @staticmethod
+    def update_password(id, password):
+        
+        rows = app.db.execute("""
+UPDATE Users
+SET password = :password
+WHERE id = :id
+RETURNING id
+""",
+                                  password=generate_password_hash(password),
+                                  id=id)
+        id = rows[0][0]
+        return User.get(id)
 
     @staticmethod
     @login.user_loader
