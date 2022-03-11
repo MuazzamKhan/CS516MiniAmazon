@@ -8,6 +8,7 @@ CREATE TABLE Users (
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     balance INTEGER DEFAULT 0 CHECK (balance>=0)
+    is_seller BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE Products (
@@ -22,4 +23,12 @@ CREATE TABLE Purchases (
     uid INT NOT NULL REFERENCES Users(id),
     pid INT NOT NULL REFERENCES Products(id),
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE Inventory (
+    product_id INT NOT NULL REFERENCES Products(product_id),
+    seller_id INT NOT NULL REFERENCES Users(id),
+    price DECIMAL NOT NULL DEFAULT 0.0,
+    quantity INT NOT NULL DEFAULT 0,
+    PRIMARY KEY(product_id, seller_id)
 );
