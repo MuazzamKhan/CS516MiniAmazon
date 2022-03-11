@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "topnav.html" %}
+<form action="" method="post">
+  {{ form2.hidden_tag() }}
+      <p>
+          {{ form2.search.label }}<br/>
+          {{ form2.search(size=32) }}<br/>
+          {% for error in form2.search.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>
+          {{ form2.submit2() }}
+      </p>
+</form>
+{% if hasInventory %}
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+      <p>
+          {{ form.sort.label }}<br/>
+          {{ form.sort(size=3) }}<br/>
+          {% for error in form.sort.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>
+          {{ form.submit() }}
+      </p>
+</form>
+<table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+    
+      <tr>
+        <!-- <th scope="col">Product ID</th> -->
+        <th scope="col">Product ID</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in inventory%}
+        <tr>
+          <!-- <th scope="row">{{product.id}}</th> -->
+          <td> {{product.product_id[0]}} </td>
+          <td> {{ product.product_name[0] }}</td>
+          <td>{{product.quantity[0]}} <a id="editquantity-button" href="{{ url_for('inventory.editQuantity', pid=product.product_id[0]) }}" type="button" class="btn btn-light btn-sm">Edit</a></td>
+          <td>{{'%0.2f'|format(product.price[0])}} <a id="editprice-button" href="{{ url_for('inventory.editPrice', pid=product.product_id[0]) }}" type="button" class="btn btn-light btn-sm">Edit</a></td>
+          <td><a id="remove-button" href="{{ url_for('inventory.removeInventory', pid=product.product_id[0]) }}" type="button" class="btn btn-light btn-block">Remove Item</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+<div>
+    <Text>No results</Text>
+</div>
+{% endif %}
+<div>
+    <a id="addinventory-button" href="{{ url_for('inventory.addInventory', pid=0, fill=0) }}" type="button" class="btn btn-light">Add Existing Product</a>
+    <a id="addnewproduct-button" href="{{ url_for('inventory.addProduct') }}" type="button" class="btn btn-light">Add New Product</a>
+</div>
+{% endblock %}
