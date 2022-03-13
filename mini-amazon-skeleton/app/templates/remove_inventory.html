@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h2>Remove item from inventory</h2>
+    <a href="{{ url_for('inventory.inventory', sid=current_user.id) }}">Back to inventory</a>
+</div>
+
+<form action="{{ url_for('inventory.removeInventory') }}" method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.pid.label }}<br/>
+    {{ form.pid(size=32) }}<br/>
+    {% for error in form.pid.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

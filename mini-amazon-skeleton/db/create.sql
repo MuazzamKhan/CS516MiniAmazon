@@ -7,7 +7,7 @@ CREATE TABLE Users (
     password VARCHAR(255) NOT NULL,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
-    balance INTEGER DEFAULT 0 CHECK (balance>=0)
+    balance INTEGER DEFAULT 0 CHECK (balance>=0),
     is_seller BOOLEAN DEFAULT FALSE
 );
 
@@ -26,9 +26,9 @@ CREATE TABLE Purchases (
 );
 
 CREATE TABLE Inventory (
-    product_id INT NOT NULL REFERENCES Products(product_id),
+    product_id INT NOT NULL REFERENCES Products(id),
     seller_id INT NOT NULL REFERENCES Users(id),
-    price DECIMAL NOT NULL DEFAULT 0.0,
+    price DECIMAL(12,2) NOT NULL,
     quantity INT NOT NULL DEFAULT 0,
     PRIMARY KEY(product_id, seller_id)
 );

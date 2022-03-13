@@ -3,112 +3,181 @@ from flask_login import current_user
 
 
 class Inventory:
-    def __init__(self, seller_id, product_id, price, quantity):
-            self.seller_id = seller_id
-            self.product_id = product_id
-            self.price = price
-            self.quantity = quantity
+    def __init__(this, sid, pid, price, quantity):
+            this.sid = sid
+            this.pid = pid
+            this.price = price
+            this.quantity = quantity
     
-     @staticmethod
-    def get_item(product_id, seller_id):
+    @staticmethod
+    def get_item(pid, sid):
         rows = app.db.execute('''
-        SELECT product_id, seller_id, price, quantity
-        FROM InventoryItem
-        WHERE product_id = :product_id AND seller_id = :seller_id
+        SELECT pid, sid, price, quantity
+        FROM Inventory
+        WHERE pid=:pid AND sid=:sid
         ''',
-        product_id = product_id,
-        seller_id = seller_id)
-        return Inventory(*(rows[0])) if rows else None
+        pid=pid,
+        sid=sid)
+        if rows:
+            return Inventory(*(rows[0]))
+        else:
+            None
 
 
     @staticmethod
-    def get_by_seller(seller_id):
+    def get_with_sid(sid):
         rows = app.db.execute('''
-        SELECT product_id, seller_id, price, quantity
+        SELECT pid, sid, price, quantity
         FROM Inventory 
-        WHERE seller_id = :seller_id
+        WHERE sid=:sid
         ''',
-        seller_id=seller.id)
-        return [Inventory(*row) for row in rows] if rows else None
+        sid=sid)
+        if rows:
+            return [Inventory(*row) for row in rows]
+        else: 
+            None
 
 
     @staticmethod
-    def get_by_product(product_id):
+    def get_with_pid(pid):
         rows = app.db.execute('''
-        SELECT product_id, seller_id, price, quantity
+        SELECT pid, sid, price, quantity
         FROM Inventory 
-        WHERE product_id = :product_id
+        WHERE pid=:pid
         ''',
-        product_id=product_id)
-        return [Inventory(*row) for row in rows] if rows else None
+        pid=pid)
+        if rows:
+            return [Inventory(*row) for row in rows]
+        else: 
+            None
+
+    @staticmethod
+    def get_with_price(floor, ceiling):
+        rows = app.db.execute('''
+        SELECT pid, sid, price, quantity
+        FROM Inventory 
+        WHERE price>=:floor AND price<=:ceiling
+        ''',
+        floor=floor,
+        ceiling=ceiling)
+        if rows:
+            return [Inventory(*row) for row in rows]
+        else: 
+            None
 
 
 
     @staticmethod
-    def add_item(product_id, seller_id, price, quantity):
+    def get_with_quantity(floor, ceiling):
+        rows = app.db.execute('''
+        SELECT pid, sid, price, quantity
+        FROM Inventory 
+        WHERE quantity>=:floor AND quantity<=:ceiling
+        ''',
+        floor=floor,
+        ceiling=ceiling)
+        if rows:
+            return [Inventory(*row) for row in rows]
+        else: 
+            None
+
+
+    @staticmethod
+    def add_item(pid, sid, price, quantity):
     ###WILL NEED TO ADD A LINE TO ADD ITEM INTO PRODUCT TABLE: https://gitlab.oit.duke.edu/the-primary-keys-316/mini-amazon/-/blob/main/app/models/inventoryitem.py
         rows = app.db.execute('''
-            INSERT INTO Inventory(product_id, seller_id, price, quantity)
-            VALUES(:product_id, :seller_id, :price, :quantity)
-            RETURNING product_id
+            INSERT INTO Inventory(pid, sid, price, quantity)
+            VALUES(:pid, :sid, :price, :quantity)
         ''',
-        product_id=product_id,
-        seller_id=seller_id,
+        pid=pid,
+        sid=sid,
         price=price,
         quantity=quantity)
-        return True if rows else False
+        if rows:
+            return True
+        else: 
+            return False
 
 
     @staticmethod
-    def remove_item(seller_id, product_id):
+    def remove_item(sid, pid):
         rows = app.db.execute('''
             DELETE FROM Inventory
-            WHERE product_id = :product_id
-            AND seller_id = :seller_id
-            RETURNING NULL
+            WHERE pid = :pid
+            AND sid = :sid
             ''',
-            product_id = product_id,
-            seller_id = seller_id)
-        return True if rows else False
+            pid = pid,
+            sid = sid)
+        if rows:
+            return True
+        else: 
+            return False
 
 
     @staticmethod
-    def edit_quantity(product_id, seller_id, quantity):
+    def edit_quantity(pid, sid, quantity):
         rows = app.db.execute('''
             UPDATE Inventory
             SET quantity = :quantity
-            WHERE product_id = :product_id
-            AND seller_id = :seller_id
-            RETURNING quantity
+            WHERE pid = :pid
+            AND sid = :sid
         ''', 
-        product_id = product_id,
-        seller_id = seller_id,
+        pid = pid,
+        sid = sid,
         quantity = quantity)
-        return rows
+        if rows:
+            return True
+        else: 
+            return False
 
 
     @staticmethod
-    def edit_price(product_id, seller_id, price):
+    def edit_price(pid, sid, price):
         rows = app.db.execute('''
             UPDATE Inventory
             SET price = :price
-            WHERE product_id = :product_id
-            AND seller_id = :seller_id
-            RETURNING price
+            WHERE pid = :pid
+            AND sid = :sid
         ''', 
-        product_id = product_id, 
-        seller_id = seller_id, 
+        pid = pid, 
+        sid = sid, 
         price = price)
-        return rows
+        if rows:
+            return True
+        else: 
+            return False
 
     
     @staticmethod
-    def count_items_seller(seller_id) : 
-        count = app.db.execute('''
-        SELECT COUNT(seller_id)
+    def calc_unique_items(sid) : 
+        num = app.db.execute('''
+        SELECT COUNT(pid)
         FROM Inventory
-        WHERE seller_id= :seller_id
+        WHERE sid=:sid
         ''',
-        seller_id = seller_id) 
-        return count
+        sid = sid)
+        return num
+
+
+    @staticmethod
+    def calc_total_quantity(sid) : 
+        num = app.db.execute('''
+        SELECT SUM(quantity)
+        FROM Inventory
+        WHERE sid=:sid
+        ''',
+        sid = sid)
+        return num
+
+
+    @staticmethod
+    def calc_average_price(sid) : 
+        num = app.db.execute('''
+        SELECT AVG(price)
+        FROM Inventory
+        WHERE sid=:sid
+        ''',
+        sid = sid)
+        return num
+
 

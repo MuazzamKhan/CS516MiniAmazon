@@ -4,11 +4,18 @@
 
 <div>
     <h2>Add item to inventory</h2>
-    <a href="{{ url_for('inventory.inventory', seller_id=current_user.id) }}">Back to inventory</a>
+    <a href="{{ url_for('inventory.inventory', sid=current_user.id) }}">Back to inventory</a>
 </div>
 
-<form action="{{ url_for('inventory.add_to_inventory') }}" method="post" enctype="multipart/form-data">
+<form action="{{ url_for('inventory.addInventory') }}" method="post" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
+  <p>
+    {{ form.pid.label }}<br/>
+    {{ form.pid(size=32) }}<br/>
+    {% for error in form.pid.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
   <p>
     {{ form.name.label }}<br/>
     {{ form.name(size=32) }}<br/>
@@ -17,28 +24,9 @@
     {% endfor %}
   </p>
   <p>
-    {{ form.category.label }}<br/>
-    {{ form.category() }}<br/>
-    {% for error in form.category.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
     {{ form.description.label }}<br/>
     {{ form.description(size=64) }}<br/>
     {% for error in form.description.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.tags.label }}
-    <small>(Please enter as comma-separated list of tags. For example: "Tag1, Tag2, Tag3")</small><br/>
-    {{ form.tags(size=64) }}<br/>
-  </p>
-  <p>
-    {{ form.image.label }}<br/>
-    {{ form.image() }}<br/>
-    {% for error in form.image.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>

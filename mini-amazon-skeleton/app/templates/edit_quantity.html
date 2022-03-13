@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h2>Edit Quantity for Product</h2>
+    <a href="{{ url_for('inventory.inventory', seller_id=current_user.id) }}">Back to inventory</a>
+</div>
+
+<form action="" method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.quantity.label }}<br/>
+    {{ form.quantity(size=32) }}<br/>
+    {% for error in form.quantity.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}
