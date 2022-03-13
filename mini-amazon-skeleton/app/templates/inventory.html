@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Products for sale:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Remove Item</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in inventory%}
+      <tr>
+        <td> {{item.pid}} </td>
+        <td>
+          <form id="priceform" action="{{url_for('inventory.editPrice', pid=item.pid)}}" method="post">
+            <input onchange="changePrice()" style="width: 150px;" id="cartprice" type="number" step="0.01" name="price" label="price" value="{{item.price}}">
+            <input class="form-control" type="hidden" name="seller" value="{{current_user.id}}">
+            <input class="form-control" type="hidden" name="product" value="{{item.pid}}">
+            </form>
+          </td>
+        <td>
+          <form id="quantityform" action="{{url_for('inventory.editQuantity', pid=item.pid)}}" method="post">
+            <input onchange="changePrice()" style="width: 150px;" id="cartprice" type="number" step="0.01" name="price" label="price" value="{{item.quantity}}">
+            <input class="form-control" type="hidden" name="seller" value="{{current_user.id}}">
+            <input class="form-control" type="hidden" name="product" value="{{item.pid}}">
+            </form>
+            </td>
+        <td><a id="remove-button" href="{{url_for('inventory.removeInventory', pid=item.pid)}}" type="button" class="btn btn-light btn-block">Remove Item</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div>
+  <a id="addinventory-button" href="{{ url_for('inventory.addInventory', pid=0, fill=0) }}" type="button" class="btn btn-light">Add Inventory</a>
+  <a id="removeinventory-button" href="{{ url_for('inventory.removeInventory', pid=0, fill=0) }}" type="button" class="btn btn-light">Remove Inventory</a>
+</div>
+
+
+{% endblock %}
