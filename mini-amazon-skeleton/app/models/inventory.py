@@ -124,7 +124,7 @@ class Inventory:
         ''', 
         pid = pid,
         sid = sid,
-        quantity = quantity)
+        quantity = quantitys)
         if rows:
             return True
         else: 

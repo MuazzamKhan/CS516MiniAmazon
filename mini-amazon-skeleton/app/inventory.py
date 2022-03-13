@@ -18,8 +18,7 @@ bp = Blueprint('inventory', __name__)
 def inventory(sid):
     inventory = Inventory.get_with_sid(sid)
     if inventory == None:
-        flash("This user is not a seller. No inventory can be shown!")
-        return
+        return "This user is not a seller. No inventory can be shown!"
     else:
         return render_template("inventory.html", inventory=inventory)
 
