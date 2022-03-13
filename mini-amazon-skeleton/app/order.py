@@ -11,9 +11,18 @@ from .models.user import User
 from flask import Blueprint
 bp = Blueprint('order', __name__)
 
-@bp.route('/order/<uid>', methods=['GET'])
+@bp.route('/order/user/<uid>', methods=['GET'])
 def order(uid):
     orders = Order.get_by_uid(uid)
+    if orders == None:
+        flash("This user has not made any order!")
+        return
+    else:
+        return render_template("order.html", orders=orders)
+
+@bp.route('/order/seller/<sid>', methods=['GET'])
+def order(uid):
+    orders = Order.get_by_sid(uid)
     if orders == None:
         flash("This user has not made any order!")
         return

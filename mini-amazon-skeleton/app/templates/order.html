@@ -11,6 +11,7 @@
       <th scope="col">Seller ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
       <th scope="col">Time Placed</th>
       <th scope="col">Completed?</th>
       <th scope="col">Time Fulfilled</th>
@@ -29,6 +30,7 @@
         <td> {{item.placed_datetime}} </td>
         <td> {{item.completed_status}} </td>
         <td> {{item.completion_datetime}} </td>
+        <td> {{item.address}} </td>
       </tr>
     {% endfor %}
   </tbody>
