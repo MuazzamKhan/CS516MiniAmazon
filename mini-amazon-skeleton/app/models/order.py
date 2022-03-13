@@ -37,7 +37,7 @@ class Order:
         FROM Purchases PUR, Users BUY, Products PROD
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
-        AND PUR.uid=:uid
+        AND PUR.sid=:sid
         ''',
         sid=sid)
         if rows:
@@ -94,3 +94,18 @@ class Order:
             None
 
             
+    @staticmethod
+    def mark_fulfilled(id, pid):
+        rows = app.db.execute('''
+            UPDATE Purchases
+            SET completed_status = TRUE
+            AND completion_datetime = CURRENT_TIMESTAMP
+            WHERE pid=:pid
+            AND id=:id
+        ''', 
+        id=id,
+        pid=pid)
+        if rows:
+            return True
+        else: 
+            return False
