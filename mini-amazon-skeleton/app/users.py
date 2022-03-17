@@ -168,7 +168,7 @@ def purchase_history():
     else:
         purchase = None 
 
-    return render_template('purchase_history.html', title='Purchase History', purchase_history=purchases)
+    return render_template('purchase_history.html', title='Purchase History', purchase=purchases)
 
 
 
