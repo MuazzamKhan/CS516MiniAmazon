@@ -22,6 +22,33 @@ def inventory(sid):
     else:
         return render_template("inventory.html", inventory=inventory)
 
+class EditInventoryForm(FlaskForm):
+    price = DecimalField('Enter New Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
+    quantity = IntegerField('Enter New Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quanitity must be >= 1 units")])
+    submit = SubmitField('Confirm Change to Inventory')
+
+@bp.route('/edit-inventory/<pid>/<sid>', methods=['GET', 'POST'])
+def editInventory(pid, sid):
+    print(pid)
+    inventory = Inventory.get_with_pid(pid)
+    form = EditInventoryForm()
+    if request.method=='POST':
+        price = float(request.form.get("price"))
+        if price < 0:
+            flash("Invalid price input")
+            return redirect(url_for('inventory.inventory'))
+        quantity = int(request.form.get("quantity"))
+        if quantity < 0:
+            flash("Invalid quantity input")
+            return redirect(url_for('inventory.inventory'))
+    if form.validate_on_submit():
+        print("check 2")
+        Inventory.edit_price(pid, sid, form.price.data)
+        Inventory.edit_quantity(pid, sid, form.quantity.data)
+        flash("Successfully changed price for product")
+        return redirect(url_for('inventory.inventory', sid=0))
+    return render_template('edit_product.html', form=form, inventory=inventory, pid=1, sid=0)
+
 
 class NewInventoryForm(FlaskForm):
     pid = IntegerField('Product ID', validators=[InputRequired()])
@@ -32,63 +59,26 @@ class NewInventoryForm(FlaskForm):
     submit = SubmitField('Add Inventory')
 
 
-@bp.route('/add-inventory', methods=['GET', 'POST'])
-def addInventory():
+@bp.route('/add-inventory/<sid>', methods=['GET','POST'])
+def addInventory(sid):
     form = NewInventoryForm()
     if form.validate_on_submit():
-        new_item = Inventory.add_item(pid, sid, price, quantity)
+        new_item = Inventory.add_item(form.pid.data, sid, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
-        inventory = Inventory.get_by_seller(sid)
-        return redirect(url_for("inventory.inventory", sid=sid))
-    return render_template('add_inventory.html', title='Add to Inventory', form=form)
+        return redirect(url_for("inventory.inventory", sid=current_user.id))
+    return render_template('add_inventory.html', title='Add to Inventory', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
     pid = IntegerField('Product ID', validators=[InputRequired()])
     submit = SubmitField('Remove Inventory')
 
-@bp.route('/remove-inventory')
-def removeInventory():
+@bp.route('/remove-inventory/<pid>', methods=['GET','POST'])
+def removeInventory(pid):
     form = RemoveInventoryForm()
     if form.validate_on_submit():
         Inventory.remove_item(sid, pid)
         flash('Successfully removed item from inventory!')
-        return redirect(url_for("inventory.inventory", sid = sid))
-    return render_template('remove_inventory.html', title='Remove from Inventory', form=form)
+        return redirect(url_for("inventory.inventory", sid=current_user.id))
+    return render_template('remove_inventory.html', title='Remove from Inventory', form=form, inventory=inventory, pid=pid)
 
-
-class EditQuantityForm(FlaskForm):
-    quantity = IntegerField('Enter New Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quanitity must be >= 0 units")])
-    submit = SubmitField('Confirm Quantity Change')
-
-# page for editing quantity of inventory
-@bp.route('/edit-quantity/<int:pid>', methods=['GET', 'POST'])
-def editQuantity(pid):
-    form = EditQuantityForm()
-    price = request.form['quantity']
-    if quantity < 0:
-        flash("Invalid quantity input")
-        return redirect(url_for('inventory.inventory'))
-    if form.validate_on_submit():
-        Inventory.edit_quantity(pid, sid, form.quantity.data)
-        flash("Successfully changed price for product")
-        return redirect(url_for('inventory.inventory'))
-    return render_template('edit_quantity.html',form=form)
-
-class EditPriceForm(FlaskForm):
-    price = DecimalField('Enter New Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
-    submit = SubmitField('Confirm Price Change')
-
-# page for editing price of inventory
-@bp.route('/edit-price/<int:pid>', methods=['GET', 'POST'])
-def editPrice(pid):
-    form = EditPriceForm()
-    price = request.form['price']
-    if price < 0:
-        flash("Invalid price input")
-        return redirect(url_for('inventory.inventory'))
-    if form.validate_on_submit():
-        Inventory.edit_price(pid, sid, form.price.data)
-        flash("Successfully changed price for product")
-        return redirect(url_for('inventory.inventory'))
-    return render_template('editprice.html', form=form)
 
