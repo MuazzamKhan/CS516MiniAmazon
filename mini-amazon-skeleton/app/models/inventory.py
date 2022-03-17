@@ -1,13 +1,15 @@
 from flask import current_app as app
 from flask_login import current_user
 
+from .models.product import Product
+
 
 class Inventory:
-    def __init__(this, sid, pid, price, quantity):
-            this.sid = sid
-            this.pid = pid
-            this.price = price
-            this.quantity = quantity
+    def __init__(this, pid, sid, price, quantity):
+        this.pid = pid
+        this.sid = sid
+        this.price = price
+        this.quantity = quantity
     
     @staticmethod
     def get_item(pid, sid):
@@ -85,6 +87,8 @@ class Inventory:
     @staticmethod
     def add_item(pid, sid, price, quantity):
     ###WILL NEED TO ADD A LINE TO ADD ITEM INTO PRODUCT TABLE: https://gitlab.oit.duke.edu/the-primary-keys-316/mini-amazon/-/blob/main/app/models/inventoryitem.py
+        pid = Product.add()
+        
         rows = app.db.execute('''
             INSERT INTO Inventory(pid, sid, price, quantity)
             VALUES(:pid, :sid, :price, :quantity)
@@ -93,6 +97,7 @@ class Inventory:
         sid=sid,
         price=price,
         quantity=quantity)
+
         if rows:
             return True
         else: 
@@ -124,7 +129,7 @@ class Inventory:
         ''', 
         pid = pid,
         sid = sid,
-        quantity = quantitys)
+        quantity = quantity)
         if rows:
             return True
         else: 

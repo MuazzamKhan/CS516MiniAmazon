@@ -3,33 +3,12 @@
 {% block content %}
 
 <div>
-    <h2>Add item to inventory</h2>
+    <h2>Edit Inventory Details for Item</h2>
     <a href="{{ url_for('inventory.inventory', sid=0) }}">Back to inventory</a>
 </div>
 
 <form action="" method="post" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
-  <p>
-    {{ form.pid.label }}<br/>
-    {{ form.pid(size=32) }}<br/>
-    {% for error in form.pid.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.name.label }}<br/>
-    {{ form.name(size=32) }}<br/>
-    {% for error in form.name.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.description.label }}<br/>
-    {{ form.description(size=64) }}<br/>
-    {% for error in form.description.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
   <p>
     {{ form.price.label }}<br/>
     {{ form.price(size=32) }}<br/>

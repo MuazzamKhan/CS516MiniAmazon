@@ -23,6 +23,7 @@ class Order:
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
         AND PUR.uid=:uid
+        ORDER BY placed_datetime DESC
         ''',
         uid=uid)
         if rows:
@@ -38,6 +39,7 @@ class Order:
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
         AND PUR.sid=:sid
+        ORDER BY placed_datetime DESC
         ''',
         sid=sid)
         if rows:
@@ -53,6 +55,7 @@ class Order:
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
         AND PUR.id=:id
+        ORDER BY placed_datetime DESC
         ''',
         id=id)
         if rows:
@@ -69,6 +72,7 @@ class Order:
         AND PUR.pid = PROD.id
         AND PUR.sid=:sid
         AND completed_status=:completed_status
+        ORDER BY placed_datetime DESC
         ''',
         sid=sid,
         completed_status=completed_status)
@@ -85,6 +89,7 @@ class Order:
         AND PUR.pid = PROD.id
         AND PUR.uid=:uid
         AND completed_status=:completed_status
+        ORDER BY placed_datetime DESC
         ''',
         uid=uid,
         completed_status=completed_status)
