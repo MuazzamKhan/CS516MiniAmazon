@@ -1,7 +1,7 @@
 from flask import current_app as app
 from flask_login import current_user
 
-from .models.product import Product
+from .product import Product
 
 
 class Inventory:
