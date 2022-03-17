@@ -6,17 +6,19 @@ from .. import login
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname):
+    def __init__(self, id, email, firstname, lastname, address):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
+        self.address = address
     
 
-    def set_profile(self, email, firstname, lastname):
+    def set_profile(self, email, firstname, lastname, address):
         self.email = email 
         self.firstname = firstname
         self.lastname = lastname
+        self.address = address
 
     @staticmethod
     def check_password(email, password):
@@ -38,7 +40,7 @@ where email = :email
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-select password, id, email, firstname, lastname
+select password, id, email, firstname, lastname, address
 from users
 where email = :email
 """,
@@ -83,17 +85,18 @@ RETURNING id
     
 
     @staticmethod
-    def update_profile(id, email, firstname, lastname):
+    def update_profile(id, email, firstname, lastname, address):
         try:
             rows = app.db.execute("""
 UPDATE Users
-SET email = :email, firstname = :firstname, lastname = :lastname
+SET email = :email, firstname = :firstname, lastname = :lastname, address = :address
 WHERE id = :id
 RETURNING id
 """,
                                   email=email,
                                   firstname=firstname, 
                                   lastname=lastname,
+                                  address=address,
                                   id=id)
             id = rows[0][0]
             return User.get(id)
@@ -143,7 +146,7 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname
+SELECT id, email, firstname, lastname, address
 FROM Users
 WHERE id = :id
 """,

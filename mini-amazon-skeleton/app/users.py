@@ -7,14 +7,16 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Integ
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 
 from .models.user import User
+from .models.purchase import Purchase
 
+import datetime
 
 from flask import Blueprint
 bp = Blueprint('users', __name__)
 
 
 # This is to store user information 
-curr_user = User(0, "", "", "")
+curr_user = User(0, "", "", "", "")
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -85,6 +87,7 @@ def register():
 class UpdateProfileForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()], default=curr_user.firstname) 
     lastname = StringField('Last Name', validators=[DataRequired()], default=curr_user.lastname)
+    address = StringField('Home Address', validators=[DataRequired()], default=curr_user.address)
     email = StringField('Email', validators=[DataRequired(), Email()], default=curr_user.email)
     submit = SubmitField('Update Profile')
 
@@ -98,14 +101,15 @@ class UpdateProfileForm(FlaskForm):
 def profile():
     global curr_user
     if request.method == "GET":
-        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email}))
+        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email, "address": curr_user.address}))
     elif request.method == "POST":
         form = UpdateProfileForm()
     if form.validate_on_submit():
-        curr_user.set_profile(form.email.data, form.firstname.data, form.lastname.data)
+        curr_user.set_profile(form.email.data, form.firstname.data, form.lastname.data, form.address.data)
         if User.update_profile(curr_user.id, form.email.data,
                          form.firstname.data,
-                         form.lastname.data):
+                         form.lastname.data,
+                         form.address.data):
             flash('Your user profile has been updated!')
             return render_template('profile.html', title='Profile', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
     return render_template('profile.html', title='Profile', form=form)
@@ -157,7 +161,7 @@ def balance():
 
 
 
-@bp.route('/purchase-history', methods=['GET'])
+@bp.route('/purchase_history', methods=['GET'])
 def purchase_history():
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
