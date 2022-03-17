@@ -155,6 +155,17 @@ def balance():
 
 
 
+@bp.route('/purchase-history', methods=['GET'])
+def purchase_history():
+    if current_user.is_authenticated:
+        purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
+    else:
+        purchase = None 
+
+    return render_template('purchase-history.html', title='Purchase History', purchase_history=purchases)
+
+
+
 @bp.route('/logout')
 def logout():
     logout_user()
