@@ -1,6 +1,6 @@
-1,vanilla ice cream,2.99,true
-2,chocolate ice cream,2.99,true
-3,strawberry ice cream,2.99,true
-4,6-pack of paycheck pilsners,11.49,true
-5,seven fabergé easter eggs,1199000.00,true
-6,painting - the storm on the sea of galilee,44000000.00,true
+1,0,vanilla ice cream,description,2.99,true
+2,0,chocolate ice cream,description,2.99,true
+3,1,strawberry ice cream,description,2.99,true
+4,1,6-pack of paycheck pilsners,description,11.49,true
+5,2,seven fabergé easter eggs,description,1199000.00,true
+6,2,painting - the storm on the sea of galilee,description,44000000.00,true

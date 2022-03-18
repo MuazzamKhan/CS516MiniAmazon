@@ -29,7 +29,7 @@ class EditInventoryForm(FlaskForm):
 
 @bp.route('/edit-inventory/<pid>/<sid>', methods=['GET', 'POST'])
 def editInventory(pid, sid):
-    print(pid)
+    #print(pid)
     inventory = Inventory.get_with_pid(pid)
     form = EditInventoryForm()
     if request.method=='POST':
@@ -51,7 +51,6 @@ def editInventory(pid, sid):
 
 
 class NewInventoryForm(FlaskForm):
-    pid = IntegerField('Product ID', validators=[InputRequired()])
     name = StringField('Product Name', validators=[InputRequired()])
     description = TextField('Description', validators=[InputRequired(), Length(max=200)])
     price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
@@ -63,22 +62,22 @@ class NewInventoryForm(FlaskForm):
 def addInventory(sid):
     form = NewInventoryForm()
     if form.validate_on_submit():
-        new_item = Inventory.add_item(form.pid.data, sid, form.price.data, form.quantity.data)
+        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
-        return redirect(url_for("inventory.inventory", sid=current_user.id))
+        return redirect(url_for("inventory.inventory", sid=0))
     return render_template('add_inventory.html', title='Add to Inventory', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
-    pid = IntegerField('Product ID', validators=[InputRequired()])
+    pid = IntegerField('Reenter Product ID to confirm', validators=[InputRequired()])
     submit = SubmitField('Remove Inventory')
 
-@bp.route('/remove-inventory/<pid>', methods=['GET','POST'])
-def removeInventory(pid):
+@bp.route('/remove-inventory/<sid>/<pid>', methods=['GET','POST'])
+def removeInventory(sid, pid):
     form = RemoveInventoryForm()
     if form.validate_on_submit():
         Inventory.remove_item(sid, pid)
         flash('Successfully removed item from inventory!')
-        return redirect(url_for("inventory.inventory", sid=current_user.id))
-    return render_template('remove_inventory.html', title='Remove from Inventory', form=form, inventory=inventory, pid=pid)
+        return redirect(url_for("inventory.inventory", sid=1))
+    return render_template('remove_inventory.html', title='Remove from Inventory', form=form, inventory=inventory, sid=sid, pid=pid)
 
 
