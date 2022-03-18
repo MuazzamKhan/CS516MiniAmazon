@@ -8,6 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 
 from .models.user import User
 from .models.purchase import Purchase
+from .models.product import Product
 
 import datetime
 
@@ -165,6 +166,7 @@ def balance():
 def purchase_history():
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
+
     else:
         purchase = None 
 

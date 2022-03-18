@@ -12,8 +12,10 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Purchase ID</th>
+      <th scope="col">Product</th>
       <th scope="col">Quantity</th>
       <th scope="col">Price</th>
+      <th scope="col">Seller</th>
       <th scope="col">Fulfillment</th>
       <th scope="col">Purchase Time</th>
       <th scope="col">Detail</th>
@@ -23,8 +25,10 @@
     {% for purchase in purchase_history%}
       <tr>
         <th scope="row">{{purchase.id}}</th>
+        <th scope="row">{{purchase.pname}}</th>
         <td>{{purchase.quantity}}</td>
         <td>{{purchase.price}}</td>
+        <td>{{purchase.sname}}</td>
         <td>{{purchase.completed_status}}</td>
         <td>{{purchase.time_purchased}}</td>
         <td></td>
