@@ -20,7 +20,7 @@
         <td> {{item.price}} </td>
         <td> {{item.quantity}} </td>
         <td><div><p><a href="{{url_for('inventory.editInventory', pid=item.pid, sid=item.sid)}}" type="button" class="btn btn-dark">Edit</a></p></div></td>
-        <td><a id="remove-button" href="{{url_for('inventory.removeInventory', pid=item.pid)}}" type="button" class="btn btn-dark">Remove Item</a></td>
+        <td><a id="remove-button" href="{{url_for('inventory.removeInventory', sid=item.sid, pid=item.pid)}}" type="button" class="btn btn-dark">Remove Item</a></td>
       </tr>
     {% endfor %}
   </tbody>

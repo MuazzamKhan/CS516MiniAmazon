@@ -85,10 +85,9 @@ class Inventory:
 
 
     @staticmethod
-    def add_item(pid, sid, price, quantity):
+    def add_item(sid, name, description, price, quantity):
     ###WILL NEED TO ADD A LINE TO ADD ITEM INTO PRODUCT TABLE: https://gitlab.oit.duke.edu/the-primary-keys-316/mini-amazon/-/blob/main/app/models/inventoryitem.py
-        pid = Product.add()
-        
+        pid = Product.add(sid, name, description, price)
         rows = app.db.execute('''
             INSERT INTO Inventory(pid, sid, price, quantity)
             VALUES(:pid, :sid, :price, :quantity)
