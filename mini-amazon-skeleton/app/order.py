@@ -17,7 +17,7 @@ def orderBuyer(uid):
     if orders == None:
         return "Error! No such buyer exists!"
     else:
-        return render_template("order.html", orders=orders)
+        return render_template("order.html", orders=orders, uid=uid)
 
 
 @bp.route('/seller-order/<sid>', methods=['GET'])
@@ -26,23 +26,23 @@ def orderSeller(sid):
     if orders == None:
         return "Error! No such seller exists!"
     else:
-        return render_template("order_seller.html", orders=orders)
+        return render_template("order_seller.html", orders=orders, sid=sid)
 
 
 class MarkFufilledForm(FlaskForm):
-    confirm = StringField('Confirm fulfilment? (Yes/No)')
+    confirm = StringField('Confirm that this product is fulfilled? (Y/N)')
     submit = SubmitField('Submit')
 
 
-@bp.route('/seller/mark-fulfill', methods=['GET'])
+@bp.route('/seller/mark-fulfilled/<sid>/<pid>', methods=['GET'])
 def markFulfilled():
     form = MarkFufilledForm()
     confirmation = request.form.get("confirm")
-    if confirmation == 'No':
+    if confirmation == 'N':
         flash('You indicated that this order is NOT fulfilled.')
         return redirect(url_for("order.orderSeller", sid=sid))
     if form.validate_on_submit():
-        Order.mark_fulfilled(id, pid)
+        Order.mark_fulfilled(pid, pid)
         flash('You indicated that this order is SUCCESSFULLY fulfilled.')
         return redirect(url_for("order.orderSeller", sid = sid))
-    return render_template('mark_fulfilled.html', title='Mark Fulfilled', form=form)
+    return render_template('mark_fulfilled.html', title='Mark Fulfilled', form=form, sid=sid, pid=pid)

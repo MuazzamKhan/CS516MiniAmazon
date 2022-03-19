@@ -101,16 +101,32 @@ class Order:
             
     @staticmethod
     def mark_fulfilled(id, pid):
-        rows = app.db.execute('''
-            UPDATE Purchases
-            SET completed_status = TRUE
-            AND completion_datetime = CURRENT_TIMESTAMP
+        fulfilled_status = app.db.execute('''
+            SELECT completed_status
+            FROM Purchases
             WHERE pid=:pid
             AND id=:id
+            RETURNING completed_status
         ''', 
         id=id,
         pid=pid)
-        if rows:
-            return True
-        else: 
-            return False
+        if fulfilled_status == FALSE:
+            rows = app.db.execute('''
+                UPDATE Purchases
+                SET completed_status = TRUE
+                AND completion_datetime = CURRENT_TIMESTAMP
+                WHERE pid=:pid
+                AND id=:id
+            ''', 
+            id=id,
+            pid=pid)
+        is_order_complete = app.db.execute('''
+            SELECT completed_status
+            FROM Purchases
+            WHERE pid=:pid
+            AND id=:id
+            RETURNING completed_status
+        ''', 
+        id=id,
+        pid=pid)
+            
