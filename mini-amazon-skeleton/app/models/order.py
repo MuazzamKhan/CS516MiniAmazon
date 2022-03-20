@@ -16,16 +16,16 @@ class Order:
         self.address = address
     
     @staticmethod
-    def get_by_uid(uid):
+    def get_by_bid(bid):
         rows = app.db.execute('''
-        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
-        FROM Purchases PUR, Users BUY, Products PROD
-        WHERE PUR.uid = BUY.id
+        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        FROM Orders ORD, Purchases PUR, Products PROD
+        WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
-        AND PUR.uid=:uid
-        ORDER BY placed_datetime DESC
+        AND ORD.bid=:bid
+        ORDER BY ORD.placed_datetime DESC
         ''',
-        uid=uid)
+        bid=bid)
         if rows:
             return [Order(*row) for row in rows]
         else: 
@@ -34,12 +34,12 @@ class Order:
     @staticmethod
     def get_by_sid(sid):
         rows = app.db.execute('''
-        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
-        FROM Purchases PUR, Users BUY, Products PROD
-        WHERE PUR.uid = BUY.id
+        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        FROM Orders ORD, Purchases PUR, Products PROD
+        WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        ORDER BY placed_datetime DESC
+        AND PROD.sid=:sid
+        ORDER BY ORD.placed_datetime DESC
         ''',
         sid=sid)
         if rows:
@@ -100,17 +100,68 @@ class Order:
 
             
     @staticmethod
-    def mark_fulfilled(id, pid):
-        rows = app.db.execute('''
-            UPDATE Purchases
-            SET completed_status = TRUE
-            AND completion_datetime = CURRENT_TIMESTAMP
+    def item_fulfilled(oid, pid):
+        item_status = app.db.execute('''
+            SELECT completed_status
+            FROM Purchases
             WHERE pid=:pid
-            AND id=:id
+            AND oid=:oid
         ''', 
-        id=id,
+        oid=oid,
         pid=pid)
-        if rows:
+
+        print("oid = ", oid)
+
+        #print("item status = ", item_status)
+
+        print("item status = ", item_status[0][0])
+
+        if item_status[0][0] == False:
+            rows = app.db.execute('''
+                UPDATE Purchases
+                SET completed_status = TRUE, completion_datetime = CURRENT_TIMESTAMP
+                WHERE pid=:pid
+                AND oid=:oid
+            ''', 
+            oid=oid,
+            pid=pid)
+        
             return True
-        else: 
+        else:
             return False
+
+    @staticmethod
+    def all_fulfilled_check(oid):
+
+        print("oid = ", oid)
+
+        all_items_status = app.db.execute('''
+            SELECT completed_status
+            FROM Purchases
+            WHERE oid=:oid
+        ''', 
+        oid=oid)
+
+        print("all_items_status = ", all_items_status)
+
+        order_status = True
+
+        for status in all_items_status:
+            if status[0] == False:
+                order_status = False
+        
+        print("order_status_final", order_status)
+        
+        if order_status == True:
+            rows = app.db.execute('''
+                UPDATE Orders
+                SET completed_status = TRUE, completion_datetime = CURRENT_TIMESTAMP
+                WHERE id=:oid
+            ''', 
+            oid=oid)
+            return True
+
+        else:
+            return False
+
+            

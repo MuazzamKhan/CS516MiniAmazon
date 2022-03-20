@@ -13,30 +13,29 @@
       <th scope="col">Price</th>
       <th scope="col">Quantity</th>
       <th scope="col">Time Placed</th>
-      <th scope="col">Completed?</th>
+      <th scope="col">Fulfilled?</th>
       <th scope="col">Time Fulfilled</th>
       <th scope="col">Address</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
-    {% for item in orders%}
+    {% for order in orders%}
       <tr>
-        <td> {{item.id}} </td>
-        <td> {{item.pid}} </td>
-        <td> {{item.sid}} </td>
-        <td> {{item.product_name}} </td>
-        <td> {{item.price}} </td>
-        <td> {{item.quantity}} </td>
-        <td> {{item.placed_datetime}} </td>
-        <td> {{item.completed_status}} </td>
-        <td> {{item.completion_datetime}} </td>
-        <td> {{item.address}} </td>
-        <td><a id="fulfill-button" href="{{url_for('order.markFulfilled', id=item.id, pid=item.pid)}}" type="button" class="btn btn-light btn-block">Item Fulfilled</a></td>
+        <td> {{order.id}} </td>
+        <td> {{order.pid}} </td>
+        <td> {{order.sid}} </td>
+        <td> {{order.product_name}} </td>
+        <td> {{order.price}} </td>
+        <td> {{order.quantity}} </td>
+        <td> {{order.placed_datetime}} </td>
+        <td> {{order.completed_status}} </td>
+        <td> {{order.completion_datetime}} </td>
+        <td> {{order.address}} </td>
+        <td><a id="fulfill-button" href="{{url_for('order.itemFulfilled', oid=order.id, pid=order.pid, sid=order.sid)}}" type="button" class="btn btn-light btn-block">Item Fulfilled</a></td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
-
 
 {% endblock %}
