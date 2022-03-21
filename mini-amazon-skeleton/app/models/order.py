@@ -34,11 +34,11 @@ class Order:
     @staticmethod
     def get_by_sid(sid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
-        AND PROD.sid=:sid
+        AND PUR.sid=:sid
         ORDER BY ORD.placed_datetime DESC
         ''',
         sid=sid)
