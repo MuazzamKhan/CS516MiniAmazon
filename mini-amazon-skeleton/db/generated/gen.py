@@ -66,7 +66,7 @@ def gen_products(num_products):
             if available == 'true':
                 available_pids.append(pid)
             category = fake.random_element(elements=categories)
-            image_file = 'https://picsum.photos/id/' + pid + '/200/300'
+            image_file = 'https://picsum.photos/id/' + str(pid) + '/200/300'
             writer.writerow([pid, sid, name, description, price, available, category, image_file])
         print(f'{num_products} generated; {len(available_pids)} available')
     return available_pids
@@ -98,7 +98,7 @@ def gen_inventory(num_inventory):
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             quantity = fake.random_int(min=0, max=100)
             writer.writerow([pid, sid, price, quantity])
-        print(f'{num_purchases} generated')
+        print(f'{num_inventory} generated')
     return
 
 
@@ -116,9 +116,12 @@ def gen_cart(num_carted_products):
             quantity = fake.random_int(min=0, max=10)
             wishlist = fake.random_element(elements=('true', 'false'))
             writer.writerow([id, pid, sid, quantity, price, wishlist])
-        print(f'{num_purchases} generated')
+        print(f'{num_carted_products} generated')
     return
 
 gen_users(num_users)
 available_pids = gen_products(num_products)
+gen_sellers(num_sellers)
 gen_purchases(num_purchases, available_pids)
+gen_inventory(num_inventory)
+gen_cart(num_carted_products)
