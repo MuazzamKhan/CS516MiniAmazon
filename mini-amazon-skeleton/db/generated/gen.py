@@ -1,3 +1,4 @@
+from unicodedata import category
 from werkzeug.security import generate_password_hash
 import csv
 from faker import Faker
@@ -5,6 +6,11 @@ from faker import Faker
 num_users = 100
 num_products = 2000
 num_purchases = 2500
+num_sellers = 15
+num_inventory = 6000
+num_carted_products = 200
+
+categories = ['Books', 'Clothing', 'Electronics', 'Food', 'Home', 'Media', 'Toys', 'Sports']
 
 Faker.seed(0)
 fake = Faker()
@@ -32,6 +38,17 @@ def gen_users(num_users):
         print(f'{num_users} generated')
     return
 
+def gen_sellers(num_sellers):
+    with open('Sellers.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        print('Sellers...', end=' ', flush=True)
+        for id in range(num_users):
+            if id % 10 == 0:
+                print(f'{id}', end=' ', flush=True)
+            writer.writerow([id])
+        print(f'{num_sellers} generated')
+    return
+
 
 def gen_products(num_products):
     available_pids = []
@@ -41,12 +58,16 @@ def gen_products(num_products):
         for pid in range(num_products):
             if pid % 100 == 0:
                 print(f'{pid}', end=' ', flush=True)
+            sid = fake.random_int(min=0, max=num_sellers-1)
             name = fake.sentence(nb_words=4)[:-1]
+            description = fake.sentence(nb_words=15)[:-1]
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             available = fake.random_element(elements=('true', 'false'))
             if available == 'true':
                 available_pids.append(pid)
-            writer.writerow([pid, name, price, available])
+            category = fake.random_element(elements=categories)
+            image_file = 'https://picsum.photos/id/' + pid + '/200/300'
+            writer.writerow([pid, sid, name, description, price, available, category, image_file])
         print(f'{num_products} generated; {len(available_pids)} available')
     return available_pids
 
@@ -65,6 +86,38 @@ def gen_purchases(num_purchases, available_pids):
         print(f'{num_purchases} generated')
     return
 
+def gen_inventory(num_inventory):
+    with open('Inventory.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        print('Inventory...', end=' ', flush=True)
+        for id in range(num_inventory):
+            if id % 100 == 0:
+                print(f'{id}', end=' ', flush=True)
+            pid = fake.random_int(min=0, max=num_products-1)
+            sid = fake.random_int(min=0, max=num_sellers-1)
+            price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
+            quantity = fake.random_int(min=0, max=100)
+            writer.writerow([pid, sid, price, quantity])
+        print(f'{num_purchases} generated')
+    return
+
+
+def gen_cart(num_carted_products):
+    with open('Cart.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        print('Cart...', end=' ', flush=True)
+        for id in range(num_carted_products):
+            if id % 100 == 0:
+                print(f'{id}', end=' ', flush=True)
+            uid = fake.random_int(min=0, max=num_users-1)
+            pid = fake.random_int(min=0, max=num_products-1)
+            sid = fake.random_int(min=0, max=num_sellers-1)
+            price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
+            quantity = fake.random_int(min=0, max=10)
+            wishlist = fake.random_element(elements=('true', 'false'))
+            writer.writerow([id, pid, sid, quantity, price, wishlist])
+        print(f'{num_purchases} generated')
+    return
 
 gen_users(num_users)
 available_pids = gen_products(num_products)
