@@ -1,6 +1,6 @@
-1,0,vanilla ice cream,description,2.99,true
-2,0,chocolate ice cream,description,2.99,true
-3,1,strawberry ice cream,description,2.99,true
-4,1,6-pack of paycheck pilsners,description,11.49,true
-5,2,seven fabergé easter eggs,description,1199000.00,true
-6,2,painting - the storm on the sea of galilee,description,44000000.00,true
+1,0,vanilla ice cream,description,2.99,true, Food, https://picsum.photos/id/1/200/300
+2,0,chocolate ice cream,description,2.99,true, Food, https://picsum.photos/id/2/200/300
+3,1,strawberry ice cream,description,2.99,true, Food, https://picsum.photos/id/3/200/300
+4,1,6-pack of paycheck pilsners,description,11.49,true, Food, https://picsum.photos/id/4/200/300
+5,2,seven fabergé easter eggs,description,1199000.00,true, Home, https://picsum.photos/id/5/200/300
+6,2,painting - the storm on the sea of galilee,description,44000000.00,true, Books, https://picsum.photos/id/6/200/300
