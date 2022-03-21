@@ -36,11 +36,12 @@ CREATE TABLE Orders (
 CREATE TABLE Purchases (
     oid INT NOT NULL REFERENCES Orders(id),
     pid INT NOT NULL REFERENCES Products(id),
+    sid INT NOT NULL REFERENCES Sellers(id),
     price DECIMAL(12,2) NOT NULL,
     quantity INT NOT NULL DEFAULT 0,
     completed_status BOOLEAN DEFAULT FALSE,
     completion_datetime TIMESTAMP DEFAULT NULL,
-    PRIMARY KEY(oid, pid)
+    PRIMARY KEY(oid, pid, sid)
 );
 
 CREATE TABLE Inventory (
@@ -57,6 +58,6 @@ CREATE TABLE Cart (
     sid INT NOT NULL REFERENCES Sellers(id),
     quantity INT NOT NULL DEFAULT 1,
     price DECIMAL(12,2) NOT NULL,
-    wishlist BOOLEAN DEFAULT FALSE
+    wishlist BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id, pid, sid)
-)
+);
