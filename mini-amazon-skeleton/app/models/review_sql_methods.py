@@ -5,6 +5,7 @@ Created on Thu Mar 17 23:37:23 2022
 
 @author: jiwooky
 """
+# methods to be called by the product item page.
 
 import sqlite3
 
