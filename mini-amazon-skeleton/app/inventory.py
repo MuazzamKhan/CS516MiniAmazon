@@ -68,7 +68,7 @@ def addUnlistedProduct(sid):
     if form.validate_on_submit():
         f = form.image_file.data
         filename = secure_filename(f.filename)
-        image_path = os.path.join('app/static/images/products', filename)
+        image_path = os.path.join('db/images/products', filename)
         f.save(image_path)
         new_item = Inventory.add_unlisted_item(sid, form.name.data, form.description.data, form.category.data, filename, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
