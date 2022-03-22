@@ -3,7 +3,7 @@
 {% block content %}
 
 <div>
-    <h2>Add item to inventory</h2>
+    <h2>Add New Product</h2>
     <a href="{{ url_for('inventory.inventory', sid=0) }}">Back to inventory</a>
 </div>
 
@@ -34,6 +34,20 @@
     {{ form.quantity.label }}<br/>
     {{ form.quantity(size=32) }}<br/>
     {% for error in form.quantity.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.category.label }}<br/>
+    {{ form.category(size=32) }}<br/>
+    {% for error in form.category.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.category.label }}<br/>
+    {{ form.category(size=32) }}<br/>
+    {% for error in form.category.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>

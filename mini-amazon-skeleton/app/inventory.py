@@ -50,22 +50,45 @@ def editInventory(pid, sid):
     return render_template('edit_product.html', form=form, inventory=inventory, pid=1, sid=0)
 
 
-class NewInventoryForm(FlaskForm):
+class NewProductForm(FlaskForm):
     name = StringField('Product Name', validators=[InputRequired()])
     description = TextField('Description', validators=[InputRequired(), Length(max=200)])
     price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
     quantity = IntegerField('Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quantity must be >= 0 units")])
-    submit = SubmitField('Add Inventory')
+    category = TextField('Category', validators=[InputRequired(), Length(max=200)])
+    image_file = FileField('Product Image', validators=[FileRequired()])
+    submit = SubmitField('Add Product')
 
 
-@bp.route('/add-inventory/<sid>', methods=['GET','POST'])
-def addInventory(sid):
-    form = NewInventoryForm()
+@bp.route('/add-new-Product/<sid>', methods=['GET','POST'])
+def addNewProduct(sid):
+    form = NewProductForm()
     if form.validate_on_submit():
-        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.price.data, form.quantity.data)
+        image = form.image_file.data
+        filename = secure_filename(image.filename)
+        image_path = os.path.join('app/static/images/product_images', filename)
+        f.save(image_path)
+
+        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.category.data, form.image_file.data, form.image_file.data, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
         return redirect(url_for("inventory.inventory", sid=0))
-    return render_template('add_inventory.html', title='Add to Inventory', form=form, sid=sid)
+    return render_template('add_new_product.html', title='Add New Product', form=form, sid=sid)
+
+class AddListedProductForm(FlaskForm):
+    name = StringField('Product Name', validators=[InputRequired()])
+    price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
+    quantity = IntegerField('Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quantity must be >= 0 units")])
+    submit = SubmitField('Add Product')
+
+
+@bp.route('/add-new-Product/<sid>', methods=['GET','POST'])
+def addListedProduct(sid):
+    form = AddListedProductForm()
+    if form.validate_on_submit():
+        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.price.data, form.quantity.data, category, image_file)
+        flash('Successfully added new item to inventory!')
+        return redirect(url_for("inventory.inventory", sid=0))
+    return render_template('add_new_product.html', title='Add New Product', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
     pid = IntegerField('Reenter Product ID to confirm', validators=[InputRequired()])

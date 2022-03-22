@@ -32,13 +32,14 @@ WHERE available = :available
     def add(sid, name, description, category, image_file):
         rows = app.db.execute('''
             INSERT INTO Products(sid, name, description, available, category, image_file)
-            VALUES(:sid, :name, :description, :price, TRUE)
+            VALUES(:sid, :name, :description, TRUE, :category, :image_file)
             RETURNING id
         ''',
         sid=sid,
         name=name,
         description=description,
-        price=price)
+        category=category,
+        image_file=image_file)
             
         id = rows[0][0]
 
