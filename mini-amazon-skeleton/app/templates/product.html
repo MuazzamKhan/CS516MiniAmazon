@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{product.name}}</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <!-- CSS -->
+    <link href="../static/css/product.css" rel="stylesheet">
+    <meta name="robots" content="noindex,follow" />
+
+  </head>
+
+  </body>
+    <main class="container">
+    
+        <!-- Left Column / Product Image -->
+        <div class="left-column">
+        <img data-image="img" class = "active" src={{product.image_file}} alt="No image available">
+        </div>
+    
+    
+        <!-- Right Column -->
+        <div class="right-column">
+    
+            <!-- Product Description -->
+            <div class="product-description">
+                <span>{{product.category}}</span>
+                <h1>{{product.name}}</h1>
+                <p>{{product.description}}</p>
+            </div>
+        
+        
+            <!-- Product Pricing -->
+            <div class="product-price">
+                <span>general.price</span>
+                <a href="#" class="cart-btn">Add to cart</a>
+            </div>
+        </div>
+    </main>
+
+ </body>
+
+</html>
