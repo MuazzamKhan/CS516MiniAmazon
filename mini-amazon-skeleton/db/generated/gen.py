@@ -58,16 +58,14 @@ def gen_products(num_products):
         for pid in range(num_products):
             if pid % 100 == 0:
                 print(f'{pid}', end=' ', flush=True)
-            sid = fake.random_int(min=0, max=num_sellers-1)
             name = fake.sentence(nb_words=4)[:-1]
             description = fake.sentence(nb_words=15)[:-1]
-            price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             available = fake.random_element(elements=('true', 'false'))
             if available == 'true':
                 available_pids.append(pid)
             category = fake.random_element(elements=categories)
             image_file = 'https://picsum.photos/id/' + str(pid) + '/200/300'
-            writer.writerow([pid, sid, name, description, price, available, category, image_file])
+            writer.writerow([pid, name, description, available, category, image_file])
         print(f'{num_products} generated; {len(available_pids)} available')
     return available_pids
 
@@ -115,7 +113,7 @@ def gen_cart(num_carted_products):
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             quantity = fake.random_int(min=0, max=10)
             wishlist = fake.random_element(elements=('true', 'false'))
-            writer.writerow([id, pid, sid, quantity, price, wishlist])
+            writer.writerow([uid, pid, sid, quantity, price, wishlist])
         print(f'{num_carted_products} generated')
     return
 
