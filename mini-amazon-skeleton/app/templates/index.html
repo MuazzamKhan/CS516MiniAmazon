@@ -5,21 +5,36 @@
 <br><br>
 
 <h2>Products for sale:</h2>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
+
+<!-- Search Bar: -->
+<input type="text" id="myInput" onkeyup="searchLookup()" placeholder="Search for product.." title="Type in a product">
+
+<!-- Dropdown Bar: -->
+<select id="dropdown" onchange="searchLookup()" class='form-control'>
+  <option></option>
+  <option>Books</option>
+  <option>Clothing</option>
+  <option>Electronics</option>
+  <option>Food</option>
+  <option>Home</option>
+  <option>Media</option>
+  <option>Toys</option>
+  <option>Sports</option>
+</select>
+
+<table class='table table-hover table-bordered container', id = "productsTable">
+    <tr class = "header">
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
+      <th scope="col">category</th>
     </tr>
-  </thead>
-  <tbody>
     {% for product in avail_products%}
-      <tr>
-        <th scope="row">{{product.id}}</th>
-        <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
-      </tr>
+    <tr>
+      <td scope="row">{{product.id}}</td>
+      <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
+      <td> {{product.category}}</td>
+    </tr>
     {% endfor %}
-  </tbody>
 </table>
 
 <br><br>
@@ -45,5 +60,31 @@
 {% else %}
 <p><a href="{{ url_for('users.login') }}">Log in</a> to see your purchase history!</p>
 {% endif %}
+
+
+<!-- Function for Search Bar & Dropdown -->
+<script>
+function searchLookup() {
+    var input, table, tr, name, filter, category, filter2, i, txtValue;
+    searchInput = document.getElementById("myInput");
+    filter = searchInput.value.toUpperCase();
+    input = document.getElementById("dropdown");
+    filter2 = input.value.toUpperCase();
+    table = document.getElementById("productsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      name = tr[i].getElementsByTagName("td")[1];
+      category = tr[i].getElementsByTagName("td")[2];
+      if (name) {
+        txtValue = name.textContent || name.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && category.innerHTML.toUpperCase().indexOf(filter2) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }       
+    }
+}
+</script>
 
 {% endblock %}
