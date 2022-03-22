@@ -1,3 +1,4 @@
+<!-- html for main product table page -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -5,24 +6,41 @@
 <br><br>
 
 <h2>Products for sale:</h2>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Product ID</th>
-      <th scope="col">Product Name</th>
+
+<!-- Search Bar: -->
+<input type="text" id="myInput" onkeyup="searchLookup()" placeholder="Search for product.." title="Type in a product">
+
+<!-- Dropdown Bar: -->
+<select id="dropdown" onchange="searchLookup()" class='form-control'>
+  <option></option>
+  <option>Books</option>
+  <option>Clothing</option>
+  <option>Electronics</option>
+  <option>Food</option>
+  <option>Home</option>
+  <option>Media</option>
+  <option>Toys</option>
+  <option>Sports</option>
+</select>
+
+<p>Click on column name to sort</p>
+
+<table class='table table-hover table-bordered container', id = "productsTable">
+    <tr class = "header">
+      <th onclick="sortTable(0)" scope="col">Product ID</th>
+      <th onclick="sortTable(1)" scope="col">Product Name</th>
+      <th onclick="sortTable(2)" scope="col">category</th>
     </tr>
-  </thead>
-  <tbody>
     {% for product in avail_products%}
-      <tr>
-        <th scope="row">{{product.id}}</th>
-        <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
-      </tr>
+    <tr>
+      <td scope="row">{{product.id}}</td>
+      <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
+      <td> {{product.category}}</td>
+    </tr>
     {% endfor %}
-  </tbody>
 </table>
 
-<br><br>
+<!-- <br><br>
 {% if current_user.is_authenticated %}
 <h2>Your recent purchases:</h2>
 <table class='table table-hover table-bordered container'>
@@ -44,6 +62,69 @@
 </table>
 {% else %}
 <p><a href="{{ url_for('users.login') }}">Log in</a> to see your purchase history!</p>
-{% endif %}
+{% endif %} -->
+
+
+<!-- Function for Search Bar & Dropdown -->
+<script>
+function searchLookup() {
+    var input, table, tr, name, filter, category, filter2, i, txtValue;
+    searchInput = document.getElementById("myInput");
+    filter = searchInput.value.toUpperCase();
+    input = document.getElementById("dropdown");
+    filter2 = input.value.toUpperCase();
+    table = document.getElementById("productsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      name = tr[i].getElementsByTagName("td")[1];
+      category = tr[i].getElementsByTagName("td")[2];
+      if (name) {
+        txtValue = name.textContent || name.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && category.innerHTML.toUpperCase().indexOf(filter2) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }       
+    }
+}
+
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("productsTable");
+  switching = true;
+  dir = "asc";
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount ++; 
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
 
 {% endblock %}

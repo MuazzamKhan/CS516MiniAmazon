@@ -34,9 +34,42 @@
         
             <!-- Product Pricing -->
             <div class="product-price">
-                <span>general.price</span>
-                <a href="#" class="cart-btn">Add to cart</a>
+                <span>Best Price: ${{display_price}}</span>
             </div>
+
+            <!-- Stock Status -->
+            <div class="stock-status">
+                <p>{{stock}}</p>
+            </div>
+
+            {% if stock == "In Stock" %}
+            <!-- Sellers -->
+            <table class='table table-hover table-bordered container'>
+                
+                <tr class = "header">
+                    <th scope="col">Seller</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col"></th>
+                  </tr>
+                  {% for listing in inventory%}
+                  <tr>
+                    <td scope="row">{{listing.sid}}</td>
+                    <td>${{listing.price}}</td>
+                    <td>{{listing.quantity}}</td>
+                    {% if current_user.is_authenticated %}
+                    <td><form action="{{ url_for('product.addToCart', pid = product.id, sid = listing.sid, quantity = 0) }}" method="GET">
+                        <input type="number" id="quantity" name="quantity" required
+                            min="1" max="{{listing.quantity}}">
+                        <input type="submit" value="Add to Cart">
+                    </form></td>
+                    {% else %}
+                    <td><a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a></td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+            </table>
+            {% endif %}
         </div>
     </main>
 
