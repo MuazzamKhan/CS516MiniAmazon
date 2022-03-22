@@ -31,15 +31,16 @@ WHERE available = :available
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def add(sid, name, description, category, image_file):
+    def add(name, description, category, image_file):
         rows = app.db.execute('''
-            INSERT INTO Products(sid, name, description, available, category, image_file)
-            VALUES(:sid, :name, :description, :price, TRUE)
+            INSERT INTO Products(name, description, available, category, image_file)
+            VALUES(:name, :description, TRUE, :category, :image_file)
             RETURNING id
         ''',
-        sid=sid,
         name=name,
-        description=description)
+        description=description,
+        category=category,
+        image_file=image_file)
             
         id = rows[0][0]
 
