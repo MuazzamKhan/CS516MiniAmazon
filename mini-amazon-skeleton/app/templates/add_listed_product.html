@@ -10,16 +10,9 @@
 <form action="" method="post" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   <p>
-    {{ form.name.label }}<br/>
-    {{ form.name(size=32) }}<br/>
-    {% for error in form.name.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.description.label }}<br/>
-    {{ form.description(size=64) }}<br/>
-    {% for error in form.description.errors %}
+    {{ form.pid.label }}<br/>
+    {{ form.pid(size=32) }}<br/>
+    {% for error in form.pid.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>
@@ -34,20 +27,6 @@
     {{ form.quantity.label }}<br/>
     {{ form.quantity(size=32) }}<br/>
     {% for error in form.quantity.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.category.label }}<br/>
-    {{ form.category(size=32) }}<br/>
-    {% for error in form.category.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.category.label }}<br/>
-    {{ form.category(size=32) }}<br/>
-    {% for error in form.category.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>

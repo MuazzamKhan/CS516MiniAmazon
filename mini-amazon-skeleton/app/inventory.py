@@ -1,8 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
+from werkzeug.utils import secure_filename
 from wtforms import StringField, TextField, IntegerField, DecimalField, SubmitField, SelectField
 from wtforms.validators import ValidationError, InputRequired, NumberRange, Required, Length
+from flask_wtf.file import FileField, FileRequired
 
 from .models.inventory import Inventory
 from .models.user import User
@@ -50,7 +52,7 @@ def editInventory(pid, sid):
     return render_template('edit_product.html', form=form, inventory=inventory, pid=1, sid=0)
 
 
-class NewProductForm(FlaskForm):
+class AddUnlistedProductForm(FlaskForm):
     name = StringField('Product Name', validators=[InputRequired()])
     description = TextField('Description', validators=[InputRequired(), Length(max=200)])
     price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
@@ -60,35 +62,34 @@ class NewProductForm(FlaskForm):
     submit = SubmitField('Add Product')
 
 
-@bp.route('/add-new-Product/<sid>', methods=['GET','POST'])
-def addNewProduct(sid):
-    form = NewProductForm()
+@bp.route('/add-unlisted-Product/<sid>', methods=['GET','POST'])
+def addUnlistedProduct(sid):
+    form = AddUnlistedProductForm()
     if form.validate_on_submit():
-        image = form.image_file.data
-        filename = secure_filename(image.filename)
-        image_path = os.path.join('app/static/images/product_images', filename)
+        f = form.image_file.data
+        filename = secure_filename(f.filename)
+        image_path = os.path.join('app/static/images/products', filename)
         f.save(image_path)
-
-        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.category.data, form.image_file.data, form.image_file.data, form.price.data, form.quantity.data)
+        new_item = Inventory.add_unlisted_item(sid, form.name.data, form.description.data, form.category.data, filename, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
         return redirect(url_for("inventory.inventory", sid=0))
-    return render_template('add_new_product.html', title='Add New Product', form=form, sid=sid)
+    return render_template('add_unlisted_product.html', title='Add Unlisted Product', form=form, sid=sid)
 
 class AddListedProductForm(FlaskForm):
-    name = StringField('Product Name', validators=[InputRequired()])
+    pid = IntegerField('Product ID', validators=[InputRequired()])
     price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
     quantity = IntegerField('Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quantity must be >= 0 units")])
     submit = SubmitField('Add Product')
 
 
-@bp.route('/add-new-Product/<sid>', methods=['GET','POST'])
+@bp.route('/add-listed-Product/<sid>', methods=['GET','POST'])
 def addListedProduct(sid):
     form = AddListedProductForm()
     if form.validate_on_submit():
-        new_item = Inventory.add_item(sid, form.name.data, form.description.data, form.price.data, form.quantity.data, category, image_file)
+        new_item = Inventory.add_listed_item(form.pid.data, sid, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
         return redirect(url_for("inventory.inventory", sid=0))
-    return render_template('add_new_product.html', title='Add New Product', form=form, sid=sid)
+    return render_template('add_listed_product.html', title='Add Listed Product', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
     pid = IntegerField('Reenter Product ID to confirm', validators=[InputRequired()])
