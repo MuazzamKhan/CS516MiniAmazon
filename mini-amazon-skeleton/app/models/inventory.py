@@ -203,4 +203,20 @@ class Inventory:
         sid = sid)
         return num
 
+    @staticmethod
+    def inventory_low(pid, sid):
+        rows = app.db.execute('''
+        SELECT quantity
+        FROM Inventory
+        WHERE pid=:pid AND sid=:sid
+        ''',
+        pid=pid,
+        sid=sid)
+
+        if rows[0][0] <= 5:
+            return "Low in Stock"
+        else if rows[0][0] <= 20:
+            return "Moderate in Stock"
+        else:
+            return "High in Stock"
 
