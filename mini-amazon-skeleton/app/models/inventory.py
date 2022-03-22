@@ -215,7 +215,7 @@ class Inventory:
 
         if rows[0][0] <= 5:
             return "Low in Stock"
-        else if rows[0][0] <= 20:
+        elif rows[0][0] <= 20:
             return "Moderate in Stock"
         else:
             return "High in Stock"
