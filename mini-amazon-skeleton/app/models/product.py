@@ -39,8 +39,7 @@ WHERE available = :available
         ''',
         sid=sid,
         name=name,
-        description=description,
-        price=price)
+        description=description)
             
         id = rows[0][0]
 

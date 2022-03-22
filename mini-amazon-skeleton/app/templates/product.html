@@ -34,9 +34,34 @@
         
             <!-- Product Pricing -->
             <div class="product-price">
-                <span>general.price</span>
+                <span>${{display_price}}</span>
                 <a href="#" class="cart-btn">Add to cart</a>
             </div>
+
+            <!-- Stock Status -->
+            <div class="stock-status">
+                <p>{{stock}}</p>
+            </div>
+
+            {% if stock == "In Stock" %}
+            <!-- Sellers -->
+            <table class='table table-hover table-bordered container'>
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Seller</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for listing in inventory%}
+                    <tr>
+                        <th scope="row">{{listing.sid}}</th>
+                        <td>${{listing.price}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
         </div>
     </main>
 
