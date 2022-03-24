@@ -2,16 +2,18 @@ from flask import current_app as app
 
 
 class Product:
-    def __init__(self, id, name, price, available):
+    def __init__(self, id, name, description, available, category, image_file):
         self.id = id
         self.name = name
-        self.price = price
+        self.description = description
         self.available = available
+        self.category = category
+        self.image_file = image_file
 
     @staticmethod
     def get(id):
         rows = app.db.execute('''
-SELECT id, name, price, available
+SELECT id, name, description, available, category, image_file
 FROM Products
 WHERE id = :id
 ''',
@@ -21,7 +23,7 @@ WHERE id = :id
     @staticmethod
     def get_all(available=True):
         rows = app.db.execute('''
-SELECT id, name, price, available
+SELECT id, name, description, available, category, image_file
 FROM Products
 WHERE available = :available
 ''',
@@ -29,16 +31,16 @@ WHERE available = :available
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def add(sid, name, description, price):
+    def add(name, description, category, image_file):
         rows = app.db.execute('''
-            INSERT INTO Products(sid, name, description, price, available)
-            VALUES(:sid, :name, :description, :price, TRUE)
+            INSERT INTO Products(name, description, available, category, image_file)
+            VALUES(:name, :description, TRUE, :category, :image_file)
             RETURNING id
         ''',
-        sid=sid,
         name=name,
         description=description,
-        price=price)
+        category=category,
+        image_file=image_file)
             
         id = rows[0][0]
 

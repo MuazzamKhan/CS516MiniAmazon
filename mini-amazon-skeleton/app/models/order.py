@@ -34,30 +34,14 @@ class Order:
     @staticmethod
     def get_by_sid(sid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
-        AND PROD.sid=:sid
+        AND PUR.sid=:sid
         ORDER BY ORD.placed_datetime DESC
         ''',
         sid=sid)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
-
-    @staticmethod
-    def get_by_id(id):
-        rows = app.db.execute('''
-        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
-        FROM Purchases PUR, Users BUY, Products PROD
-        WHERE PUR.uid = BUY.id
-        AND PUR.pid = PROD.id
-        AND PUR.id=:id
-        ORDER BY placed_datetime DESC
-        ''',
-        id=id)
         if rows:
             return [Order(*row) for row in rows]
         else: 
@@ -163,5 +147,60 @@ class Order:
 
         else:
             return False
+
+    @staticmethod
+    def top_three_products(sid):
+        rows = app.db.execute('''
+        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
+        FROM Purchases PUR, Products PROD
+        WHERE PUR.pid = PROD.id
+        AND PUR.sid=:sid
+        GROUP BY PUR.pid, product_name
+        ORDER BY count DESC
+        LIMIT 3
+        ''',
+        sid=sid)
+
+    @staticmethod
+    def bottom_three_products(sid):
+        rows = app.db.execute('''
+        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
+        FROM Purchases PUR, Products PROD
+        WHERE PUR.pid = PROD.id
+        AND PUR.sid=:sid
+        GROUP BY PUR.pid, product_name
+        ORDER BY count ASC
+        LIMIT 3
+        ''',
+        sid=sid)
+
+    @staticmethod
+    def top_three_categories(sid):
+        rows = app.db.execute('''
+        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
+        FROM Purchases PUR, Products PROD
+        WHERE PUR.pid = PROD.id
+        AND PUR.sid=:sid
+        GROUP BY PUR.category
+        ORDER BY count DESC
+        LIMIT 3
+        ''',
+        sid=sid)
+
+    @staticmethod
+    def bottom_three_categories(sid):
+        rows = app.db.execute('''
+        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
+        FROM Purchases PUR, Products PROD
+        WHERE PUR.pid = PROD.id
+        AND PUR.sid=:sid
+        GROUP BY PUR.category
+        ORDER BY count ASC
+        LIMIT 3
+        ''',
+        sid=sid)
+
+
+
 
             

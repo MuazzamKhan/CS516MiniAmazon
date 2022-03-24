@@ -85,9 +85,8 @@ class Inventory:
 
 
     @staticmethod
-    def add_item(sid, name, description, price, quantity):
-    ###WILL NEED TO ADD A LINE TO ADD ITEM INTO PRODUCT TABLE: https://gitlab.oit.duke.edu/the-primary-keys-316/mini-amazon/-/blob/main/app/models/inventoryitem.py
-        pid = Product.add(sid, name, description, price)
+    def add_unlisted_item(sid, name, description, category, image_file, price, quantity):
+        pid = Product.add(name, description, category, image_file)
         rows = app.db.execute('''
             INSERT INTO Inventory(pid, sid, price, quantity)
             VALUES(:pid, :sid, :price, :quantity)
@@ -101,6 +100,26 @@ class Inventory:
             return True
         else: 
             return False
+
+    
+    @staticmethod
+    def add_listed_item(pid, sid, price, quantity):
+        rows = app.db.execute('''
+            INSERT INTO Inventory(pid, sid, price, quantity)
+            VALUES(:pid, :sid, :price, :quantity)
+        ''',
+        pid=pid,
+        sid=sid,
+        price=price,
+        quantity=quantity)
+
+        if rows:
+            return True
+        else: 
+            return False
+
+
+    
 
 
     @staticmethod
@@ -184,4 +203,20 @@ class Inventory:
         sid = sid)
         return num
 
+    @staticmethod
+    def inventory_low(pid, sid):
+        rows = app.db.execute('''
+        SELECT quantity
+        FROM Inventory
+        WHERE pid=:pid AND sid=:sid
+        ''',
+        pid=pid,
+        sid=sid)
+
+        if rows[0][0] <= 5:
+            return "Low in Stock"
+        elif rows[0][0] <= 20:
+            return "Moderate in Stock"
+        else:
+            return "High in Stock"
 
