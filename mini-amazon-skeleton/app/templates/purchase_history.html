@@ -2,12 +2,40 @@
 
 {% block content %}
 
-<br><br>
-
-
-<br><br>
 {% if current_user.is_authenticated %}
-<h2>Your recent purchases:</h2>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"> </script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
+</head>
+
+<h1>Your recent purchases:</h1>
+
+<br/>
+
+<h3>Search by</h3>
+<form action="{{ url_for('users.purchase_history') }}" method="POST">
+    by seller
+    <input type="text" name="seller" id="tags">
+    <script>
+    $( function() {
+        var availableTags = [
+            {% for language in languages %}
+                "{{language}}",
+            {% endfor %}
+        ];
+        $( "#tags" ).autocomplete({
+            source: availableTags
+        });
+    });
+    </script>
+    
+
+
+    <input type = "submit" value = "submit" />
+
+</form>
+
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
