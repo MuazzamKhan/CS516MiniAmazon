@@ -162,23 +162,22 @@ def balance():
 
 
 
-class purchaseHistorySearchForm(FlaskForm):
-    seller = StringField('seller ', validators=[])
-    submit = SubmitField('Search')
 
 @bp.route('/purchase_history', methods=['GET', 'POST'])
 def purchase_history():
 
     if current_user.is_authenticated:
-        languages = ["test1", "test2"]
+        
         if request.method == "GET":
             # purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
             purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0))
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, languages=languages)
+            potential_sellers = list(set([ p.sname for p in purchases ]))
+            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers)
 
         elif request.method == "POST":
             form_data = request.form
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, languages=languages)
+            potential_sellers = []
+            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers)
     else:
         form = LoginForm()
         return render_template('login.html', title='Sign In', form=form)

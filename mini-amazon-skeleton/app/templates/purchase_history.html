@@ -20,8 +20,8 @@
     <script>
     $( function() {
         var availableTags = [
-            {% for language in languages %}
-                "{{language}}",
+            {% for s in potential_sellers %}
+                "{{s}}",
             {% endfor %}
         ];
         $( "#tags" ).autocomplete({
