@@ -11,7 +11,7 @@
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Purchase ID</th>
+      <th scope="col">Order ID</th>
       <th scope="col">Product</th>
       <th scope="col">Quantity</th>
       <th scope="col">Price</th>
@@ -22,15 +22,15 @@
     </tr>
   </thead>
   <tbody>
-    {% for purchase in purchase_history%}
+    {% for p in purchase%}
       <tr>
-        <th scope="row">{{purchase.id}}</th>
-        <th scope="row">{{purchase.pname}}</th>
-        <td>{{purchase.quantity}}</td>
-        <td>{{purchase.price}}</td>
-        <td>{{purchase.sname}}</td>
-        <td>{{purchase.completed_status}}</td>
-        <td>{{purchase.time_purchased}}</td>
+        <th scope="row">{{p.oid}}</th>
+        <th scope="row">{{p.product}}</th>
+        <td>{{p.quantity}}</td>
+        <td>{{p.price}}</td>
+        <td>{{p.sname}}</td>
+        <td>{{p.completed_status}}</td>
+        <td>{{p.time_purchased}}</td>
         <td></td>
       </tr>
     {% endfor %}

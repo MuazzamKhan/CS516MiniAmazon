@@ -165,8 +165,8 @@ def balance():
 @bp.route('/purchase_history', methods=['GET'])
 def purchase_history():
     if current_user.is_authenticated:
-        purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
-
+        # purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
+        purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0))
     else:
         purchase = None 
 
