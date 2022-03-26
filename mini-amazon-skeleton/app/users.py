@@ -142,7 +142,7 @@ def password():
 
 
 
-class balanceform(FlaskForm):
+class BalanceForm(FlaskForm):
     deposit = IntegerField('deposit', validators=[], default=0)
     withdraw = IntegerField('withdraw', validators=[], default=0)
     submit = SubmitField('adjust balance')
