@@ -36,9 +36,8 @@ WHERE o.bid = :uid
     AND pro.id = p.pid 
     AND u.id = sid
     AND p.completion_datetime >= :since
-    AND pro.name LIKE :product
-    AND u.firstname LIKE :firstname
-    AND u.lastname LIKE :lastname
+    AND LOWER(pro.name) LIKE :product
+    AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) )
 ORDER BY p.completion_datetime DESC
 ''',
                               uid=uid,
@@ -46,9 +45,6 @@ ORDER BY p.completion_datetime DESC
                               product=product,
                               firstname=seller_firstname,
                               lastname=seller_lastname)
-        print(seller_firstname)
-        print(seller_lastname)  
-        print(product)
-        print(rows)
+        
         return [Purchase(*row) for row in rows]
 

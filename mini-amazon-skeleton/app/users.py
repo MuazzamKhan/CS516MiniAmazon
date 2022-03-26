@@ -173,12 +173,19 @@ def purchase_history():
             purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0))
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_items = list(set([ p.product for p in purchases ]))
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers, potential_items=potential_items)
+            return render_template('purchase_history.html', 
+                                    title='Purchase History', 
+                                    purchase=purchases,
+                                    potential_sellers=potential_sellers, 
+                                    potential_items=potential_items, 
+                                    search_seller="",
+                                    search_product="")
 
         elif request.method == "POST":
             form_data = request.form
-            input_seller = form_data['seller'].split() 
-            input_product = form_data['item']
+            input_seller_fullname = form_data['seller']
+            input_seller = input_seller_fullname.split() 
+            input_product = form_data['item'].lower()
             
             product = '%' if len(input_product) == 0 else '%' + input_product + '%'
             
@@ -186,17 +193,24 @@ def purchase_history():
             seller_lastname = '%' 
             
             if len(input_seller) >= 2:
-                seller_firstname = '%' + input_seller[0] + '%'
-                seller_lastname = '%' + input_seller[1] + '%'
+                seller_firstname = '%' + input_seller[0].lower() + '%'
+                seller_lastname = '%' + input_seller[1].lower() + '%'
             elif len(input_seller) == 1:
-                seller_firstname = '%' + input_seller[0] + '%'
+                seller_firstname = '%' + input_seller[0].lower() + '%'
             
 
             purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0), product, seller_firstname, seller_lastname)
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_items = list(set([ p.product for p in purchases ]))
+            
 
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers, potential_items=potential_items)
+            return render_template('purchase_history.html', 
+                                    title='Purchase History', 
+                                    purchase=purchases, 
+                                    potential_sellers=potential_sellers, 
+                                    potential_items=potential_items,
+                                    search_seller=input_seller_fullname,
+                                    search_product=input_product)
     else:
         form = LoginForm()
         return render_template('login.html', title='Sign In', form=form)

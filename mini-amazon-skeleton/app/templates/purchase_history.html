@@ -13,12 +13,10 @@
 
 <br/>
 
-<h3>Search by</h3>
+<h3>Search</h3>
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
-    by seller
-    <input type="text" name="seller" id="tags_seller">
-    by prodoct
-    <input type="text" name="item" id="tags_item">
+    <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
+    <input type="text" name="item" id="tags_item" placeholder="by porduct" value="{{search_product}}">
     <script>
     $( function() {
         var availableSellers = [
@@ -43,8 +41,11 @@
     
 
     <input type = "submit" value = "submit" />
-
+    <a class="btn btn-secondary" href="{{ url_for('users.purchase_history') }}" role="button">Reset criteria</a>
 </form>
+
+
+<br/>
 
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
