@@ -172,12 +172,31 @@ def purchase_history():
             # purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
             purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0))
             potential_sellers = list(set([ p.sname for p in purchases ]))
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers)
+            potential_items = list(set([ p.product for p in purchases ]))
+            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers, potential_items=potential_items)
 
         elif request.method == "POST":
             form_data = request.form
-            potential_sellers = []
-            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers)
+            input_seller = form_data['seller'].split() 
+            input_product = form_data['item']
+            
+            product = '%' if len(input_product) == 0 else '%' + input_product + '%'
+            
+            seller_firstname = '%'
+            seller_lastname = '%' 
+            
+            if len(input_seller) >= 2:
+                seller_firstname = '%' + input_seller[0] + '%'
+                seller_lastname = '%' + input_seller[1] + '%'
+            elif len(input_seller) == 1:
+                seller_firstname = '%' + input_seller[0] + '%'
+            
+
+            purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0), product, seller_firstname, seller_lastname)
+            potential_sellers = list(set([ p.sname for p in purchases ]))
+            potential_items = list(set([ p.product for p in purchases ]))
+
+            return render_template('purchase_history.html', title='Purchase History', purchase=purchases, potential_sellers=potential_sellers, potential_items=potential_items)
     else:
         form = LoginForm()
         return render_template('login.html', title='Sign In', form=form)

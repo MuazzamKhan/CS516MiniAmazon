@@ -27,7 +27,7 @@ WHERE id = :id
     """
 
     @staticmethod
-    def get_all_by_uid_since(uid, since):
+    def get_all_by_uid_since(uid, since, product='%', seller_firstname='%', seller_lastname='%'):
         rows = app.db.execute('''
 SELECT oid, o.bid, pro.name, u.firstname, u.lastname, price, quantity, p.completed_status, p.completion_datetime
 FROM Purchases AS p, Orders AS o, Products AS pro, Users AS u
@@ -36,11 +36,19 @@ WHERE o.bid = :uid
     AND pro.id = p.pid 
     AND u.id = sid
     AND p.completion_datetime >= :since
+    AND pro.name LIKE :product
+    AND u.firstname LIKE :firstname
+    AND u.lastname LIKE :lastname
 ORDER BY p.completion_datetime DESC
 ''',
                               uid=uid,
-                              since=since)
-
+                              since=since,
+                              product=product,
+                              firstname=seller_firstname,
+                              lastname=seller_lastname)
+        print(seller_firstname)
+        print(seller_lastname)  
+        print(product)
+        print(rows)
         return [Purchase(*row) for row in rows]
-
 
