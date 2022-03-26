@@ -241,8 +241,6 @@ def logout():
 
 
 def generateDateRange(date1, date2):
-    
-    print(date1.split("-"))
 
     date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
     date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
