@@ -17,6 +17,8 @@
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
     <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
     <input type="text" name="item" id="tags_item" placeholder="by porduct" value="{{search_product}}">
+    <input type="date" name="start_date" value={{since}}>
+    <input type="date" name="end_date" value={{to}}>
     <script>
     $( function() {
         var availableSellers = [

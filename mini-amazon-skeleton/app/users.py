@@ -170,25 +170,39 @@ def purchase_history():
         
         if request.method == "GET":
             # purchases = Purchase.get_all_by_uid_since(current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
-            purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0))
+            ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
+            now = datetime.datetime.now()
+            purchases = Purchase.get_all_by_uid_since(0, ancient, now)
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_items = list(set([ p.product for p in purchases ]))
+            
+            since = ancient.strftime("%Y-%m-%d")
+            today = now.strftime("%Y-%m-%d")
+
+            
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases,
                                     potential_sellers=potential_sellers, 
                                     potential_items=potential_items, 
                                     search_seller="",
-                                    search_product="")
+                                    search_product="",
+                                    since=since,
+                                    to=today)
 
         elif request.method == "POST":
             form_data = request.form
             input_seller_fullname = form_data['seller']
             input_seller = input_seller_fullname.split() 
             input_product = form_data['item'].lower()
+            input_start_date = form_data['start_date']
+            input_end_date = form_data['end_date']
+            
+            date_start, date_end = generateDateRange(input_start_date, input_end_date)
+            datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
             
             product = '%' if len(input_product) == 0 else '%' + input_product + '%'
-            
+        
             seller_firstname = '%'
             seller_lastname = '%' 
             
@@ -199,7 +213,7 @@ def purchase_history():
                 seller_firstname = '%' + input_seller[0].lower() + '%'
             
 
-            purchases = Purchase.get_all_by_uid_since(0, datetime.datetime(1980, 9, 14, 0, 0, 0), product, seller_firstname, seller_lastname)
+            purchases = Purchase.get_all_by_uid_since(0, datetime_start, datetime_end, product, seller_firstname, seller_lastname)
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_items = list(set([ p.product for p in purchases ]))
             
@@ -210,7 +224,9 @@ def purchase_history():
                                     potential_sellers=potential_sellers, 
                                     potential_items=potential_items,
                                     search_seller=input_seller_fullname,
-                                    search_product=input_product)
+                                    search_product=input_product,
+                                    since=datetime_start.strftime("%Y-%m-%d"),
+                                    to=datetime_end.strftime("%Y-%m-%d"))
     else:
         form = LoginForm()
         return render_template('login.html', title='Sign In', form=form)
@@ -221,3 +237,29 @@ def purchase_history():
 def logout():
     logout_user()
     return redirect(url_for('index.index'))
+
+
+
+def generateDateRange(date1, date2):
+    
+    print(date1.split("-"))
+
+    date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
+    date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
+    
+    if date1_year > date2_year:
+        return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
+    elif date1_year < date2_year:
+        return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
+    else:
+        if date1_month > date2_month:
+            return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
+        elif date2_month > date1_month:
+            return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
+        else:
+            if date1_day > date2_day:
+                return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
+            elif date2_day > date1_day:
+                return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
+            else: 
+                date1, date2
