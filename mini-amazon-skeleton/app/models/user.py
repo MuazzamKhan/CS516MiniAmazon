@@ -6,12 +6,13 @@ from .. import login
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname, address):
+    def __init__(self, id, email, firstname, lastname, address, is_seller):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
+        self.is_seller = is_seller
     
 
     def set_profile(self, email, firstname, lastname, address):
@@ -40,7 +41,7 @@ where email = :email
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-select password, id, email, firstname, lastname, address
+select password, id, email, firstname, lastname, address, FALSE as is_seller
 from users
 where email = :email
 """,
@@ -146,8 +147,10 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname, address
-FROM Users
+SELECT id, email, firstname, lastname, address, 
+        CASE 
+        WHEN id in (SELECT id from Sellers) THEN TRUE ELSE FALSE END AS is_seller            
+FROM Users AS u
 WHERE id = :id
 """,
                               id=id)

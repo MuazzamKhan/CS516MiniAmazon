@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<h1> {{user.firstname}} {{user.lastname}} </h1>
+Account Number: {{user.id}} <br/> 
+
+
+<!--- only show the following information if he is a seller ---->
+{% if user.is_seller %}
+    Email: {{user.email}} <br/>
+    Address: {{user.address}} <br/>
+
+    Review:  <br/>
+{% endif %}
+{% endblock %}
