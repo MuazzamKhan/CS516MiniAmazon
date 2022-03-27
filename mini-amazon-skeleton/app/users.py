@@ -17,7 +17,7 @@ bp = Blueprint('users', __name__)
 
 
 # This is to store user information 
-curr_user = User(0, "", "", "", "")
+curr_user = User(0, "", "", "", "", False)
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
