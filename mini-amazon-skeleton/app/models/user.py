@@ -154,7 +154,6 @@ FROM Users AS u
 WHERE id = :id
 """,
                               id=id)
-        print(rows)
         return User(*(rows[0])) if rows else None
 
     

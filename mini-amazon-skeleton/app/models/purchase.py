@@ -3,10 +3,11 @@ from flask import current_app as app
 from .product import Product
 
 class Purchase:
-    def __init__(self, oid, uid, product, sfirstname, slastname, price, quantity, completed_status, time_purchased):
+    def __init__(self, oid, uid, product, sid, sfirstname, slastname, price, quantity, completed_status, time_purchased):
         self.oid = oid
         self.uid = uid
         self.product = product
+        self.sid = sid
         self.sname = sfirstname + " " + slastname
         self.time_purchased = time_purchased
         self.quantity = quantity
@@ -29,7 +30,7 @@ WHERE id = :id
     @staticmethod
     def get_all_by_uid_since(uid, start_date, end_date, product='%', seller_firstname='%', seller_lastname='%'):
         rows = app.db.execute('''
-SELECT oid, o.bid, pro.name, u.firstname, u.lastname, price, quantity, p.completed_status, p.completion_datetime
+SELECT oid, o.bid, pro.name, sid, u.firstname, u.lastname, price, quantity, p.completed_status, p.completion_datetime
 FROM Purchases AS p, Orders AS o, Products AS pro, Users AS u
 WHERE o.bid = :uid
     AND o.id = p.oid 

@@ -240,6 +240,15 @@ def logout():
 
 
 
+@bp.route('/user_public_view/<int:id>')
+def user_public_view(id):
+    
+    user = User.get(id)
+
+    return render_template('user_public_view.html', title='Public view', user=user)
+
+
+
 def generateDateRange(date1, date2):
 
     date1_year, date1_month, date1_day = list(map(int, date1.split("-")))

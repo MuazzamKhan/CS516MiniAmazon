@@ -2,14 +2,13 @@
 
 {% block content %}
 
-<h1>User Public View</h1>
 
-Name: {{}} <br/>
-Account Number: {{}} <br/> 
+<h1> {{user.firstname}} {{user.lastname}} </h1>
+Account Number: {{user.id}} <br/> 
 
-Email: {{}} <br/>
-Address: {{}} <br/>
+Email: {{user.email}} <br/>
+Address: {{user.address}} <br/>
 
-Review: {{}} <br/>
+Review:  <br/>
 
 {% endblock %}

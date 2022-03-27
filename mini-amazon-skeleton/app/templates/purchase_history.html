@@ -71,7 +71,7 @@
         <th scope="row">{{p.product}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
-        <td>{{p.sname}}</td>
+        <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
         <td>{{p.completed_status}}</td>
         <td>{{p.time_purchased}}</td>
         <td></td>
