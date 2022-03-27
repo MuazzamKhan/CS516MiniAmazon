@@ -10,6 +10,8 @@ from .models.user import User
 from .models.purchase import Purchase
 from .models.product import Product
 
+from .order import orderBuyer
+
 import datetime
 
 from flask import Blueprint
