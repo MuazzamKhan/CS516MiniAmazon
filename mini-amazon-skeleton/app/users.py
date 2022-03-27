@@ -31,7 +31,7 @@ class LoginForm(FlaskForm):
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    
+
     global curr_user
 
     if current_user.is_authenticated:
@@ -166,6 +166,13 @@ def balance():
 @bp.route('/purchase_history', methods=['GET', 'POST'])
 def purchase_history():
 
+    """ purchase_history - Show personal purchase history 
+
+    Returns
+    -------
+    Flask page html
+    """
+
     if current_user.is_authenticated:
         
         if request.method == "GET":
@@ -198,6 +205,7 @@ def purchase_history():
             input_start_date = form_data['start_date']
             input_end_date = form_data['end_date']
             
+            # pass user inputs as filter to the query
             date_start, date_end = generateDateRange(input_start_date, input_end_date)
             datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
             
@@ -242,7 +250,17 @@ def logout():
 
 @bp.route('/user_public_view/<int:id>')
 def user_public_view(id):
-    
+    """user_public_view - Show public view page for a given user
+
+    Parameters
+    ----------
+    id : int
+        User id
+
+    Returns
+    -------
+    Public view html        
+    """
     user = User.get(id)
 
     return render_template('user_public_view.html', title='Public view', user=user)
@@ -250,6 +268,20 @@ def user_public_view(id):
 
 
 def generateDateRange(date1, date2):
+    """generateDateRange - Generate a date range regardless the order of two given dates
+
+    Parameters
+    ----------
+    date1 : String
+        Date 1 (i.e. "2020-12-12")
+    date2 : String
+        Date 2 
+
+    Returns
+    -------
+    List, List
+        Each list is [ year, month, date ], the first list is before the second list
+    """
 
     date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
     date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
@@ -269,4 +301,4 @@ def generateDateRange(date1, date2):
             elif date2_day > date1_day:
                 return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
             else: 
-                date1, date2
+                return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
