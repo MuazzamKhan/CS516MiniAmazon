@@ -7,13 +7,14 @@ class Order:
         self.uid = uid
         self.pid = pid
         self.sid = sid
-        self.product_name = product_name,
+        self.product_name = product_name
         self.price = price
         self.quantity = quantity
         self.placed_datetime = placed_datetime
         self.completed_status = completed_status
         self.completion_datetime = completion_datetime
         self.address = address
+        self.count = count
     
     @staticmethod
     def get_by_bid(bid):
@@ -147,59 +148,6 @@ class Order:
 
         else:
             return False
-
-    @staticmethod
-    def top_three_products(sid):
-        rows = app.db.execute('''
-        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.pid, product_name
-        ORDER BY count DESC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def bottom_three_products(sid):
-        rows = app.db.execute('''
-        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.pid, product_name
-        ORDER BY count ASC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def top_three_categories(sid):
-        rows = app.db.execute('''
-        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.category
-        ORDER BY count DESC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def bottom_three_categories(sid):
-        rows = app.db.execute('''
-        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.category
-        ORDER BY count ASC
-        LIMIT 3
-        ''',
-        sid=sid)
-
 
 
 

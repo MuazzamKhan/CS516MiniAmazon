@@ -119,9 +119,6 @@ class Inventory:
             return False
 
 
-    
-
-
     @staticmethod
     def remove_item(sid, pid):
         rows = app.db.execute('''
@@ -169,54 +166,3 @@ class Inventory:
             return True
         else: 
             return False
-
-    
-    @staticmethod
-    def calc_unique_items(sid) : 
-        num = app.db.execute('''
-        SELECT COUNT(pid)
-        FROM Inventory
-        WHERE sid=:sid
-        ''',
-        sid = sid)
-        return num
-
-
-    @staticmethod
-    def calc_total_quantity(sid) : 
-        num = app.db.execute('''
-        SELECT SUM(quantity)
-        FROM Inventory
-        WHERE sid=:sid
-        ''',
-        sid = sid)
-        return num
-
-
-    @staticmethod
-    def calc_average_price(sid) : 
-        num = app.db.execute('''
-        SELECT AVG(price)
-        FROM Inventory
-        WHERE sid=:sid
-        ''',
-        sid = sid)
-        return num
-
-    @staticmethod
-    def inventory_low(pid, sid):
-        rows = app.db.execute('''
-        SELECT quantity
-        FROM Inventory
-        WHERE pid=:pid AND sid=:sid
-        ''',
-        pid=pid,
-        sid=sid)
-
-        if rows[0][0] <= 5:
-            return "Low in Stock"
-        elif rows[0][0] <= 20:
-            return "Moderate in Stock"
-        else:
-            return "High in Stock"
-
