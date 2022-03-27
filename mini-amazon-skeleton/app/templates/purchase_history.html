@@ -74,7 +74,7 @@
         <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
         <td>{{p.completed_status}}</td>
         <td>{{p.time_purchased}}</td>
-        <td></td>
+        <td><a href="{{ url_for('order.orderBuyer', bid=p.oid) }}">More details</a></td>
       </tr>
     {% endfor %}
   </tbody>
