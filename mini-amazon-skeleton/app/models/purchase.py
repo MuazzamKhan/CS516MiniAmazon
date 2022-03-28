@@ -1,4 +1,5 @@
 from flask import current_app as app
+from flask_login import current_user
 
 from .product import Product
 
@@ -26,6 +27,19 @@ WHERE id = :id
                               id=id)
         return Purchase(*(rows[0])) if rows else None
     """
+
+    @staticmethod
+    def add_to_purchases(item, oid):
+        app.db.execute('''
+            INSERT INTO Purchases(oid, pid, sid, price, quantity)
+            VALUES(:oid, :pid, :sid, :price, :quantity)
+        ''',
+        oid=oid,
+        pid=item.pid,
+        sid=item.sid,
+        price=item.price,
+        quantity=item.quantity
+        )
 
     @staticmethod
     def get_all_by_uid_since(uid, start_date, end_date, product='%', seller_firstname='%', seller_lastname='%'):

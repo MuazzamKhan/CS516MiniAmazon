@@ -1,5 +1,7 @@
+from datetime import datetime
 from os import name
 from flask import current_app as app
+from flask_login import current_user
 
 class Order:
     def __init__(self, id, uid, pid, sid, product_name, price, quantity, placed_datetime, completed_status, completion_datetime, address):
@@ -14,6 +16,20 @@ class Order:
         self.completed_status = completed_status
         self.completion_datetime = completion_datetime
         self.address = address
+    
+    @staticmethod
+    def add_to_order():
+        oid = app.db.execute('''
+            INSERT INTO Orders(bid, address, placed_datetime)
+            VALUES(:bid, :address, :placed_datetime)
+            RETURNING id
+        ''',
+        bid=current_user.id,
+        address=current_user.address,
+        placed_datetime=datetime.now()
+        )
+
+        return oid[0][0]
     
     @staticmethod
     def get_by_bid(bid):
