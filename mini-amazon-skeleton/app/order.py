@@ -14,6 +14,7 @@ bp = Blueprint('order', __name__)
 @bp.route('/buyer-order/<bid>', methods=['GET'])
 def orderBuyer(bid):
     orders = Order.get_by_bid(bid)
+    print(bid)
     if orders == None:
         return "Error! No such buyer exists!"
     else:
