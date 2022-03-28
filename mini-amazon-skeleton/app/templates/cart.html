@@ -1,0 +1,29 @@
+<!-- html for main product table page -->
+{% extends "base.html" %}
+
+{% block content %}
+
+    <table class='table table-hover table-bordered container', id = "cartTable">
+        <tr class = "header">
+          <th onclick="sortTable(0)" scope="col">Product ID</th>
+          <th onclick="sortTable(1)" scope="col">Seller ID</th>
+          <th onclick="sortTable(2)" scope="col">Quantity</th>
+          <th onclick="sortTable(2)" scope="col">Total Price</th>
+        </tr>
+        {% for cart in cart_items%}
+        <tr>
+          <td scope="row">{{cart.pid}}</td>
+          <td> {{cart.sid}} </td>
+          <td> {{cart.quantity}} </td>
+          <td> {{cart.total}} </td>
+          <td><a href="{{ url_for('cart.edit', pid = cart.pid, sid = cart.sid) }}">Edit</a>
+            <a href="{{ url_for('cart.delete', pid = cart.pid, sid = cart.sid) }}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <td>Cart Total: $ {{cart_total}}</td> <br><br>
+    <td><a href="{{ url_for('cart.order') }}">Order all of Cart</a></td>
+    <td>{{message}}</td>
+
+{% endblock %}
