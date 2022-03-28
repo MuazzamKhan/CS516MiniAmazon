@@ -14,12 +14,11 @@ class Order:
         self.completed_status = completed_status
         self.completion_datetime = completion_datetime
         self.address = address
-        self.count = count
     
     @staticmethod
     def get_by_bid(bid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
