@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<td>Product ID: {{item.pid}}</td> <br><br>
+<td>Seller ID: {{item.sid}}</td> <br><br>
+<td>Stock: {{stock}}</td> <br><br>
+<td>Current Quantity: {{item.quantity}}</td>
+<td><form action="{{ url_for('cart.editCart', pid = item.pid, sid = item.sid) }}" method="GET">
+    <input type="number" id="quantity" name="quantity" required
+        min="1" max="{{stock}}">
+    <input type="submit" value="Edit Cart">
+</form></td>
+
+
+<td><a href="{{ url_for('cart.cart') }}">Cancel</a></td>
+<td><a href="{{ url_for('cart.delete', pid = item.pid, sid = item.sid) }}">Delete</a></td>
+
+{% endblock %}

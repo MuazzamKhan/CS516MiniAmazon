@@ -58,7 +58,7 @@
                     <td>${{listing.price}}</td>
                     <td>{{listing.quantity}}</td>
                     {% if current_user.is_authenticated %}
-                    <td><form action="{{ url_for('product.addToCart', pid = product.id, sid = listing.sid, quantity = 0) }}" method="GET">
+                    <td><form action="{{ url_for('product.addToCart', pid = product.id, sid = listing.sid) }}" method="GET">
                         <input type="number" id="quantity" name="quantity" required
                             min="1" max="{{listing.quantity}}">
                         <input type="submit" value="Add to Cart">
