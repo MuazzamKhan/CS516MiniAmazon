@@ -70,6 +70,27 @@
                   {% endfor %}
             </table>
             {% endif %}
+
+            {% if stock == "In Stock" %}
+            <table class='table table-hover table-bordered container'>
+                
+                <tr class = "header">
+                    <th scope="col">Rating</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Review</th>
+                    <th scope="col"></th>
+                  </tr>
+
+            {% for review in reviews%}
+            <tr>
+                <td scope="row">{{review.rating}}</td>
+                <td>{{review.title}}</td>
+                <td>{{review.body}}</td>
+            </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
         </div>
     </main>
 
