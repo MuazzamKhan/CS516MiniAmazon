@@ -1,5 +1,7 @@
+from datetime import datetime
 from os import name
 from flask import current_app as app
+from flask_login import current_user
 
 class Order:
     def __init__(self, id, uid, pid, sid, product_name, price, quantity, placed_datetime, completed_status, completion_datetime, address):
@@ -7,7 +9,7 @@ class Order:
         self.uid = uid
         self.pid = pid
         self.sid = sid
-        self.product_name = product_name,
+        self.product_name = product_name
         self.price = price
         self.quantity = quantity
         self.placed_datetime = placed_datetime
@@ -16,9 +18,23 @@ class Order:
         self.address = address
     
     @staticmethod
+    def add_to_order():
+        oid = app.db.execute('''
+            INSERT INTO Orders(bid, address, placed_datetime)
+            VALUES(:bid, :address, :placed_datetime)
+            RETURNING id
+        ''',
+        bid=current_user.id,
+        address=current_user.address,
+        placed_datetime=datetime.now()
+        )
+
+        return oid[0][0]
+    
+    @staticmethod
     def get_by_bid(bid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PROD.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
@@ -147,59 +163,6 @@ class Order:
 
         else:
             return False
-
-    @staticmethod
-    def top_three_products(sid):
-        rows = app.db.execute('''
-        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.pid, product_name
-        ORDER BY count DESC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def bottom_three_products(sid):
-        rows = app.db.execute('''
-        SELECT PUR.pid, PROD.name AS product_name, SUM(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.pid, product_name
-        ORDER BY count ASC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def top_three_categories(sid):
-        rows = app.db.execute('''
-        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.category
-        ORDER BY count DESC
-        LIMIT 3
-        ''',
-        sid=sid)
-
-    @staticmethod
-    def bottom_three_categories(sid):
-        rows = app.db.execute('''
-        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
-        FROM Purchases PUR, Products PROD
-        WHERE PUR.pid = PROD.id
-        AND PUR.sid=:sid
-        GROUP BY PUR.category
-        ORDER BY count ASC
-        LIMIT 3
-        ''',
-        sid=sid)
-
 
 
 

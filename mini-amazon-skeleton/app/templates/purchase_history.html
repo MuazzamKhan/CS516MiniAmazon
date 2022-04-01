@@ -2,16 +2,59 @@
 
 {% block content %}
 
-<br><br>
-
-
-<br><br>
 {% if current_user.is_authenticated %}
-<h2>Your recent purchases:</h2>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"> </script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
+</head>
+
+<h1>Your recent purchases:</h1>
+
+<br/>
+
+<h3>Search</h3>
+<form action="{{ url_for('users.purchase_history') }}" method="POST">
+    <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
+    <input type="text" name="item" id="tags_item" placeholder="by product" value="{{search_product}}">
+    from
+    <input type="date" name="start_date" value={{since}}>
+    to
+    <input type="date" name="end_date" value={{to}}>
+    <script>
+    $( function() {
+        var availableSellers = [
+            {% for s in potential_sellers %}
+                "{{s}}",
+            {% endfor %}
+        ];
+        var availableItems = [
+            {% for s in potential_items %}
+                "{{s}}",
+            {% endfor %}
+        ];
+        $( "#tags_seller" ).autocomplete({
+            source: availableSellers
+        });
+        $( "#tags_item" ).autocomplete({
+            source: availableItems
+        });
+
+    });
+    </script>
+    
+
+    <input type = "submit" value = "submit" />
+    <a class="btn btn-secondary" href="{{ url_for('users.purchase_history') }}" role="button">Reset filter</a>
+</form>
+
+
+<br/>
+
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Purchase ID</th>
+      <th scope="col">Order ID</th>
       <th scope="col">Product</th>
       <th scope="col">Quantity</th>
       <th scope="col">Price</th>
@@ -22,16 +65,16 @@
     </tr>
   </thead>
   <tbody>
-    {% for purchase in purchase_history%}
+    {% for p in purchase%}
       <tr>
-        <th scope="row">{{purchase.id}}</th>
-        <th scope="row">{{purchase.pname}}</th>
-        <td>{{purchase.quantity}}</td>
-        <td>{{purchase.price}}</td>
-        <td>{{purchase.sname}}</td>
-        <td>{{purchase.completed_status}}</td>
-        <td>{{purchase.time_purchased}}</td>
-        <td></td>
+        <th scope="row">{{p.oid}}</th>
+        <th scope="row">{{p.product}}</th>
+        <td>{{p.quantity}}</td>
+        <td>{{p.price}}</td>
+        <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
+        <td>{{p.completed_status}}</td>
+        <td>{{p.time_purchased}}</td>
+        <td><a href="{{ url_for('order.orderBuyer', bid=p.uid) }}">More details</a></td>
       </tr>
     {% endfor %}
   </tbody>

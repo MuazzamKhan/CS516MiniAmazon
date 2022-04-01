@@ -1,7 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-    <p>{{current_user.firstname}}</p>
-    <p>{{listing.pid}}</p>
-    <p>{{listing.sid}}</p>
-    <p>{{quantity}}</p>
-</html>
+<!-- html for main product table page -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<h2>"{{product.name}}" ({{quantity}}) has been added to your cart!</h2>
+
+<td><a href="{{ url_for('cart.cart') }}">Cart</a></td>
+
+{% endblock %}

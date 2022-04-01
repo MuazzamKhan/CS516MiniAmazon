@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Most Popular Products:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in top_products%}
+      <tr>
+        <td> {{item.pid}} </td>
+        <td> {{item.product_name}} </td>
+        <td> {{item.count}} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Least Popular Products:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in bottom_products%}
+      <tr>
+        <td> {{item.pid}} </td>
+        <td> {{item.product_name}} </td>
+        <td> {{item.count}} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<h2>Most Popular Categories:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Category</th>
+      <th scope="col">Quantity Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in top_categories%}
+      <tr>
+        <td> {{item.category}} </td>
+        <td> {{item.count}} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Least Popular Categories:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Category</th>
+      <th scope="col">Quantity Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in bottom_categories%}
+      <tr>
+        <td> {{item.category}} </td>
+        <td> {{item.count}} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Inventory Summary Statistics:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+        <th scope="col">Total Stock in Inventory</th>
+        <th scope="col">Total Unique Products</th>
+        <th scope="col">Average Price in Inventory</th>
+    </tr>
+  </thead>
+  <tbody>
+        <td> {{total_inventory}} </td>
+        <td> {{unique_inventory}} </td>
+        <td> {{avg_price_inventory}} </td>
+  </tbody>
+</table>
+
+
+{% endblock %}
