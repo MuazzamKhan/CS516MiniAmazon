@@ -39,6 +39,16 @@ def gen_users(num_users):
             address = profile['address']
             writer.writerow([uid, email, password, firstname, lastname, balance, address])
         print(f'{num_users} generated')
+
+        # add one test user for login
+        email = 'test@duke.edu'
+        password = generate_password_hash("test")
+        firstname = 'test'
+        lastname = 'test'
+        balance = 100
+        address = 'Durham NC'
+        writer.writerow([num_users, email, password, firstname, lastname, balance, address])
+        print("Test user generated")
     return
 
 def gen_sellers(num_sellers):
@@ -121,8 +131,8 @@ def gen_cart(num_carted_products):
     return
 
 gen_users(num_users)
-# available_pids = gen_products(num_products)
+available_pids = gen_products(num_products)
 gen_sellers(num_sellers)
-# gen_purchases(num_purchases, available_pids)
-# gen_inventory(num_inventory)
-# gen_cart(num_carted_products)
+gen_purchases(num_purchases, available_pids)
+gen_inventory(num_inventory)
+gen_cart(num_carted_products)
