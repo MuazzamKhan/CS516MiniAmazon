@@ -180,7 +180,7 @@ def purchase_history():
         if request.method == "GET":
             ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
             now = datetime.datetime.now()
-            purchases = Purchase.get_all_by_uid_since(0, ancient, now)
+            purchases = Purchase.get_all_by_uid_since(curr_user.id, ancient, now)
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_quantity = list(set([ p.quantity for p in purchases ]))
             
@@ -222,7 +222,7 @@ def purchase_history():
                 seller_firstname = '%' + input_seller[0].lower() + '%'
             
 
-            purchases = Purchase.get_all_by_uid_since(0, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
+            purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
             potential_sellers = list(set([ p.sname for p in purchases ]))
             potential_quantity = list(set([ p.quantity for p in purchases ]))
             
