@@ -46,6 +46,24 @@ class Order:
             return [Order(*row) for row in rows]
         else: 
             None
+    
+    @staticmethod
+    def get_by_bid_oid(bid, oid):
+        rows = app.db.execute('''
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        FROM Orders ORD, Purchases PUR, Products PROD
+        WHERE ORD.id = PUR.oid 
+        AND PUR.pid = PROD.id
+        AND ORD.bid=:bid
+        AND ORD.id=:oid
+        ORDER BY ORD.placed_datetime DESC
+        ''',
+        bid=bid,
+        oid=oid)
+        if rows:
+            return [Order(*row) for row in rows]
+        else: 
+            None
 
     @staticmethod
     def get_by_sid(sid):

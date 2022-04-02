@@ -70,7 +70,7 @@
         <td>{{p.price}}</td>
         <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
         <td>{{p.time_purchased}}</td>
-        <td><a href="{{ url_for('order.orderBuyer', bid=p.uid) }}">More details</a></td>
+        <td><a href="{{ url_for('order.orderBuyer', bid=p.uid, oid=p.oid) }}">More details</a></td>
       </tr>
     {% endfor %}
   </tbody>

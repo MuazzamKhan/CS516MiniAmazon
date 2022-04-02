@@ -4,7 +4,7 @@
 
 <div>
     <h2>Mark Fulfilled</h2>
-    <a href="{{ url_for('order.orderSeller', sid=sid) }}">Back to inventory</a>
+    <a href="{{ url_for('order.orderSeller', sid=current_user.id) }}">Back to inventory</a>
 </div>
 
 <form action="" method="post" enctype="multipart/form-data">

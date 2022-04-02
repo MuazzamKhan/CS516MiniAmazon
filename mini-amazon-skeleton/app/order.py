@@ -12,14 +12,14 @@ from .models.user import User
 from flask import Blueprint
 bp = Blueprint('order', __name__)
 
-@bp.route('/buyer-order/<bid>', methods=['GET'])
-def orderBuyer(bid):
-    orders = Order.get_by_bid(bid)
+@bp.route('/buyer-order/<bid>/<oid>', methods=['GET'])
+def orderBuyer(bid, oid):
+    orders = Order.get_by_bid_oid(bid, oid)
     print(bid)
     if orders == None:
         return "Error! No such buyer exists!"
     else:
-        return render_template("order.html", orders=orders, bid=bid)
+        return render_template("order.html", orders=orders, bid=bid, oid=oid)
 
 
 @bp.route('/seller-order/<sid>', methods=['GET'])
@@ -43,7 +43,7 @@ def itemFulfilled(oid, sid, pid):
     #print("confirmation", confirmation)
     if confirmation == 'N':
         flash('You indicated that this item is NOT fulfilled.')
-        return redirect(url_for("order.orderSeller", sid=1))
+        return redirect(url_for("order.orderSeller", sid=sid))
     else:
         if form.validate_on_submit():
             Order.item_fulfilled(oid, pid)
