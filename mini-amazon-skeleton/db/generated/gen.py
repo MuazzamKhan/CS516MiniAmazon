@@ -122,7 +122,7 @@ def gen_cart(num_carted_products):
 
 gen_users(num_users)
 # available_pids = gen_products(num_products)
-# gen_sellers(num_sellers)
+gen_sellers(num_sellers)
 # gen_purchases(num_purchases, available_pids)
 # gen_inventory(num_inventory)
 # gen_cart(num_carted_products)
