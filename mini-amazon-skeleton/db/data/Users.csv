@@ -1,5 +1,4 @@
-"0","tamaramorrison@hotmail.com","pbkdf2:sha256:260000$g1vOLJruKjznutZP$6118ca23cb454bc2885e1ff503b6e365ec6b866cfb144aa77ec3a9590ca7e004","Gary","Cross","97607","711 Golden Overpass
-West Andreaville, MA 71317"
+"0","test@duke.edu","pbkdf2:sha256:260000$ScuMutvp73ODdt9c$38644d24b021b52e10df9dbd2c045a249a89c59f2b2f17e0646c73d1b5389663","test","test","100","Durham NC"
 "1","martha10@hotmail.com","pbkdf2:sha256:260000$XA23v6AyPLrSgdvk$bb7bde70806b6bcbae3d7a5559ab3f37175f335dfbf8e1c0ae8c9f172dbb6b6b","Denise","Thornton","2987","30989 Anthony Roads
 New Maria, MO 12498"
 "2","deborah64@gmail.com","pbkdf2:sha256:260000$uK8tTs0D8o89cNMc$04c742119eb715140840f95c2db44fb41bb796544c5acc8f5293bd0a705484c2","Jeanne","Green","99437","22584 Candice Mills
@@ -198,4 +197,5 @@ East Lindseyville, MA 56035"
 Jenniferchester, WI 32030"
 "99","danieltucker@hotmail.com","pbkdf2:sha256:260000$Sbxj2nh4VoWz5PoT$ee204fe11676bd1310acdc96d7f93e21a8366a7acdd701a5c63faf05e7f90cb8","Jessica","Miller","75362","99513 Thomas Port Apt. 838
 Hutchinsonmouth, MN 33266"
-"100","test@duke.edu","pbkdf2:sha256:260000$ScuMutvp73ODdt9c$38644d24b021b52e10df9dbd2c045a249a89c59f2b2f17e0646c73d1b5389663","test","test","100","Durham NC"
+"100","tamaramorrison@hotmail.com","pbkdf2:sha256:260000$g1vOLJruKjznutZP$6118ca23cb454bc2885e1ff503b6e365ec6b866cfb144aa77ec3a9590ca7e004","Gary","Cross","97607","711 Golden Overpass
+West Andreaville, MA 71317"
