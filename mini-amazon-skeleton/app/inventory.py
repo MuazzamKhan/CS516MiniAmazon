@@ -16,6 +16,8 @@ import app
 from flask import Blueprint
 bp = Blueprint('inventory', __name__)
 
+categories = [('Books', 'Books'), ('Clothing', 'Clothing'), ('Electronics', 'Electronics'), ('Food', 'Food'), ('Home', 'Home'), ('Media', 'Media'), ('Toys', 'Toys'), ('Sports', 'Sports')]
+
 @bp.route('/inventory/<sid>', methods=['GET'])
 def inventory(sid):
     inventory = Inventory.get_with_sid(sid)
@@ -48,8 +50,8 @@ def editInventory(pid, sid):
         Inventory.edit_price(pid, sid, form.price.data)
         Inventory.edit_quantity(pid, sid, form.quantity.data)
         flash("Successfully changed price for product")
-        return redirect(url_for('inventory.inventory', sid=0))
-    return render_template('edit_product.html', form=form, inventory=inventory, pid=1, sid=0)
+        return redirect(url_for('inventory.inventory', sid=sid))
+    return render_template('edit_product.html', form=form, inventory=inventory, pid=pid, sid=sid)
 
 
 class AddUnlistedProductForm(FlaskForm):
@@ -57,7 +59,7 @@ class AddUnlistedProductForm(FlaskForm):
     description = TextField('Description', validators=[InputRequired(), Length(max=200)])
     price = DecimalField('Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
     quantity = IntegerField('Quantity', validators=[InputRequired(), NumberRange(min=0, message="Quantity must be >= 0 units")])
-    category = TextField('Category', validators=[InputRequired(), Length(max=200)])
+    category = SelectField('Category', choices=categories)
     image_file = FileField('Product Image', validators=[FileRequired()])
     submit = SubmitField('Add Product')
 
@@ -72,7 +74,7 @@ def addUnlistedProduct(sid):
         f.save(image_path)
         new_item = Inventory.add_unlisted_item(sid, form.name.data, form.description.data, form.category.data, filename, form.price.data, form.quantity.data)
         flash('Successfully added new item to inventory!')
-        return redirect(url_for("inventory.inventory", sid=0))
+        return redirect(url_for("inventory.inventory", sid=sid))
     return render_template('add_unlisted_product.html', title='Add Unlisted Product', form=form, sid=sid)
 
 class AddListedProductForm(FlaskForm):
@@ -101,7 +103,7 @@ def removeInventory(sid, pid):
     if form.validate_on_submit():
         Inventory.remove_item(sid, pid)
         flash('Successfully removed item from inventory!')
-        return redirect(url_for("inventory.inventory", sid=1))
+        return redirect(url_for("inventory.inventory", sid=sid))
     return render_template('remove_inventory.html', title='Remove from Inventory', form=form, inventory=inventory, sid=sid, pid=pid)
 
 
