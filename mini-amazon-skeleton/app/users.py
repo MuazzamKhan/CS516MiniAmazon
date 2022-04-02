@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request, current_app as app
+from flask import render_template, redirect, url_for, flash, request, current_app as app, g
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
 from flask_login import login_user, logout_user, current_user
@@ -43,8 +43,12 @@ def login():
     if form.validate_on_submit():
         user = User.get_by_auth(form.email.data, form.password.data)
         curr_user = user
+        
         if user is None:
             flash('Invalid email or password')
+            return redirect(url_for('users.login'))
+        elif not user.email_confirm:
+            flash('Please confirm your email first. See it in your mailbox')
             return redirect(url_for('users.login'))
         login_user(user)
         next_page = request.args.get('next')
@@ -77,6 +81,7 @@ def confirm_email(token):
 
     try:
         email = confirm_token(token)
+        flash('Your email is confirmed! You can now log in. ')
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
     
@@ -224,7 +229,7 @@ def purchase_history():
             since = ancient.strftime("%Y-%m-%d")
             today = now.strftime("%Y-%m-%d")
 
-            
+            print("DEBUG", g.get(user))
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases,
