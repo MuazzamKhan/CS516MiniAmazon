@@ -10,6 +10,8 @@ Flask-Login==0.5.0
 Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
+Flask-Mail==0.9.1
+Flask-Ext==0.1
 greenlet==1.1.1
 idna==3.2
 importlib-metadata==4.8.1

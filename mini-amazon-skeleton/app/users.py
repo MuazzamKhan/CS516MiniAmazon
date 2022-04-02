@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app as app
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
 from flask_login import login_user, logout_user, current_user
@@ -11,12 +11,15 @@ from .models.purchase import Purchase
 from .models.product import Product
 
 from .order import orderBuyer
+from .email import send_email
 
 import datetime
 
-from flask import Blueprint
-bp = Blueprint('users', __name__)
+from itsdangerous import URLSafeTimedSerializer
 
+from flask import Blueprint
+
+bp = Blueprint('users', __name__)
 
 # This is to store user information 
 curr_user = User(0, "", "", "", "", False)
@@ -26,8 +29,6 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
-
-
 
 
 
@@ -54,6 +55,33 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+                token,
+                salt=app.config['SECURITY_PASSWORD_SALT'],
+                max_age=expiration
+                )
+    except:
+        return False
+    return email
+
+
+@bp.route('/confirm/<token>')
+def confirm_email(token):
+
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    
+    return redirect(url_for('users.login'))    
+
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
@@ -76,6 +104,15 @@ def register():
         return redirect(url_for('index.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        
+        token = generate_confirmation_token(form.email.data)
+        confirm_url = url_for('users.confirm_email', token=token, _external=True)
+        html = render_template('activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(form.email.data, subject, html)
+
+        import sys
+        sys.exit()
         if User.register(form.email.data,
                          form.password.data,
                          form.firstname.data,
