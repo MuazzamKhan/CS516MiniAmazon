@@ -182,7 +182,7 @@ def purchase_history():
             now = datetime.datetime.now()
             purchases = Purchase.get_all_by_uid_since(0, ancient, now)
             potential_sellers = list(set([ p.sname for p in purchases ]))
-            potential_items = list(set([ p.product for p in purchases ]))
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
             
             since = ancient.strftime("%Y-%m-%d")
             today = now.strftime("%Y-%m-%d")
@@ -192,9 +192,9 @@ def purchase_history():
                                     title='Purchase History', 
                                     purchase=purchases,
                                     potential_sellers=potential_sellers, 
-                                    potential_items=potential_items, 
+                                    potential_quantity=potential_quantity, 
                                     search_seller="",
-                                    search_product="",
+                                    search_quantity="",
                                     since=since,
                                     to=today)
 
@@ -202,7 +202,7 @@ def purchase_history():
             form_data = request.form
             input_seller_fullname = form_data['seller']
             input_seller = input_seller_fullname.split() 
-            input_product = form_data['item'].lower()
+            input_quantity = form_data['item']
             input_start_date = form_data['start_date']
             input_end_date = form_data['end_date']
             
@@ -210,7 +210,7 @@ def purchase_history():
             date_start, date_end = generateDateRange(input_start_date, input_end_date)
             datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
             
-            product = '%' if len(input_product) == 0 else '%' + input_product + '%'
+            quantity = int(input_quantity) if input_quantity.isnumeric() else -1
         
             seller_firstname = '%'
             seller_lastname = '%' 
@@ -222,18 +222,19 @@ def purchase_history():
                 seller_firstname = '%' + input_seller[0].lower() + '%'
             
 
-            purchases = Purchase.get_all_by_uid_since(0, datetime_start, datetime_end, product, seller_firstname, seller_lastname)
+            purchases = Purchase.get_all_by_uid_since(0, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
             potential_sellers = list(set([ p.sname for p in purchases ]))
-            potential_items = list(set([ p.product for p in purchases ]))
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
             
+            if quantity == -1: quantity = ""
 
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases, 
                                     potential_sellers=potential_sellers, 
-                                    potential_items=potential_items,
+                                    potential_quantity=potential_quantity,
                                     search_seller=input_seller_fullname,
-                                    search_product=input_product,
+                                    search_quantity=quantity,
                                     since=datetime_start.strftime("%Y-%m-%d"),
                                     to=datetime_end.strftime("%Y-%m-%d"))
     else:
