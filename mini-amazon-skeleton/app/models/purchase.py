@@ -4,10 +4,9 @@ from flask_login import current_user
 from .product import Product
 
 class Purchase:
-    def __init__(self, oid, uid, product, sid, sfirstname, slastname, price, quantity, completed_status, time_purchased):
+    def __init__(self, oid, uid, sid, sfirstname, slastname, price, quantity, completed_status, time_purchased):
         self.oid = oid
         self.uid = uid
-        self.product = product
         self.sid = sid
         self.sname = sfirstname + " " + slastname
         self.time_purchased = time_purchased
@@ -42,24 +41,29 @@ WHERE id = :id
         )
 
     @staticmethod
-    def get_all_by_uid_since(uid, start_date, end_date, product='%', seller_firstname='%', seller_lastname='%'):
-        rows = app.db.execute('''
-SELECT oid, o.bid, pro.name, sid, u.firstname, u.lastname, price, quantity, p.completed_status, p.completion_datetime
-FROM Purchases AS p, Orders AS o, Products AS pro, Users AS u
-WHERE o.bid = :uid
-    AND o.id = p.oid 
-    AND pro.id = p.pid 
-    AND u.id = sid
-    AND p.completion_datetime >= :start_date
-    AND p.completion_datetime <= :end_date
-    AND LOWER(pro.name) LIKE :product
-    AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) )
-ORDER BY p.completion_datetime DESC
-''',
+    def get_all_by_uid_since(uid, start_date, end_date, quantity=-1, seller_firstname='%', seller_lastname='%'):
+        
+        quantity_check = ""
+        if quantity >= 0:
+            quantity_check = "WHERE total_quantity = %d" % quantity
+        
+        query = "WITH subquery AS (" \
+                    "SELECT oid, o.bid, sid, u.firstname, u.lastname, SUM(price) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
+                    "FROM Purchases AS p, Orders AS o, Users AS u " \
+                    "WHERE o.bid = :uid " \
+                        "AND o.id = p.oid " \
+                        "AND u.id = sid " \
+                        "AND p.completion_datetime >= :start_date " \
+                        "AND p.completion_datetime <= :end_date " \
+                        "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " \
+                "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.completion_datetime ) "\
+                "SELECT * "\
+                "FROM subquery "\
+                "%s ORDER BY completion_datetime DESC " % (quantity_check)
+        rows = app.db.execute(query,
                               uid=uid,
                               start_date=start_date,
                               end_date=end_date,
-                              product=product,
                               firstname=seller_firstname,
                               lastname=seller_lastname)
         
