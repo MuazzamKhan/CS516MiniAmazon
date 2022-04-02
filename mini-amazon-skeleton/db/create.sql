@@ -8,7 +8,8 @@ CREATE TABLE Users (
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     balance INTEGER DEFAULT 0 CHECK (balance>=0),
-    address VARCHAR(255) NOT NULL
+    address VARCHAR(255) NOT NULL, 
+    email_confirm BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE Sellers (

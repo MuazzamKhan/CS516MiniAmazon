@@ -81,6 +81,7 @@ def confirm_email(token):
 
     try:
         email = confirm_token(token)
+        User.confirm_email(email)
         flash('Your email is confirmed! You can now log in. ')
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
@@ -116,14 +117,12 @@ def register():
         subject = "Please confirm your email"
         send_email(form.email.data, subject, html)
 
-        import sys
-        sys.exit()
         if User.register(form.email.data,
                          form.password.data,
                          form.firstname.data,
                          form.lastname.data,
                          form.home_address.data):
-            flash('Congratulations, you are now a registered user!')
+            flash('Congratulations, you are now a registered user! Before login please confirm your email first in your mailbox.')
             return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -229,7 +228,6 @@ def purchase_history():
             since = ancient.strftime("%Y-%m-%d")
             today = now.strftime("%Y-%m-%d")
 
-            print("DEBUG", g.get(user))
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases,

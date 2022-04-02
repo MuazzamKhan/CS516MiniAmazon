@@ -126,6 +126,21 @@ RETURNING id
     
 
     @staticmethod
+    def confirm_email(email):
+        
+        rows = app.db.execute("""
+UPDATE Users
+SET email_confirm = true
+WHERE email = :email
+RETURNING id
+""",
+                                  email=email)
+        id = rows[0][0]
+        return User.get(id)
+    
+
+
+    @staticmethod
     def update_balance(id, deposit, withdraw):
         try:
             rows = app.db.execute("""

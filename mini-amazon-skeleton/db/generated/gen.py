@@ -25,7 +25,19 @@ def gen_users(num_users):
     with open('Users.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Users...', end=' ', flush=True)
-        for uid in range(num_users):
+        
+        # add one test user for login
+        email = 'test@duke.edu'
+        password = generate_password_hash("test")
+        firstname = 'test'
+        lastname = 'test'
+        balance = 100
+        address = 'Durham NC'
+        email_confirm = True
+        writer.writerow([0, email, password, firstname, lastname, balance, address, email_confirm])
+        print("Test user generated")
+
+        for uid in range(1, num_users):
             if uid % 10 == 0:
                 print(f'{uid}', end=' ', flush=True)
             profile = fake.profile()
@@ -37,18 +49,10 @@ def gen_users(num_users):
             lastname = name_components[-1]
             balance = random.randint(0, 100000)
             address = profile['address']
-            writer.writerow([uid, email, password, firstname, lastname, balance, address])
+            email_confirm = False
+            writer.writerow([uid, email, password, firstname, lastname, balance, address, email_confirm])
         print(f'{num_users} generated')
 
-        # add one test user for login
-        email = 'test@duke.edu'
-        password = generate_password_hash("test")
-        firstname = 'test'
-        lastname = 'test'
-        balance = 100
-        address = 'Durham NC'
-        writer.writerow([num_users, email, password, firstname, lastname, balance, address])
-        print("Test user generated")
     return
 
 def gen_sellers(num_sellers):
