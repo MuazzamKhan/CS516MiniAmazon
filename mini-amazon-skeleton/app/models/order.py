@@ -64,6 +64,127 @@ class Order:
             None
 
     @staticmethod
+    def get_by_search(sid, time_placed_start, time_placed_end, product_name, pid, oid, address):
+        if product_name == 'NA':
+            product_name = '%'
+        if pid == 'NA':
+            pid = None
+        if oid == 'NA':
+            oid = None
+        if address == 'NA':
+            address = '%'
+
+        try:
+            pid = int(pid)
+        except:
+            return "pid input error"
+
+        try:
+            oid = int(oid)
+        except:
+            return "oid input error"
+        
+        if pid is not None and oid is None:
+            rows = app.db.execute('''
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            FROM Orders ORD, Purchases PUR, Products PROD
+            WHERE ORD.id = PUR.oid 
+            AND PUR.pid = PROD.id
+            AND PUR.sid=:sid
+            AND LOWER(PROD.name) LIKE :product_name
+            AND PUR.pid =:pid
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            product_name=product_name,
+            pid=pid,
+            address=address)
+            if rows:
+                return [Order(*row) for row in rows]
+            else: 
+                None
+        
+        if pid is None and oid is not None:
+            rows = app.db.execute('''
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            FROM Orders ORD, Purchases PUR, Products PROD
+            WHERE ORD.id = PUR.oid 
+            AND PUR.pid = PROD.id
+            AND PUR.sid=:sid
+            AND LOWER(PROD.name) LIKE :product_name
+            AND ORD.id =:oid
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            product_name=product_name,
+            oid=oid,
+            address=address)
+            if rows:
+                return [Order(*row) for row in rows]
+            else: 
+                None
+        
+        if pid is None and oid is None:
+            rows = app.db.execute('''
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            FROM Orders ORD, Purchases PUR, Products PROD
+            WHERE ORD.id = PUR.oid 
+            AND PUR.pid = PROD.id
+            AND PUR.sid=:sid
+            AND LOWER(PROD.name) LIKE :product_name
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            product_name=product_name,
+            address=address)
+            if rows:
+                return [Order(*row) for row in rows]
+            else: 
+                None
+
+        if pid is not None and oid is not None:
+            rows = app.db.execute('''
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            FROM Orders ORD, Purchases PUR, Products PROD
+            WHERE ORD.id = PUR.oid 
+            AND PUR.pid = PROD.id
+            AND PUR.sid=:sid
+            AND LOWER(PROD.name) LIKE :product_name
+            AND PUR.pid =:pid
+            AND ORD.id =:oid
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            product_name=product_name,
+            pid=pid,
+            oid=oid,
+            address=address)
+            if rows:
+                return [Order(*row) for row in rows]
+            else: 
+                None
+
+    @staticmethod
     def get_by_sid_status(sid, completed_status):
         rows = app.db.execute('''
         SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
