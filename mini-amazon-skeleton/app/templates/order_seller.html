@@ -2,7 +2,15 @@
 
 {% block content %}
 
-<h2>Your Orders:</h2>
+<h2>Your Orders as a Seller:</h2>
+
+<br>
+<div>
+  <a id="search-orders-button" href="{{ url_for('order.orderSearch', sid=0) }}" type="button" class="btn btn-dark">Search Options</a>
+  <a id="show-all-button" href="{{ url_for('order.orderSeller', sid=0) }}" type="button" class="btn btn-dark">Show All</a>
+</div>
+<br>
+
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
