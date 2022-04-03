@@ -33,7 +33,7 @@ def gen_users(num_users):
         lastname = 'test'
         balance = 100
         address = 'Durham NC'
-        email_confirm = True
+        email_confirm = True # without account activation 
         writer.writerow([0, email, password, firstname, lastname, balance, address, email_confirm])
         print("Test user generated")
 
@@ -42,28 +42,30 @@ def gen_users(num_users):
                 print(f'{uid}', end=' ', flush=True)
             profile = fake.profile()
             email = profile['mail']
-            plain_password = f'pass{uid}'
+            plain_password = f'password_{uid}'
             password = generate_password_hash(plain_password)
             name_components = profile['name'].split(' ')
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.randint(0, 100000)
             address = profile['address']
-            email_confirm = False
+            email_confirm = False # requires account activation 
             writer.writerow([uid, email, password, firstname, lastname, balance, address, email_confirm])
-        print(f'{num_users} generated')
+        print(f'{num_users} users generated')
 
     return
 
 def gen_sellers(num_sellers):
+    
+    """ The first {num_sellers} users in Users will be sellers """
+
     with open('Sellers.csv', 'w') as f:
         writer = get_csv_writer(f)
-        print('Sellers...', end=' ', flush=True)
-        for id in range(num_users):
-            if id % 10 == 0:
-                print(f'{id}', end=' ', flush=True)
-            writer.writerow([id])
-        print(f'{num_sellers} generated')
+        print("Generating sellers ...")
+        for sid in range(num_sellers):
+            writer.writerow([sid])
+        print(f'{num_sellers} sellers generated')
+        print(f'uid 0 to {num_sellers-1} are sellers')
     return
 
 
