@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <h2>Add New Product</h2>
+    <a href="{{ url_for('order.orderSeller', sid=current_user.id) }}">Back to Order Page</a>
+</div>
+
+<form action="" method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.product_name.label }}<br/>
+    {{ form.product_name(size=32) }}<br/>
+    {% for error in form.product_name.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.pid.label }}<br/>
+    {{ form.pid(size=64) }}<br/>
+    {% for error in form.pid.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.oid.label }}<br/>
+    {{ form.oid(size=64) }}<br/>
+    {% for error in form.oid.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.address.label }}<br/>
+    {{ form.address(size=64) }}<br/>
+    {% for error in form.oid.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.time_placed_start.label }}<br/>
+    {{ form.time_placed_start(size=32) }}<br/>
+    {% for error in form.time_placed_start.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {{ form.time_placed_end.label }}<br/>
+    {{ form.time_placed_end(size=32) }}<br/>
+    {% for error in form.time_placed_end.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

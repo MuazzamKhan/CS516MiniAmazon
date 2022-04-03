@@ -6,13 +6,15 @@ from .. import login
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname, address, is_seller):
+    def __init__(self, id, email, firstname, lastname, address, is_seller, email_confirm=False):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
         self.is_seller = is_seller
+        self.email_confirm = False if not email_confirm else True
+    
     
 
     def set_profile(self, email, firstname, lastname, address):
@@ -41,7 +43,7 @@ where email = :email
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-select password, id, email, firstname, lastname, address, FALSE as is_seller
+select password, id, email, firstname, lastname, address, FALSE as is_seller, email_confirm
 from users
 where email = :email
 """,
@@ -122,6 +124,21 @@ RETURNING id
         id = rows[0][0]
         return User.get(id)
     
+
+    @staticmethod
+    def confirm_email(email):
+        
+        rows = app.db.execute("""
+UPDATE Users
+SET email_confirm = true
+WHERE email = :email
+RETURNING id
+""",
+                                  email=email)
+        id = rows[0][0]
+        return User.get(id)
+    
+
 
     @staticmethod
     def update_balance(id, deposit, withdraw):

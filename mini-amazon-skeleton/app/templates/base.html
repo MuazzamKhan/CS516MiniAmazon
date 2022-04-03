@@ -56,6 +56,7 @@
             <a href="{{ url_for('cart.cart') }}" type="button" class="btn btn-light">Cart</a>
             <a href="{{ url_for('users.purchase_history') }}" type="button" class="btn btn-light">Purchase History</a>
             <a href="{{ url_for('users.balance') }}" type="button" class="btn btn-light">Balance</a>
+            <a href="{{ url_for('seller.seller', sid=current_user.id) }}" type="button" class="btn btn-light">Seller's Page</a>
             <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
             <a href="{{ url_for('users.profile') }}" type="button" class="btn btn-light">Profile</a>
             <a href="{{ url_for('users.password') }}" type="button" class="btn btn-light">Change Password</a>

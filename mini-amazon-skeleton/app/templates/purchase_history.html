@@ -16,7 +16,7 @@
 <h3>Search</h3>
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
     <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
-    <input type="text" name="item" id="tags_item" placeholder="by product" value="{{search_product}}">
+    <input type="text" name="item" id="tags_item" placeholder="by quantity" value="{{search_quantity}}">
     from
     <input type="date" name="start_date" value={{since}}>
     to
@@ -29,7 +29,7 @@
             {% endfor %}
         ];
         var availableItems = [
-            {% for s in potential_items %}
+            {% for s in potential_quantity %}
                 "{{s}}",
             {% endfor %}
         ];
@@ -55,11 +55,9 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Order ID</th>
-      <th scope="col">Product</th>
-      <th scope="col">Quantity</th>
+      <th scope="col">Total Quantity</th>
       <th scope="col">Price</th>
       <th scope="col">Seller</th>
-      <th scope="col">Fulfillment</th>
       <th scope="col">Purchase Time</th>
       <th scope="col">Detail</th>
     </tr>
@@ -68,13 +66,11 @@
     {% for p in purchase%}
       <tr>
         <th scope="row">{{p.oid}}</th>
-        <th scope="row">{{p.product}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
         <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
-        <td>{{p.completed_status}}</td>
         <td>{{p.time_purchased}}</td>
-        <td><a href="{{ url_for('order.orderBuyer', bid=p.uid) }}">More details</a></td>
+        <td><a href="{{ url_for('order.orderBuyer', bid=p.uid, oid=p.oid) }}">More details</a></td>
       </tr>
     {% endfor %}
   </tbody>

@@ -36,4 +36,7 @@ def create_app():
     from .seller_analytics import bp as seller_analytics_bp
     app.register_blueprint(seller_analytics_bp)
 
+    from .seller import bp as seller_bp
+    app.register_blueprint(seller_bp)
+
     return app

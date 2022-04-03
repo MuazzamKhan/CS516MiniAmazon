@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app as app, g
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
 from flask_login import login_user, logout_user, current_user
@@ -11,12 +11,15 @@ from .models.purchase import Purchase
 from .models.product import Product
 
 from .order import orderBuyer
+from .email import send_email
 
 import datetime
 
-from flask import Blueprint
-bp = Blueprint('users', __name__)
+from itsdangerous import URLSafeTimedSerializer
 
+from flask import Blueprint
+
+bp = Blueprint('users', __name__)
 
 # This is to store user information 
 curr_user = User(0, "", "", "", "", False)
@@ -26,8 +29,6 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
-
-
 
 
 
@@ -42,16 +43,85 @@ def login():
     if form.validate_on_submit():
         user = User.get_by_auth(form.email.data, form.password.data)
         curr_user = user
+        
         if user is None:
             flash('Invalid email or password')
             return redirect(url_for('users.login'))
+        elif not user.email_confirm:
+            flash('Please activate your account first. Check confirmation email in your mailbox')
+            return render_template('login.html', title='Sign In', form=form, resend_confirmation=True, input_email=form.email.data)
         login_user(user)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index.index')
 
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form, resend_confirmation=False, input_email="")
+
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+                token,
+                salt=app.config['SECURITY_PASSWORD_SALT'],
+                max_age=expiration
+                )
+    except:
+        return False
+    return email
+
+
+@bp.route('/confirm/<token>')
+def confirm_email(token):
+
+    try:
+        email = confirm_token(token)
+        User.confirm_email(email)
+        flash('Your email is activated! You can log in now. ')
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    
+    return redirect(url_for('users.login'))    
+
+
+
+
+class ResendConfirmation(FlaskForm):
+    registered_email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Resend')
+    
+    def validate_email(self, registered_email):
+        if not User.email_exists(registered_email.data):
+            flash('Email not found in our system! Please register first.')
+            return False
+        return True
+
+
+
+@bp.route('/resend_confirmation', methods=['GET', 'POST'])
+def resend_confirmation():
+    
+    if request.method == "GET":
+        form = ResendConfirmation(formdata=MultiDict({"registered_email": request.args.get('input_email') }))
+    else: 
+        form = ResendConfirmation()
+
+    if form.validate_on_submit() and form.validate_email(form.registered_email):
+        token = generate_confirmation_token(form.registered_email.data)
+        confirm_url = url_for('users.confirm_email', token=token, _external=True)
+        html = render_template('activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(form.registered_email.data, subject, html)
+        flash("Activation email is resent. Please activate before login.")
+        
+        return redirect(url_for('users.login'))
+
+    return render_template('resend_confirmation.html', title='Resend confirmation Email', form=form, input_email=form.registered_email.data)
 
 
 class RegistrationForm(FlaskForm):
@@ -76,12 +146,19 @@ def register():
         return redirect(url_for('index.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        
+        token = generate_confirmation_token(form.email.data)
+        confirm_url = url_for('users.confirm_email', token=token, _external=True)
+        html = render_template('activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(form.email.data, subject, html)
+
         if User.register(form.email.data,
                          form.password.data,
                          form.firstname.data,
                          form.lastname.data,
                          form.home_address.data):
-            flash('Congratulations, you are now a registered user!')
+            flash('Congratulations, you are now a registered user! Before login please confirm your email first in your mailbox.')
             return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -123,7 +200,7 @@ class UpdatePasswordForm(FlaskForm):
     old_password = PasswordField('First Name', validators=[DataRequired()]) 
     new_password = PasswordField('Password', validators=[DataRequired()])
     new_password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
-    submit = SubmitField('Update Profile')
+    submit = SubmitField('Update Password')
 
 
 
@@ -180,21 +257,20 @@ def purchase_history():
         if request.method == "GET":
             ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
             now = datetime.datetime.now()
-            purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
+            purchases = Purchase.get_all_by_uid_since(curr_user.id, ancient, now)
             potential_sellers = list(set([ p.sname for p in purchases ]))
-            potential_items = list(set([ p.product for p in purchases ]))
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
             
             since = ancient.strftime("%Y-%m-%d")
             today = now.strftime("%Y-%m-%d")
 
-            
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases,
                                     potential_sellers=potential_sellers, 
-                                    potential_items=potential_items, 
+                                    potential_quantity=potential_quantity, 
                                     search_seller="",
-                                    search_product="",
+                                    search_quantity="",
                                     since=since,
                                     to=today)
 
@@ -202,7 +278,7 @@ def purchase_history():
             form_data = request.form
             input_seller_fullname = form_data['seller']
             input_seller = input_seller_fullname.split() 
-            input_product = form_data['item'].lower()
+            input_quantity = form_data['item']
             input_start_date = form_data['start_date']
             input_end_date = form_data['end_date']
             
@@ -210,7 +286,7 @@ def purchase_history():
             date_start, date_end = generateDateRange(input_start_date, input_end_date)
             datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
             
-            product = '%' if len(input_product) == 0 else '%' + input_product + '%'
+            quantity = int(input_quantity) if input_quantity.isnumeric() else -1
         
             seller_firstname = '%'
             seller_lastname = '%' 
@@ -222,23 +298,24 @@ def purchase_history():
                 seller_firstname = '%' + input_seller[0].lower() + '%'
             
 
-            purchases = Purchase.get_all_by_uid_since(current_user.id, datetime_start, datetime_end, product, seller_firstname, seller_lastname)
+            purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
             potential_sellers = list(set([ p.sname for p in purchases ]))
-            potential_items = list(set([ p.product for p in purchases ]))
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
             
+            if quantity == -1: quantity = ""
 
             return render_template('purchase_history.html', 
                                     title='Purchase History', 
                                     purchase=purchases, 
                                     potential_sellers=potential_sellers, 
-                                    potential_items=potential_items,
+                                    potential_quantity=potential_quantity,
                                     search_seller=input_seller_fullname,
-                                    search_product=input_product,
+                                    search_quantity=quantity,
                                     since=datetime_start.strftime("%Y-%m-%d"),
                                     to=datetime_end.strftime("%Y-%m-%d"))
     else:
         form = LoginForm()
-        return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.html', title='Sign In', form=form, resend_confirmation=False, input_email="")
 
 
 
