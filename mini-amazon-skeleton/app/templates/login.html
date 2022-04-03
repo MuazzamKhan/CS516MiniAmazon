@@ -33,6 +33,9 @@
   </p>
   {{ form.submit(class_="btn btn-black") }}
   <a class="btn btn-secondary" href="{{ url_for('users.register') }}" role="button">Register</a>
+  {% if resend_confirmation %}
+    <a class="btn btn-secondary" href="{{ url_for('users.resend_confirmation', input_email=input_email) }}" role="button">Resend activation email?</a>
+  {% endif %}
 </form>
 
 {% endblock %}

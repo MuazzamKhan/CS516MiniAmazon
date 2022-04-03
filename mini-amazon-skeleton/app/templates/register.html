@@ -30,9 +30,6 @@
   <p>
     {{ form.home_address.label }} (Your physical address)<br/>
     {{ form.home_address(size=64) }}<br/>
-    {% for error in form.email.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
   </p>
 
   <p>

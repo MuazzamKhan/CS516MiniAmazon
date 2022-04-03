@@ -48,15 +48,15 @@ def login():
             flash('Invalid email or password')
             return redirect(url_for('users.login'))
         elif not user.email_confirm:
-            flash('Please confirm your email first. See it in your mailbox')
-            return redirect(url_for('users.login'))
+            flash('Please activate your account first. Check confirmation email in your mailbox')
+            return render_template('login.html', title='Sign In', form=form, resend_confirmation=True, input_email=form.email.data)
         login_user(user)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index.index')
 
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form, resend_confirmation=False, input_email="")
 
 
 def generate_confirmation_token(email):
@@ -82,11 +82,47 @@ def confirm_email(token):
     try:
         email = confirm_token(token)
         User.confirm_email(email)
-        flash('Your email is confirmed! You can now log in. ')
+        flash('Your email is activated! You can log in now. ')
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
     
     return redirect(url_for('users.login'))    
+
+
+
+
+class ResendConfirmation(FlaskForm):
+    registered_email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Resend')
+    
+    def validate_email(self, registered_email):
+        if not User.email_exists(registered_email.data):
+            flash('Email not found in our system! Please register first.')
+            return False
+        return True
+
+
+
+@bp.route('/resend_confirmation', methods=['GET', 'POST'])
+def resend_confirmation():
+    
+    if request.method == "GET":
+        form = ResendConfirmation(formdata=MultiDict({"registered_email": request.args.get('input_email') }))
+    else: 
+        form = ResendConfirmation()
+
+    if form.validate_on_submit() and form.validate_email(form.registered_email):
+        token = generate_confirmation_token(form.registered_email.data)
+        confirm_url = url_for('users.confirm_email', token=token, _external=True)
+        html = render_template('activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_email(form.registered_email.data, subject, html)
+        flash("Activation email is resent. Please activate before login.")
+        
+        return redirect(url_for('users.login'))
+
+    return render_template('resend_confirmation.html', title='Resend confirmation Email', form=form, input_email=form.registered_email.data)
+
 
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
@@ -279,7 +315,7 @@ def purchase_history():
                                     to=datetime_end.strftime("%Y-%m-%d"))
     else:
         form = LoginForm()
-        return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.html', title='Sign In', form=form, resend_confirmation=False, input_email="")
 
 
 
