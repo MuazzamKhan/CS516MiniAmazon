@@ -164,7 +164,7 @@ class UpdatePasswordForm(FlaskForm):
     old_password = PasswordField('First Name', validators=[DataRequired()]) 
     new_password = PasswordField('Password', validators=[DataRequired()])
     new_password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
-    submit = SubmitField('Update Profile')
+    submit = SubmitField('Update Password')
 
 
 
