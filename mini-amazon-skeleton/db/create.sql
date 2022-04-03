@@ -62,3 +62,12 @@ CREATE TABLE Cart (
     wishlist BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id, pid, sid)
 );
+
+CREATE TABLE Reviews (
+    pid INT NOT NULL REFERENCES Products(id),
+    uid INT NOT NULL REFERENCES Users(id),
+    rating INT NOT NULL DEFAULT 5,
+    title VARCHAR(255) NOT NULL,
+    body VARCHAR(255) NOT NULL,
+    PRIMARY KEY(pid, uid)
+);

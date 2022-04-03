@@ -8,7 +8,8 @@ from app.models.inventory import Inventory
 
 from .models.product import Product
 from .models.inventory import Inventory
-from .models.cart import Cart
+
+from app.models.review import Review
 
 from flask import Blueprint
 bp = Blueprint('product', __name__)
@@ -20,6 +21,8 @@ def product(pid):
         return "Error! No such product exists!"
 
     inventory = Inventory.get_with_pid(product.id)
+    
+    reviews = Review.get_reviews_with_pid(product.id)
 
     stock = "In Stock"
     min_price = 0
@@ -32,16 +35,12 @@ def product(pid):
                 min_price = listing.price
 
 
-    return render_template("product.html", product=product, stock=stock, display_price=min_price, inventory=inventory)
+    return render_template("product.html", product=product, stock=stock, display_price=min_price, inventory=inventory, reviews = reviews)
 
 
-@bp.route('/product/<pid>/<sid>', methods=['POST','GET'])
+@bp.route('/product/<pid>/<sid>', methods=['GET'])
 def addToCart(pid, sid):
     product = Product.get(pid)
     listing = Inventory.get_item(pid, sid)
-    quantity = request.args['quantity']
-    Product.addToCart(current_user.id, pid, sid, quantity, listing.price)
-    
-    return render_template("added_to_cart.html", product = product, listing = listing, quantity = quantity)
-
-    # Check if product already added to cart; increment if enough in stock
+    # Do stuff to edit Cart
+    return render_template("added_to_cart.html", product=product, listing = listing, quantity=request.form['quantity'])

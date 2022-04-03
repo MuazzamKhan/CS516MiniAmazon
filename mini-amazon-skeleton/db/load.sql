@@ -20,3 +20,5 @@ SELECT pg_catalog.setval('public.products_id_seq',
 \COPY Inventory FROM 'Inventory.csv' WITH DELIMITER ',' NULL '' CSV
 
 \COPY Cart FROM 'Cart.csv' WITH DELIMITER ',' NULL '' CSV
+
+\COPY Reviews FROM 'Reviews.csv' WITH DELIMITER ',' NULL '' CSV
