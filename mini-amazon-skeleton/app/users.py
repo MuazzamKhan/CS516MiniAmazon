@@ -14,6 +14,7 @@ from .order import orderBuyer
 from .email import send_email
 
 import datetime
+import itertools
 
 from itsdangerous import URLSafeTimedSerializer
 
@@ -258,7 +259,13 @@ def purchase_history():
             ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
             now = datetime.datetime.now()
             purchases = Purchase.get_all_by_uid_since(curr_user.id, ancient, now)
-            potential_sellers = list(set([ p.sname for p in purchases ]))
+                
+            potential_sellers = []
+            for p in purchases:
+                for s in p.sname:
+                    if s not in potential_sellers:
+                        potential_sellers.append(s)
+            
             potential_quantity = list(set([ p.quantity for p in purchases ]))
             
             since = ancient.strftime("%Y-%m-%d")
@@ -299,7 +306,14 @@ def purchase_history():
             
 
             purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
-            potential_sellers = list(set([ p.sname for p in purchases ]))
+            
+            potential_sellers = []
+            for p in purchases:
+                for s in p.sname:
+                    if s not in potential_sellers:
+                        potential_sellers.append(s)
+            
+
             potential_quantity = list(set([ p.quantity for p in purchases ]))
             
             if quantity == -1: quantity = ""

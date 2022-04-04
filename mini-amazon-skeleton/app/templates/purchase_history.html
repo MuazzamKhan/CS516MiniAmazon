@@ -68,7 +68,27 @@
         <th scope="row">{{p.oid}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
-        <td><a href="{{ url_for('users.user_public_view', id=p.sid) }}">{{p.sname}}</a></td>
+        <td>
+            <!-- only show 3 sellers in one cell. -->
+            {% if p.sname|length <= 3 %}
+                {% for seller in p.sname %}
+                    <a href="{{ url_for('users.user_public_view', id=p.sid[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
+                    {% if loop.index0 < p.sname|length - 1 %}
+                    ,
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if p.sname|length > 3 %}
+                {% for i in range(3) %}
+                    <a href="{{ url_for('users.user_public_view', id=p.sid[i]) }}">{{p.sname[i]}}</a>
+                    {% if i < p.sname|length - 1 %}
+                    ,
+                    {% endif %}
+                {% endfor %}
+                ...
+            {% endif %}
+        </td>
         <td>{{p.time_purchased}}</td>
         <td><a href="{{ url_for('order.orderBuyer', bid=p.uid, oid=p.oid) }}">More details</a></td>
       </tr>

@@ -4,11 +4,11 @@ from flask_login import current_user
 from .product import Product
 
 class Purchase:
-    def __init__(self, oid, uid, sid, sfirstname, slastname, price, quantity, completed_status, time_purchased):
+    def __init__(self, oid, uid, sid, sname, price, quantity, completed_status, time_purchased):
         self.oid = oid
         self.uid = uid
         self.sid = sid
-        self.sname = sfirstname + " " + slastname
+        self.sname = sname
         self.time_purchased = "NA (not completed)" if time_purchased == None else time_purchased
         self.quantity = quantity
         self.price = price 
@@ -48,7 +48,7 @@ WHERE id = :id
             quantity_check = "WHERE total_quantity = %d" % quantity
         
         query = "WITH subquery AS (" \
-                    "SELECT oid, o.bid, sid, u.firstname, u.lastname, SUM(price) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
+                    "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
                     "FROM Purchases AS p, Orders AS o, Users AS u " \
                     "WHERE o.bid = :uid " \
                         "AND o.id = p.oid " \
@@ -56,8 +56,9 @@ WHERE id = :id
                         "AND ( ( o.completion_datetime >= :start_date AND o.completion_datetime <= :end_date ) OR o.completion_datetime IS NULL )" \
                         "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " \
                 "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.completion_datetime ) "\
-                "SELECT * "\
+                "SELECT oid, bid, ARRAY_AGG(sid) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, completed_status, completion_datetime "\
                 "FROM subquery "\
+                "GROUP BY oid, bid, completed_status, completion_datetime "\
                 "%s ORDER BY completion_datetime DESC " % (quantity_check)
         rows = app.db.execute(query,
                               uid=uid,
