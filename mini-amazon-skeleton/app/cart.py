@@ -25,7 +25,7 @@ def cart():
 
         cart_total = 0
 
-        for item in cart_items:
+        for item in Cart.get_all_non_wishlist(current_user.id):
             cart_total += item.total
         
         return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
@@ -40,19 +40,44 @@ def delete(pid, sid):
 
     cart_total = 0
 
-    for item in cart_items:
-        cart_total += item.total
+    for item in Cart.get_all_non_wishlist(current_user.id):
+            cart_total += item.total
+        
+    return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
+
+@bp.route('/cart/wishlist/<pid>/<sid>', methods=['GET'])
+def wishlist(pid, sid):
+    Cart.wishlist_item(current_user.id, pid, sid)
+
+    cart_items = Cart.get_all(current_user.id)
+
+    cart_total = 0
+
+    for item in Cart.get_all_non_wishlist(current_user.id):
+            cart_total += item.total
+        
+    return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
+
+@bp.route('/cart/unwishlist/<pid>/<sid>', methods=['GET'])
+def unwishlist(pid, sid):
+    Cart.unwishlist_item(current_user.id, pid, sid)
+
+    cart_items = Cart.get_all(current_user.id)
+
+    cart_total = 0
+
+    for item in Cart.get_all_non_wishlist(current_user.id):
+            cart_total += item.total
         
     return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
 
 @bp.route('/cart/order', methods=['GET'])
 def order():
     cart_items = Cart.get_all(current_user.id)
-
-    oid = Order.add_to_order()
+    cart_nonwishlist = Cart.get_all_non_wishlist(current_user.id)
 
     order_cost = 0
-    for item in cart_items:
+    for item in cart_nonwishlist:
         order_cost += item.total
 
         if User.get_balance(current_user.id) < order_cost: # insufficient funds
@@ -64,8 +89,9 @@ def order():
             message = "Not enough stock for product " + item.pid
             return render_template("cart.html", cart_items=cart_items, cart_total=order_cost, message = message)
 
+    oid = Order.add_to_order()
 
-    for item in cart_items:
+    for item in cart_nonwishlist:
 
         Purchase.add_to_purchases(item, oid)
         User.update_balance(current_user.id, 0, item.total)
@@ -77,8 +103,8 @@ def order():
 
     cart_items = Cart.get_all(current_user.id)
     cart_total = 0
-    for item in cart_items:
-        cart_total += item.total
+    for item in Cart.get_all_non_wishlist(current_user.id):
+            cart_total += item.total
     return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
 
 @bp.route('/cart/edit/<pid>/<sid>', methods=['GET'])
@@ -95,7 +121,7 @@ def editCart(pid, sid):
     
     cart_total = 0
     cart_items = Cart.get_all(current_user.id)
-    for item in cart_items:
-        cart_total += item.total
+    for item in Cart.get_all_non_wishlist(current_user.id):
+            cart_total += item.total
         
     return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
