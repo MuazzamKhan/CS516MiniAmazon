@@ -72,3 +72,14 @@ CREATE TABLE Reviews (
     submitted_ts TIMESTAMP NOT NULL,
     PRIMARY KEY(pid, uid)
 );
+
+CREATE TABLE Reviews_sellers (
+    display_name VARCHAR(25) NOT NULL,
+    sid INT NOT NULL REFERENCES Sellers(id),
+    uid INT NOT NULL REFERENCES Users(id),
+    rating INT NOT NULL DEFAULT 5,
+    title VARCHAR(255) NOT NULL,
+    body VARCHAR(255) NOT NULL,
+    submitted_ts TIMESTAMP NOT NULL,
+    PRIMARY KEY(sid, uid)
+);
