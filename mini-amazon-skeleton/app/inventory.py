@@ -9,6 +9,7 @@ from flask_wtf.file import FileField, FileRequired
 from .models.inventory import Inventory
 from .models.user import User
 from .models.product import Product
+from .models.seller import Seller
 
 import os
 import app
@@ -21,10 +22,7 @@ categories = [('Books', 'Books'), ('Clothing', 'Clothing'), ('Electronics', 'Ele
 @bp.route('/inventory/<sid>', methods=['GET'])
 def inventory(sid):
     inventory = Inventory.get_with_sid(sid)
-    if inventory == None:
-        return "This user is not a seller. No inventory can be shown!"
-    else:
-        return render_template("inventory.html", inventory=inventory)
+    return render_template("inventory.html", inventory=inventory)
 
 class EditInventoryForm(FlaskForm):
     price = DecimalField('Enter New Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])

@@ -103,7 +103,10 @@ class Inventory_Analytics:
         WHERE sid=:sid
         ''',
         sid = sid)
-        return num[0][0]
+        if num[0][0] == None or num[0][0] == 0:
+            return None
+        else:
+            return num[0][0]
 
 
     @staticmethod
@@ -114,7 +117,10 @@ class Inventory_Analytics:
         WHERE sid=:sid
         ''',
         sid = sid)
-        return num[0][0]
+        if num[0][0] == None or num[0][0] == 0:
+            return None
+        else:
+            return num[0][0]
 
 
     @staticmethod
@@ -125,7 +131,10 @@ class Inventory_Analytics:
         WHERE sid=:sid
         ''',
         sid = sid)
-        return round(num[0][0], 2)
+        if num[0][0] == None:
+            return None
+        else:
+            return round(num[0][0], 2)
 
 
     @staticmethod
@@ -137,6 +146,9 @@ class Inventory_Analytics:
         ''',
         pid=pid,
         sid=sid)
+
+        if rows[0][0] == None:
+            return None
 
         if rows[0][0] <= 5:
             return "Low in Stock"

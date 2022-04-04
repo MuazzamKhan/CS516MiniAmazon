@@ -5,8 +5,10 @@ from .product import Product
 
 
 class Inventory:
-    def __init__(this, pid, sid, price, quantity):
+    def __init__(this, pid, category, name, sid, price, quantity):
         this.pid = pid
+        this.category = category
+        this.name = name
         this.sid = sid
         this.price = price
         this.quantity = quantity
@@ -14,9 +16,11 @@ class Inventory:
     @staticmethod
     def get_item(pid, sid):
         rows = app.db.execute('''
-        SELECT pid, sid, price, quantity
-        FROM Inventory
-        WHERE pid=:pid AND sid=:sid
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        FROM Inventory inv, Products prod
+        WHERE inv.pid = prod.id
+        AND pid=:pid
+        AND sid=:sid
         ''',
         pid=pid,
         sid=sid)
@@ -29,23 +33,22 @@ class Inventory:
     @staticmethod
     def get_with_sid(sid):
         rows = app.db.execute('''
-        SELECT pid, sid, price, quantity
-        FROM Inventory 
-        WHERE sid=:sid
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        FROM Inventory inv, Products prod
+        WHERE inv.pid = prod.id
+        AND inv.sid=:sid
         ''',
         sid=sid)
-        if rows:
-            return [Inventory(*row) for row in rows]
-        else: 
-            None
+        return [Inventory(*row) for row in rows]
 
 
     @staticmethod
     def get_with_pid(pid):
         rows = app.db.execute('''
-        SELECT pid, sid, price, quantity
-        FROM Inventory 
-        WHERE pid=:pid
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        FROM Inventory inv, Products prod
+        WHERE inv.pid = prod.id
+        AND pid=:pid
         ''',
         pid=pid)
         if rows:
@@ -56,9 +59,10 @@ class Inventory:
     @staticmethod
     def get_with_price(floor, ceiling):
         rows = app.db.execute('''
-        SELECT pid, sid, price, quantity
-        FROM Inventory 
-        WHERE price>=:floor AND price<=:ceiling
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        FROM Inventory inv, Products prod
+        WHERE inv.pid = prod.id
+        AND price>=:floor AND price<=:ceiling
         ''',
         floor=floor,
         ceiling=ceiling)
@@ -72,9 +76,10 @@ class Inventory:
     @staticmethod
     def get_with_quantity(floor, ceiling):
         rows = app.db.execute('''
-        SELECT pid, sid, price, quantity
-        FROM Inventory 
-        WHERE quantity>=:floor AND quantity<=:ceiling
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        FROM Inventory inv, Products prod
+        WHERE inv.pid = prod.id 
+        AND quantity>=:floor AND quantity<=:ceiling
         ''',
         floor=floor,
         ceiling=ceiling)
