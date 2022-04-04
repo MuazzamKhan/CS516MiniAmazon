@@ -38,6 +38,24 @@ class Cart:
         return [Cart(*row) for row in rows]
 
     @staticmethod
+    def get_all_non_wishlist(id):
+        rows = app.db.execute('''
+            SELECT id, pid, sid, quantity, price, wishlist
+            FROM Cart
+            WHERE id = :id AND wishlist = FALSE
+            ''', id = id)
+        return [Cart(*row) for row in rows]
+
+    # @staticmethod
+    # def get_all_wishlist(id):
+    #     rows = app.db.execute('''
+    #         SELECT id, pid, sid, quantity, price, wishlist
+    #         FROM Cart
+    #         WHERE id = :id AND wishlist = TRUE
+    #         ''', id = id)
+    #     return [Cart(*row) for row in rows]
+
+    @staticmethod
     def delete_item(id, pid, sid):
         app.db.execute('''
             DELETE FROM Cart
@@ -60,3 +78,31 @@ class Cart:
             pid = pid,
             sid = sid,
             quantity = quantity)
+
+    @staticmethod
+    def wishlist_item(id, pid, sid):
+        app.db.execute('''
+            UPDATE Cart
+            SET wishlist = TRUE
+            WHERE pid = :pid
+            AND sid = :sid
+            AND id = :id
+            ''', 
+            id = id,
+            pid = pid,
+            sid = sid,
+            )
+
+    @staticmethod
+    def unwishlist_item(id, pid, sid):
+        app.db.execute('''
+            UPDATE Cart
+            SET wishlist = FALSE
+            WHERE pid = :pid
+            AND sid = :sid
+            AND id = :id
+            ''', 
+            id = id,
+            pid = pid,
+            sid = sid,
+            )
