@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<td>Product ID: {{item.pid}}</td> <br><br>
-<td>Seller ID: {{item.sid}}</td> <br><br>
+<td>Product: {{item.productName}}</td> <br><br>
+<td>Seller: {{item.sellerName}}</td> <br><br>
 <td>Stock: {{stock}}</td> <br><br>
 <td>Current Quantity: {{item.quantity}}</td>
 <td><form action="{{ url_for('cart.editCart', pid = item.pid, sid = item.sid) }}" method="GET">

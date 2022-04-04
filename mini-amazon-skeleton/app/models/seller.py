@@ -22,4 +22,18 @@ class Seller:
             return True
         else: 
             return False
+
+    @staticmethod
+    def getNameFromSid(sid):
+        rows = app.db.execute('''
+            SELECT *
+            FROM Users
+            WHERE id=:sid
+        ''',
+        sid=sid
+        )
+
+        return rows[0][3] + " " + rows[0][4][0] + "."
+
+
     
