@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h5>Seller's Analytics:</h5>
+<h2>Seller's Analytics:</h2>
 <br>
 <h5>Most Popular Products:</h5>
 <table class='table table-hover table-bordered container'>
@@ -81,6 +81,69 @@
   </tbody>
 </table>
 
+<h5>Category Distribution:</h5>
+<table class='table table-hover table-bordered container', id="all-categories">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Category</th>
+      <th scope="col">Quantity Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in all_categories%}
+      <tr>
+        <td> {{item.category}} </td>
+        <td> {{item.count}} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<body>
+  <canvas id="myChart" width="1200" height="600"></canvas>
+  <script>
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ all_categories_x | safe }},
+        datasets: [
+          {
+            data: {{ all_categories_y | safe }},
+            backgroundColor: "rgba(151,187,205,0.2)"
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+                display: true,
+                text: "Count"
+            }
+          },
+          x: {
+            title: {
+                display: true,
+                text: "Product Categories"
+            }
+          },
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      },
+
+    });
+  </script>
+</body>
+
 <h5>Inventory Summary Statistics:</h5>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
@@ -99,3 +162,5 @@
 
 
 {% endblock %}
+
+<link rel="stylesheet" type="text/css" href="style.css">
