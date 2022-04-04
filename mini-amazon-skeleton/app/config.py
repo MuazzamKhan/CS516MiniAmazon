@@ -16,5 +16,3 @@ class Config(object):
     MAIL_USE_SSL = False
     MAIL_USERNAME = 'cs516.miniamzon@gmail.com'
     MAIL_PASSWORD = 'cs516amazon'
-
-

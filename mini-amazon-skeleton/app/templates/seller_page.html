@@ -8,6 +8,7 @@
 <div>
    <a id="seller-page-orders-button" href="{{ url_for('order.orderSeller', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller's Orders Page</a>
    <a id="seller-page-inventory-button" href="{{ url_for('inventory.inventory', sid=current_user.id) }}" type="button" class="btn btn-dark">Inventory</a>
+   <a id="seller-page-analytics-button" href="{{ url_for('seller_analytics.sellerAnalytics', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller Analytics</a>
 </div>
 <br>
 

@@ -4,11 +4,12 @@ from flask import current_app as app
 from flask_login import current_user
 
 class Order:
-    def __init__(self, id, uid, pid, sid, product_name, price, quantity, placed_datetime, completed_status, completion_datetime, address):
+    def __init__(self, id, uid, pid, sid, category, product_name, price, quantity, placed_datetime, completed_status, completion_datetime, address):
         self.id = id
         self.uid = uid
         self.pid = pid
         self.sid = sid
+        self.category = category
         self.product_name = product_name
         self.price = price
         self.quantity = quantity
@@ -34,7 +35,7 @@ class Order:
     @staticmethod
     def get_by_bid(bid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
@@ -50,7 +51,7 @@ class Order:
     @staticmethod
     def get_by_bid_oid(bid, oid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
@@ -68,7 +69,7 @@ class Order:
     @staticmethod
     def get_by_sid(sid):
         rows = app.db.execute('''
-        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+        SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
         FROM Orders ORD, Purchases PUR, Products PROD
         WHERE ORD.id = PUR.oid 
         AND PUR.pid = PROD.id
@@ -83,28 +84,30 @@ class Order:
 
     @staticmethod
     def get_by_search(sid, time_placed_start, time_placed_end, product_name, pid, oid, address):
+        
+        if pid != 'NA' and pid.isnumeric() == False:
+            return "pid input error"
+        elif pid == 'NA':
+            pid = None
+        else:
+            pid = int(pid)
+
+        if oid != 'NA' and oid.isnumeric() == False:
+            return "oid input error"
+        elif oid == 'NA':
+            oid = None
+        else:
+            oid = int(oid)
+
         if product_name == 'NA':
             product_name = '%'
-        if pid == 'NA':
-            pid = None
-        if oid == 'NA':
-            oid = None
+
         if address == 'NA':
             address = '%'
-
-        try:
-            pid = int(pid)
-        except:
-            return "pid input error"
-
-        try:
-            oid = int(oid)
-        except:
-            return "oid input error"
         
         if pid is not None and oid is None:
             rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
             FROM Orders ORD, Purchases PUR, Products PROD
             WHERE ORD.id = PUR.oid 
             AND PUR.pid = PROD.id
@@ -129,7 +132,7 @@ class Order:
         
         if pid is None and oid is not None:
             rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
             FROM Orders ORD, Purchases PUR, Products PROD
             WHERE ORD.id = PUR.oid 
             AND PUR.pid = PROD.id
@@ -154,7 +157,7 @@ class Order:
         
         if pid is None and oid is None:
             rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
             FROM Orders ORD, Purchases PUR, Products PROD
             WHERE ORD.id = PUR.oid 
             AND PUR.pid = PROD.id
@@ -177,7 +180,7 @@ class Order:
 
         if pid is not None and oid is not None:
             rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
+            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
             FROM Orders ORD, Purchases PUR, Products PROD
             WHERE ORD.id = PUR.oid 
             AND PUR.pid = PROD.id
@@ -205,7 +208,7 @@ class Order:
     @staticmethod
     def get_by_sid_status(sid, completed_status):
         rows = app.db.execute('''
-        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
+        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
         FROM Purchases PUR, Users BUY, Products PROD
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
@@ -222,7 +225,7 @@ class Order:
 
     def get_by_uid_status(uid):
         rows = app.db.execute('''
-        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
+        SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
         FROM Purchases PUR, Users BUY, Products PROD
         WHERE PUR.uid = BUY.id
         AND PUR.pid = PROD.id
