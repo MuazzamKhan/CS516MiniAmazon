@@ -82,9 +82,9 @@ def gen_products(num_products):
             description = fake.sentence(nb_words=15)[:-1]
             available = fake.random_element(elements=('true', 'false'))
             if available == 'true':
-                available_pids.append(pid)
+                available_pids.append(id)
             category = fake.random_element(elements=categories)
-            image_file = 'https://source.unsplash.com/random/800x800/?img=1' + str(pid)
+            image_file = 'https://source.unsplash.com/random/800x800/?img=1' + str(id)
             writer.writerow([id, name, description, available, category, image_file])
         print(f'{num_products} generated; {len(available_pids)} available')
     return
