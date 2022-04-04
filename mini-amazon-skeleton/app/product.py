@@ -44,7 +44,6 @@ def addToCart(pid, sid):
     product = Product.get(pid)
     listing = Inventory.get_item(pid, sid)
     quantity = request.args['quantity']
-    Product.addToCart(current_user.id, pid, sid, quantity, listing.price)
+    status = Product.addToCart(current_user.id, pid, sid, quantity, listing.price)
     
-    return render_template("added_to_cart.html", product = product, listing = listing, quantity = quantity)
-    # Check if product already added to cart; increment if enough in stock
+    return render_template("added_to_cart.html", status= status, product = product, listing = listing, quantity = quantity)

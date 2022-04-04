@@ -5,7 +5,11 @@
 
 <br><br>
 
+{% if status == True%}
 <h2>"{{product.name}}" of quantity {{quantity}} has been added to your cart!</h2>
+{% else %}
+<h2>"{{product.name}}" is already in your cart!</h2>
+{% endif %}
 
 <td><a href="{{ url_for('cart.cart') }}">Cart</a></td>
 
