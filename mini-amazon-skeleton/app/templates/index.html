@@ -12,7 +12,7 @@
 
 <!-- Dropdown Bar: -->
 <select id="dropdown" onchange="searchLookup()" class='form-control'>
-  <option></option>
+  <option value="" selected>All Categories</option>
   <option>Books</option>
   <option>Clothing</option>
   <option>Electronics</option>
@@ -27,13 +27,13 @@
 
 <table class='table table-hover table-bordered container', id = "productsTable">
     <tr class = "header">
-      <th onclick="sortTable(0)" scope="col">Product ID</th>
+      <th scope="col"></th>
       <th onclick="sortTable(1)" scope="col">Product Name</th>
       <th onclick="sortTable(2)" scope="col">Category</th>
     </tr>
     {% for product in avail_products%}
     <tr>
-      <td scope="row">{{product.id}}</td>
+      <td scope="row"><img data-image="img" class = "active" src={{product.image_file}} alt="No image available"></td>
       <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
       <td> {{product.category}}</td>
     </tr>

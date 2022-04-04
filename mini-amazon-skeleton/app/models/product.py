@@ -1,3 +1,4 @@
+from pickle import FALSE
 from flask import current_app as app
 
 
@@ -55,11 +56,11 @@ class Product:
             ''', id = id, pid = pid, sid = sid)
 
         if len(rows)>0:
-            
-            app.db.execute('''
-                DELETE FROM Cart
-                WHERE id = :id AND pid = :pid AND sid = :sid
-                ''', id = id, pid = pid, sid = sid)
+            # app.db.execute('''
+            #     DELETE FROM Cart
+            #     WHERE id = :id AND pid = :pid AND sid = :sid
+            #     ''', id = id, pid = pid, sid = sid)
+            return False
 
         app.db.execute('''
             INSERT INTO Cart(id, pid, sid, quantity, price)
@@ -71,3 +72,5 @@ class Product:
         sid=sid,
         quantity=quantity,
         price=price)
+
+        return True
