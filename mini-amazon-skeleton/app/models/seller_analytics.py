@@ -85,7 +85,22 @@ class Category_Rank:
         else: 
             None
 
+    @staticmethod
+    def all_categories(sid):
+        rows = app.db.execute('''
+        SELECT PROD.category AS category, COUNT(PUR.quantity) AS count
+        FROM Purchases PUR, Products PROD
+        WHERE PUR.pid = PROD.id
+        AND PUR.sid=:sid
+        GROUP BY PROD.category
+        ORDER BY count DESC
+        ''',
+        sid=sid)
 
+        if rows:
+            return rows
+        else: 
+            None
 
 class Inventory_Analytics:
     def __init__(this, pid, sid, price, quantity):

@@ -17,6 +17,7 @@ def sellerAnalytics(sid):
     bottom_products = Product_Rank.bottom_three_products(sid)
     top_categories = Category_Rank.top_three_categories(sid)
     bottom_categories = Category_Rank.bottom_three_categories(sid)
+    all_categories = Category_Rank.all_categories(sid)
     unique_inventory = Inventory_Analytics.calc_unique_items(sid)
     total_inventory = Inventory_Analytics.calc_total_quantity(sid)
     avg_price_inventory = Inventory_Analytics.calc_average_price(sid)
@@ -24,7 +25,10 @@ def sellerAnalytics(sid):
     top_products=top_products, 
     bottom_products=bottom_products, 
     top_categories=top_categories, 
-    bottom_categories=bottom_categories, 
+    bottom_categories=bottom_categories,
+    all_categories = all_categories,
+    all_categories_x = [row[0] for row in all_categories],
+    all_categories_y = [row[1] for row in all_categories],
     total_inventory=total_inventory, 
     unique_inventory=unique_inventory, 
     avg_price_inventory=avg_price_inventory, 
