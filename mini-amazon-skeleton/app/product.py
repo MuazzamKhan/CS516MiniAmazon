@@ -9,6 +9,7 @@ from app.models.inventory import Inventory
 from .models.product import Product
 from .models.inventory import Inventory
 from .models.cart import Cart
+from .models.seller import Seller
 
 from app.models.review import Review
 

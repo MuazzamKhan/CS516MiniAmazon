@@ -5,15 +5,15 @@
 
     <table class='table table-hover table-bordered container', id = "cartTable">
         <tr class = "header">
-          <th onclick="sortTable(0)" scope="col">Product ID</th>
-          <th onclick="sortTable(1)" scope="col">Seller ID</th>
+          <th onclick="sortTable(0)" scope="col">Product</th>
+          <th onclick="sortTable(1)" scope="col">Seller</th>
           <th onclick="sortTable(2)" scope="col">Quantity</th>
           <th onclick="sortTable(2)" scope="col">Total Price</th>
         </tr>
         {% for cart in cart_items%}
         <tr>
-          <td scope="row">{{cart.pid}}</td>
-          <td> {{cart.sid}} </td>
+          <td scope="row">{{cart.productName}}</td>
+          <td> {{cart.sellerName}} </td>
           <td> {{cart.quantity}} </td>
           <td> {{cart.total}} </td>
           <td><a href="{{ url_for('cart.edit', pid = cart.pid, sid = cart.sid) }}">Edit</a>

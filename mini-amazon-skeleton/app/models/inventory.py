@@ -2,6 +2,7 @@ from flask import current_app as app
 from flask_login import current_user
 
 from .product import Product
+from .seller import Seller
 
 
 class Inventory:
@@ -10,6 +11,7 @@ class Inventory:
         this.sid = sid
         this.price = price
         this.quantity = quantity
+        this.sellerName = Seller.getNameFromSid(sid)
     
     @staticmethod
     def get_item(pid, sid):
