@@ -45,8 +45,10 @@ WHERE id = :id
         
         quantity_check = ""
         if quantity >= 0:
-            quantity_check = "WHERE total_quantity = %d" % quantity
-        
+            quantity_check = "HAVING SUM(total_quantity) = %d" % quantity
+        #if len(seller_firstname) > 0 and len(seller_lastname) > 0:
+        #    quantity_check = " AND '%s %s' IN sellersList" % (seller_firstname, seller_lastname)
+        # "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " 
         query = "WITH subquery AS (" \
                     "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
                     "FROM Purchases AS p, Orders AS o, Users AS u " \
@@ -54,12 +56,13 @@ WHERE id = :id
                         "AND o.id = p.oid " \
                         "AND u.id = sid " \
                         "AND ( ( o.completion_datetime >= :start_date AND o.completion_datetime <= :end_date ) OR o.completion_datetime IS NULL )" \
-                        "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " \
+                        "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) "\
                 "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.completion_datetime ) "\
                 "SELECT oid, bid, ARRAY_AGG(sid) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, completed_status, completion_datetime "\
-                "FROM subquery "\
+                "FROM subquery " \
                 "GROUP BY oid, bid, completed_status, completion_datetime "\
-                "%s ORDER BY completion_datetime DESC " % (quantity_check)
+                "%s " % (quantity_check) + \
+                "ORDER BY completion_datetime DESC "
         rows = app.db.execute(query,
                               uid=uid,
                               start_date=start_date,

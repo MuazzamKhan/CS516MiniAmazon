@@ -300,9 +300,12 @@ def purchase_history():
             
             if len(input_seller) >= 2:
                 seller_firstname = '%' + input_seller[0].lower() + '%'
+                # seller_firstname = input_seller[0].lower() 
                 seller_lastname = '%' + input_seller[1].lower() + '%'
+                # seller_lastname = input_seller[1].lower()
             elif len(input_seller) == 1:
                 seller_firstname = '%' + input_seller[0].lower() + '%'
+                # seller_firstname = input_seller[0].lower() 
             
 
             purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
