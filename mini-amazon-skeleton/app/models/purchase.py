@@ -9,7 +9,7 @@ class Purchase:
         self.uid = uid
         self.sid = sid
         self.sname = sfirstname + " " + slastname
-        self.time_purchased = time_purchased
+        self.time_purchased = "NA (not completed)" if time_purchased == None else time_purchased
         self.quantity = quantity
         self.price = price 
         self.completed_status = "Yes" if completed_status else "No"
@@ -53,8 +53,7 @@ WHERE id = :id
                     "WHERE o.bid = :uid " \
                         "AND o.id = p.oid " \
                         "AND u.id = sid " \
-                        "AND p.completion_datetime >= :start_date " \
-                        "AND p.completion_datetime <= :end_date " \
+                        "AND ( ( o.completion_datetime >= :start_date AND o.completion_datetime <= :end_date ) OR o.completion_datetime IS NULL )" \
                         "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " \
                 "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.completion_datetime ) "\
                 "SELECT * "\
