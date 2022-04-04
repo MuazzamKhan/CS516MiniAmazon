@@ -8,8 +8,7 @@ CREATE TABLE Users (
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     balance INTEGER DEFAULT 0 CHECK (balance>=0),
-    address VARCHAR(255) NOT NULL, 
-    email_confirm BOOLEAN DEFAULT FALSE
+    address VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Sellers (
@@ -64,10 +63,12 @@ CREATE TABLE Cart (
 );
 
 CREATE TABLE Reviews (
+    display_name VARCHAR(25) NOT NULL,
     pid INT NOT NULL REFERENCES Products(id),
     uid INT NOT NULL REFERENCES Users(id),
     rating INT NOT NULL DEFAULT 5,
     title VARCHAR(255) NOT NULL,
     body VARCHAR(255) NOT NULL,
+    submitted_ts TIMESTAMP NOT NULL,
     PRIMARY KEY(pid, uid)
 );
