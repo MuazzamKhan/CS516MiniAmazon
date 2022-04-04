@@ -54,7 +54,7 @@
                   </tr>
                   {% for listing in inventory%}
                   <tr>
-                    <td scope="row">{{listing.sid}}</td>
+                    <td scope="row">{{listing.sellerName}}</td>
                     <td>${{listing.price}}</td>
                     <td>{{listing.quantity}}</td>
                     {% if current_user.is_authenticated %}

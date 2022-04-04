@@ -1,5 +1,7 @@
 from flask import current_app as app
 
+from .seller import Seller
+from .product import Product
 
 class Cart:
     def __init__(self, id, pid, sid, quantity, price, wishlist):
@@ -10,6 +12,8 @@ class Cart:
         self.price = price
         self.wishlist = wishlist
         self.total = quantity*price
+        self.sellerName = Seller.getNameFromSid(sid)
+        self.productName = Product.get(pid).name
 
     @staticmethod
     def get_one(id, pid, sid):
