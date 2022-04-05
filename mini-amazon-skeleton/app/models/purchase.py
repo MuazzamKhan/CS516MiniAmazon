@@ -50,7 +50,7 @@ WHERE id = :id
         #    quantity_check = " AND '%s %s' IN sellersList" % (seller_firstname, seller_lastname)
         # "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " 
         query = "WITH subquery AS (" \
-                    "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
+                    "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price*quantity) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
                     "FROM Purchases AS p, Orders AS o, Users AS u " \
                     "WHERE o.bid = :uid " \
                         "AND o.id = p.oid " \
