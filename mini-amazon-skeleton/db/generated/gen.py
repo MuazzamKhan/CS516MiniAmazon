@@ -14,7 +14,6 @@ num_quantity = 100
 num_carted_products = 200
 
 categories = ['Books', 'Clothing', 'Electronics', 'Food', 'Home', 'Media', 'Toys', 'Sports']
-available_pids = []
 
 Faker.seed(0)
 fake = Faker()
@@ -73,6 +72,7 @@ def gen_sellers(num_sellers):
 
 def gen_products(num_products):
     with open('Products.csv', 'w') as f:
+        available_pids = []
         writer = get_csv_writer(f)
         print('Products...', end=' ', flush=True)
         for id in range(num_products):
@@ -87,7 +87,7 @@ def gen_products(num_products):
             image_file = 'https://source.unsplash.com/random/800x800/?img=1' + str(id)
             writer.writerow([id, name, description, available, category, image_file])
         print(f'{num_products} generated; {len(available_pids)} available')
-    return
+    return available_pids
 
 
 def gen_purchases(num_purchases, available_pids):
