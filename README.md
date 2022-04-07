@@ -26,8 +26,8 @@
     - Ability to set alerts if inventory is will expire in  
     - Send a notification to sellers if an order is not fulfilled beyond 14 days/ a T+7 days
 - Feedback/Messaging extra feature: 
-    - Using data from the purchases of other users, we will implement a way for users to see the reviews of “super-reviewers”, i.e. the reviews of users who most frequently rate products and leave feedback. 
-    - The reasoning behind this feature being that such super-reviewers generally tend to leave more insightful reviews which are more helpful to shoppers. This is analogous to a recent feature implemented on Amazon that allows users to see which reviews are made by “top reviewers”.
+    - Implement badges, notes next to reviewers that have made many review contributions, for certain reviewers.
+    - The reasoning behind this feature being that such reviewers generally tend to leave more insightful reviews which are more helpful to shoppers. This is analogous to a recent feature implemented on Amazon that allows users to see which reviews are written by made by “top reviewers”.
 - Account/ Purchases extra feature: 
     - Send authentication email to new users when they’re registering new accounts 
     - Send email that gathers recent messages from customers to the sellers 
