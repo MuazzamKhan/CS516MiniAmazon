@@ -7,15 +7,26 @@ from datetime import datetime
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname, address, is_seller, email_confirm=False):
+    
+    class Review:
+        def __init__(self, title, body):
+            self.title = title 
+            self.body = body
+
+    def __init__(self, id, email, firstname, lastname, address, is_seller, email_confirm=False, title=[], body=[]):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
-        self.is_seller = is_seller
+        self.is_seller = True if is_seller is not None else False
         self.email_confirm = False if not email_confirm else True
-    
+        self.reviews = []
+
+        if self.is_seller:
+            for idx, _ in enumerate(title):
+                review = Review(title[idx], body[idx])
+                self.reviews.append(review)
     
 
     def set_profile(self, email, firstname, lastname, address):
@@ -165,11 +176,11 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname, address, 
-        CASE 
-        WHEN id in (SELECT id from Sellers) THEN TRUE ELSE FALSE END AS is_seller            
-FROM Users AS u
+SELECT id, email, firstname, lastname, address, sid, email_confirm, ARRAY_AGG(title), ARRAY_AGG(body)
+FROM Users 
+LEFT JOIN Reviews_sellers ON id = sid
 WHERE id = :id
+GROUP BY id, email, firstname, lastname, address, sid, email_confirm
 """,
                               id=id)
         return User(*(rows[0])) if rows else None
