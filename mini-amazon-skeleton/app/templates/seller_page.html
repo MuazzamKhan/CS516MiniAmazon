@@ -9,7 +9,34 @@
    <a id="seller-page-orders-button" href="{{ url_for('order.orderSeller', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller's Orders Page</a>
    <a id="seller-page-inventory-button" href="{{ url_for('inventory.inventory', sid=current_user.id) }}" type="button" class="btn btn-dark">Inventory</a>
    <a id="seller-page-analytics-button" href="{{ url_for('seller_analytics.sellerAnalytics', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller Analytics</a>
+   
+
+
+            {% if current_user.is_authenticated %}
+
+            {% endif %}
+
+            <table class='table table-hover table-bordered container'>
+                
+                <tr class = "header">
+                    <th scope="col">Reviewer Name</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Review</th>
+                    <th scope="col"></th>
+                  </tr>
+
+            {% for review in reviews%}
+            <tr>
+                <td scope="row">{{review.display_name}}</td>
+                <td scope="row">{{review.rating}}</td>
+                <td>{{review.title}}</td>
+                <td>{{review.body}}</td>
+            </tr>
+                {% endfor %}
+            </table>
 </div>
+
 <br>
 
 {% endblock %}

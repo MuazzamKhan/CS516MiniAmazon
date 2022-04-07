@@ -4,7 +4,7 @@ from werkzeug.datastructures import MultiDict
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, NumberRange
 
 from .models.user import User
 from .models.purchase import Purchase
@@ -241,6 +241,23 @@ def balance():
     return render_template('balance.html', title='Balance', form=form, current_balance=User.get_balance(curr_user.id))
 
 
+
+class ReviewForm(FlaskForm):
+    display_name = StringField('Enter a name to be displayed with the review:', validators = [DataRequired()])
+    rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min = 1, max = 5, message = 'Enter a integer between 1 and 5')], default = 5) 
+    title = StringField('Title', validators=[DataRequired()], default = "Product Review")
+    body = StringField('Enter your review:')
+    submit = SubmitField('Publish review')
+
+@bp.route('/write_review/<pid>', methods=['GET', 'POST'])
+def write_review(pid):
+    global curr_user
+    form = ReviewForm()
+    if form.validate_on_submit():
+        if User.leave_review(form.display_name.data, curr_user.id, pid, form.rating.data, form.title.data, form.body.data):
+            flash('Thanks for leaving a review!')
+            return render_template('leave_review.html', title='Leave a Review', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
+    return render_template('leave_review.html', title='Leave a Review', form=form)
 
 
 @bp.route('/purchase_history', methods=['GET', 'POST'])

@@ -5,7 +5,8 @@ from .product import Product
 
 
 class Review:
-    def __init__(self, pid, uid, rating, title, body):
+    def __init__(self, display_name, pid, uid, rating, title, body):
+        self.display_name = display_name
         self.pid = pid
         self.uid = uid
         self.rating = rating
@@ -15,7 +16,7 @@ class Review:
     @staticmethod
     def get_reviews_with_pid(pid):
         rows = app.db.execute('''
-        SELECT pid, uid, rating, title, body
+        SELECT display_name, pid, uid, rating, title, body
         FROM Reviews 
         WHERE pid=:pid
         ''',
