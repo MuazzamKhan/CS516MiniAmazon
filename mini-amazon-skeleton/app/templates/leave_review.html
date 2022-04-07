@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Reviews</h1>
+
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+    <p>
+    Write a review <br/>
+    {{ Write_a_review }}<br/>
+  </p>
+
+  <p>
+    Provide a name to be displayed with your review: <br/>
+    {{ form.display_name(size=32) }}<br/>
+    {% for error in form.rating.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    Leave a rating out of 5: <br/>
+    {{ form.rating(size=32) }}<br/>
+    {% for error in form.rating.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    Write a title for your review: <br/>
+    {{ form.title(size=32) }}<br/>
+    {% for error in form.title.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+    <p>
+    Write your review: <br/>
+    {{ form.body(size=128) }}<br/>
+    {% for error in form.body.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

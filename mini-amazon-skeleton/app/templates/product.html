@@ -71,10 +71,16 @@
             </table>
             {% endif %}
 
-            {% if stock == "In Stock" %}
+            {% if current_user.is_authenticated %}
+                    <td><form action="{{ url_for('users.write_review', pid = product.id) }}" method="GET">
+                        <input type="submit" value="Add/edit your review">
+                    </form></td>
+            {% endif %}
+
             <table class='table table-hover table-bordered container'>
                 
                 <tr class = "header">
+                    <th scope="col">Reviewer Name</th>
                     <th scope="col">Rating</th>
                     <th scope="col">Title</th>
                     <th scope="col">Review</th>
@@ -83,13 +89,13 @@
 
             {% for review in reviews%}
             <tr>
+                <td scope="row">{{review.display_name}}</td>
                 <td scope="row">{{review.rating}}</td>
                 <td>{{review.title}}</td>
                 <td>{{review.body}}</td>
             </tr>
                 {% endfor %}
             </table>
-        {% endif %}
 
         </div>
     </main>

@@ -3,6 +3,7 @@ from flask import current_app as app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .. import login
+from datetime import datetime
 
 
 class User(UserMixin):
@@ -183,3 +184,25 @@ WHERE id = :id
 """,
                               id=id)
         return rows[0][0]
+
+    @staticmethod
+    def leave_review(display_name, uid, pid, rating, title, body):
+            rows = app.db.execute("""
+                    INSERT INTO Reviews(display_name, uid, pid, rating, title, body, submitted_ts) 
+                    VALUES(:display_name, :uid, :pid, :rating, :title, :body, :submitted_ts)
+                    ON CONFLICT (pid, uid) DO UPDATE
+                    SET display_name = :display_name, rating = :rating, title = :title, body = :body, submitted_ts = :submitted_ts
+                    RETURNING uid
+                """,
+                        display_name = display_name,
+                        uid=uid,
+                        pid=pid, 
+                        rating=rating,
+                        title=title,
+                        body=body,
+                        submitted_ts=datetime.now())
+
+                #id = rows[0][0]
+
+            return id if rows else None
+
