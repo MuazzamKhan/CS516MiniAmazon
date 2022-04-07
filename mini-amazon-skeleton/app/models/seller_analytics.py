@@ -172,3 +172,112 @@ class Inventory_Analytics:
         else:
             return "High in Stock"
 
+class Seller_Review_Analytics:
+    def __init__(this, sid, bid, count, rating):
+        this.sid = sid
+        this.bid = bid
+        this.count = count
+        this.rating = rating
+
+    @staticmethod
+    def avg_seller_rating(sid):
+        num = app.db.execute('''
+        SELECT AVG(rating)
+        FROM Reviews_sellers
+        WHERE sid=:sid
+        ''',
+        sid=sid)
+
+        if num == None:
+            return num
+        else:
+            return num[0][0]
+
+    @staticmethod
+    def count_reviews(sid):
+        num = app.db.execute('''
+        SELECT COUNT(bid)
+        FROM Reviews_sellers
+        WHERE sid=:sid
+        ''',
+        bid=bid)
+
+        if num == None:
+            return num
+        else:
+            return num[0][0]
+
+    @staticmethod
+    def seller_ratings_breakdown(sid):
+        rows = app.db.execute('''
+        SELECT rating, COUNT(bid)
+        FROM Reviews_sellers
+        WHERE sid=:sid
+        GROUP BY rating
+        ''',
+        bid=bid)
+
+        if rows:
+            return rows
+        else: 
+            None
+
+class Seller_Review_Analytics:
+    def __init__(this, pid, bid, count, rating):
+        this.pid = pid
+        this.bid = bid
+        this.count = count
+        this.rating = rating
+
+    @staticmethod
+    def avg_all_product_rating(sid):
+        num = app.db.execute('''
+        SELECT REV.pid, PROD.name, AVG(REV.rating)
+        FROM Reviews REV, Products PROD, Inventory INV
+        WHERE REV.pid = PROD.id
+        AND INV.pid = PROD.id
+        AND PROD.sid=:sid
+        ''',
+        sid=sid)
+
+        if num == None:
+            return num
+        else:
+            return num[0][0]
+
+    @staticmethod
+    def ind_avg_product_ratings(sid):
+        rows = app.db.execute('''
+        SELECT REV.pid, PROD.name, AVG(REV.rating)
+        FROM Reviews REV, Products PROD, Inventory INV
+        WHERE REV.pid = PROD.id
+        AND INV.pid = PROD.id
+        AND PROD.sid=:sid
+        GROUP BY REV.pid
+        ''',
+        sid=sid)
+
+        if rows == None:
+            return rows
+        else:
+            return rows
+
+    @staticmethod
+    def product_ratings_breakdown(sid):
+        rows = app.db.execute('''
+        SELECT REV.pid, PROD.name, AVG(REV.rating)
+        FROM Reviews REV, Products PROD, Inventory INV
+        WHERE REV.pid = PROD.id
+        AND INV.pid = PROD.id
+        AND PROD.sid=:sid
+        GROUP BY REV.pid
+        ''',
+        sid=sid)
+
+        if rows == None:
+            return rows
+        else:
+            return rows
+
+
+

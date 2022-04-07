@@ -12,6 +12,12 @@ Account Number: {{user.id}} <br/>
     Email: {{user.email}} <br/>
     Address: {{user.address}} <br/>
 
-    Review:  <br/>
+    Review:  <br/><br/>
+    
+    {% for review in user.reviews %}
+        Title: {{review.title}}
+        {{review.body}}
+        <br/>
+    {% endfor %}
 {% endif %}
 {% endblock %}
