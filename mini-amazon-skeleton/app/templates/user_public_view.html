@@ -3,21 +3,35 @@
 {% block content %}
 
 
-<h1> {{user.firstname}} {{user.lastname}} </h1>
-Account Number: {{user.id}} <br/> 
+<h1> {{user.firstname}} {{user.lastname}} </h1> <br/>
+<b>Account Number:  </b> <u>{{user.id}}</u><br/> 
 
 
 <!--- only show the following information if he is a seller ---->
 {% if user.is_seller %}
-    Email: {{user.email}} <br/>
-    Address: {{user.address}} <br/>
-
-    Review:  <br/><br/>
+<b>Email:  </b><u>{{user.email}}</u><br/>
+<b>Address:  </b><u>{{user.address}}</u><br/>
     
+    
+    <br/><br/><h2>Reviews:</h2><br/>
+    
+    <ol>
     {% for review in user.reviews %}
-        Title: {{review.title}}
-        {{review.body}}
-        <br/>
+    <li>{% for star in range(5) %}
+            {% if star+1 <= review.rating %}
+                &#9733;
+            {% endif %}
+            {% if star+1 > review.rating %}
+                &#9734;
+            {% endif %}
+        {% endfor %}
+        </br>
+        <b><u>{{review.title}}</u></b> </br>
+        {{review.body}} </br>
+        <a href="{{ url_for('users.user_public_view', id=review.uid) }}">See who give this rating</a>
+        
+        <br/></br>
     {% endfor %}
+    </ol>
 {% endif %}
 {% endblock %}

@@ -9,11 +9,13 @@ from datetime import datetime
 class User(UserMixin):
     
     class Review:
-        def __init__(self, title, body):
+        def __init__(self, title, body, rating, uid):
             self.title = title 
             self.body = body
+            self.rating = rating
+            self.uid = uid
 
-    def __init__(self, id, email, firstname, lastname, address, is_seller, email_confirm=False, title=[], body=[]):
+    def __init__(self, id, email, firstname, lastname, address, is_seller, email_confirm=False, title=[], body=[], rating=[], uid=[]):
         self.id = id
         self.email = email
         self.firstname = firstname
@@ -25,9 +27,10 @@ class User(UserMixin):
 
         if self.is_seller:
             for idx, _ in enumerate(title):
-                review = Review(title[idx], body[idx])
+                review = self.Review(title[idx], body[idx], rating[idx], uid[idx])
                 self.reviews.append(review)
-    
+        
+
 
     def set_profile(self, email, firstname, lastname, address):
         self.email = email 
@@ -176,13 +179,15 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname, address, sid, email_confirm, ARRAY_AGG(title), ARRAY_AGG(body)
+SELECT id, email, firstname, lastname, address, sid, email_confirm, ARRAY_AGG(title), ARRAY_AGG(body), ARRAY_AGG(rating), ARRAY_AGG(uid)
 FROM Users 
 LEFT JOIN Reviews_sellers ON id = sid
 WHERE id = :id
 GROUP BY id, email, firstname, lastname, address, sid, email_confirm
 """,
                               id=id)
+
+
         return User(*(rows[0])) if rows else None
 
     
