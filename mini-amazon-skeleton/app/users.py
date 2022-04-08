@@ -3,10 +3,11 @@ from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, NumberRange
 
 from .models.user import User
+from .models.seller import Seller
 from .models.purchase import Purchase
 from .models.product import Product
 
@@ -166,10 +167,12 @@ def register():
 
 
 class UpdateProfileForm(FlaskForm):
+
     firstname = StringField('First Name', validators=[DataRequired()], default=curr_user.firstname) 
     lastname = StringField('Last Name', validators=[DataRequired()], default=curr_user.lastname)
     address = StringField('Home Address', validators=[DataRequired()], default=curr_user.address)
     email = StringField('Email', validators=[DataRequired(), Email()], default=curr_user.email)
+    receive_notification = BooleanField("I want to reveive email notification", default=False)
     submit = SubmitField('Update Profile')
 
     def validate_email(self, email):
@@ -182,7 +185,7 @@ class UpdateProfileForm(FlaskForm):
 def profile():
     global curr_user
     if request.method == "GET":
-        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email, "address": curr_user.address}))
+        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email, "address": curr_user.address, "receive_notification": Seller.get_if_receive_notification(curr_user.id) }))
     elif request.method == "POST":
         form = UpdateProfileForm()
     if form.validate_on_submit():
@@ -191,9 +194,11 @@ def profile():
                          form.firstname.data,
                          form.lastname.data,
                          form.address.data):
+            if curr_user.is_seller and Seller.update_receive_notification(curr_user.id, form.receive_notification.data):
+                pass
             flash('Your user profile has been updated!')
-            return render_template('profile.html', title='Profile', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
-    return render_template('profile.html', title='Profile', form=form)
+            return render_template('profile.html', title='Profile', form=form, is_seller=True), {"Refresh": "1; url="+str(url_for('index.index'))}
+    return render_template('profile.html', title='Profile', form=form, is_seller=True)
 
 
 

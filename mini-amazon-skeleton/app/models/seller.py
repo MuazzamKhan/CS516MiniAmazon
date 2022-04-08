@@ -22,6 +22,39 @@ class Seller:
             return True
         else: 
             return False
+    
+    @staticmethod
+    def update_receive_notification(sid, receive_notification):
+        rows = app.db.execute('''
+            UPDATE Sellers
+            SET receive_notification = :receive_notification
+            WHERE id=:sid
+            RETURNING id
+        ''',
+        sid=sid,
+        receive_notification=receive_notification
+        )
+        
+        if len(rows[0]) == 0:
+            if rows[0][0] == sid:
+                return True
+        else:
+            return False
+
+    @staticmethod
+    def get_if_receive_notification(sid):
+        rows = app.db.execute('''
+            SELECT receive_notification
+            FROM Sellers
+            WHERE id=:sid
+        ''',
+        sid=sid
+        )
+        # if it is not a seller
+        if len(rows) == 0:
+            return False
+        else:
+            return rows[0][0]
 
     @staticmethod
     def getNameFromSid(sid):
