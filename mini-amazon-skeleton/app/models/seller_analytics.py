@@ -182,9 +182,61 @@ class Seller_Review_Analytics:
     @staticmethod
     def avg_seller_rating(sid):
         num = app.db.execute('''
-        SELECT AVG(rating)
+        SELECT ROUND(AVG(rating),2)
         FROM Reviews_sellers
         WHERE sid=:sid
+        ''', 
+        sid=sid)
+
+        if num == None:
+            return num
+        else:
+            return num[0][0]
+
+    @staticmethod
+    def count_reviews(sid):
+        num = app.db.execute('''
+        SELECT COUNT(uid)
+        FROM Reviews_sellers
+        WHERE sid=:sid
+        ''',
+        sid=sid)
+
+        if num == None:
+            return num
+        else:
+            return num[0][0]
+
+    @staticmethod
+    def seller_ratings_breakdown(sid):
+        rows = app.db.execute('''
+        SELECT rating, COUNT(uid)
+        FROM Reviews_sellers
+        WHERE sid=:sid
+        GROUP BY rating
+        ''',
+        sid = sid)
+
+        if rows:
+            return rows
+        else: 
+            None
+
+class Product_Review_Analytics:
+    def __init__(this, pid, name, count, rating):
+        this.pid = pid
+        this.name = name
+        this.count = count
+        this.rating = rating
+
+    @staticmethod
+    def overall_product_rating(sid):
+        num = app.db.execute('''
+        SELECT ROUND(AVG(REV.rating),2)
+        FROM Reviews REV, Products PROD, Inventory INV
+        WHERE REV.pid = PROD.id
+        AND INV.pid = PROD.id
+        AND INV.sid=:sid
         ''',
         sid=sid)
 
@@ -196,47 +248,11 @@ class Seller_Review_Analytics:
     @staticmethod
     def count_reviews(sid):
         num = app.db.execute('''
-        SELECT COUNT(bid)
-        FROM Reviews_sellers
-        WHERE sid=:sid
-        ''',
-        bid=bid)
-
-        if num == None:
-            return num
-        else:
-            return num[0][0]
-
-    @staticmethod
-    def seller_ratings_breakdown(sid):
-        rows = app.db.execute('''
-        SELECT rating, COUNT(bid)
-        FROM Reviews_sellers
-        WHERE sid=:sid
-        GROUP BY rating
-        ''',
-        bid=bid)
-
-        if rows:
-            return rows
-        else: 
-            None
-
-class Seller_Review_Analytics:
-    def __init__(this, pid, bid, count, rating):
-        this.pid = pid
-        this.bid = bid
-        this.count = count
-        this.rating = rating
-
-    @staticmethod
-    def avg_all_product_rating(sid):
-        num = app.db.execute('''
-        SELECT REV.pid, PROD.name, AVG(REV.rating)
+        SELECT COUNT(REV.rating)
         FROM Reviews REV, Products PROD, Inventory INV
         WHERE REV.pid = PROD.id
         AND INV.pid = PROD.id
-        AND PROD.sid=:sid
+        AND INV.sid=:sid
         ''',
         sid=sid)
 
@@ -244,33 +260,16 @@ class Seller_Review_Analytics:
             return num
         else:
             return num[0][0]
-
-    @staticmethod
-    def ind_avg_product_ratings(sid):
-        rows = app.db.execute('''
-        SELECT REV.pid, PROD.name, AVG(REV.rating)
-        FROM Reviews REV, Products PROD, Inventory INV
-        WHERE REV.pid = PROD.id
-        AND INV.pid = PROD.id
-        AND PROD.sid=:sid
-        GROUP BY REV.pid
-        ''',
-        sid=sid)
-
-        if rows == None:
-            return rows
-        else:
-            return rows
 
     @staticmethod
     def product_ratings_breakdown(sid):
         rows = app.db.execute('''
-        SELECT REV.pid, PROD.name, AVG(REV.rating)
+        SELECT REV.pid, PROD.name, COUNT(REV.rating) as count, ROUND(AVG(REV.rating), 2) AS rating
         FROM Reviews REV, Products PROD, Inventory INV
         WHERE REV.pid = PROD.id
         AND INV.pid = PROD.id
-        AND PROD.sid=:sid
-        GROUP BY REV.pid
+        AND INV.sid=:sid
+        GROUP BY REV.pid, PROD.name
         ''',
         sid=sid)
 
@@ -278,6 +277,3 @@ class Seller_Review_Analytics:
             return rows
         else:
             return rows
-
-
-
