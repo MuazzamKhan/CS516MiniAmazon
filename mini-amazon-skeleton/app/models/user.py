@@ -54,6 +54,21 @@ where email = :email
             return True
         else:
             return False
+    
+
+    @staticmethod
+    def get_email(id):
+        rows = app.db.execute("""
+select email
+from users
+where id = :id
+""",
+                              id=id)
+        if not rows:  # email not found
+            return None
+        else:
+            return rows[0][0]
+
 
     @staticmethod
     def get_by_auth(email, password):

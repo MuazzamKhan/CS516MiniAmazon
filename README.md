@@ -30,7 +30,7 @@
     - The reasoning behind this feature being that such reviewers generally tend to leave more insightful reviews which are more helpful to shoppers. This is analogous to a recent feature implemented on Amazon that allows users to see which reviews are written by made by “top reviewers”.
 - Account/ Purchases extra feature: 
     - Send authentication email to new users when they’re registering new accounts 
-    - Send email that gathers recent messages from customers to the sellers 
+    - Send email to sellers when someone buys their products
 
 
 ***Github Link:*** <br />

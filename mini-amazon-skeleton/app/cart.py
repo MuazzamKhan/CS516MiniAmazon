@@ -12,6 +12,9 @@ from .models.inventory import Inventory
 from .models.cart import Cart
 from .models.order import Order
 from .models.user import User
+from .models.seller import Seller
+
+from .email import send_email
 
 from flask import Blueprint
 bp = Blueprint('cart', __name__)
@@ -100,6 +103,14 @@ def order():
 
         new_quantity = Inventory.get_item(item.pid, item.sid).quantity - item.quantity
         Inventory.edit_quantity(item.pid, item.sid, new_quantity)
+        
+        # this step might be time-comsuming (will make it multi-threaded if needed)
+        if Seller.get_if_receive_notification(item.sid):
+            html = render_template('buy_email_notification.html', seller=item.sellerName, product=item.productName) 
+            subject = "Someone buys your product on mini-amazon!"
+            email = User.get_email(item.sid)
+            send_email(email, subject, html)
+
 
     cart_items = Cart.get_all(current_user.id)
     cart_total = 0
