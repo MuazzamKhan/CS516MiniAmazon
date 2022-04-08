@@ -64,7 +64,9 @@ def gen_sellers(num_sellers):
         writer = get_csv_writer(f)
         print("Generating sellers ...")
         for sid in range(num_sellers):
-            writer.writerow([sid])
+            # whether or not wanna get notification when someone buys ur stuffs
+            receive_notification = False
+            writer.writerow([sid, receive_notification])
         print(f'{num_sellers} sellers generated')
         print(f'uid 0 to {num_sellers-1} are sellers')
     return
