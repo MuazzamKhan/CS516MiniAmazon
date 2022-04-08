@@ -194,11 +194,15 @@ def profile():
                          form.firstname.data,
                          form.lastname.data,
                          form.address.data):
-            if curr_user.is_seller and Seller.update_receive_notification(curr_user.id, form.receive_notification.data):
-                pass
-            flash('Your user profile has been updated!')
-            return render_template('profile.html', title='Profile', form=form, is_seller=True), {"Refresh": "1; url="+str(url_for('index.index'))}
-    return render_template('profile.html', title='Profile', form=form, is_seller=True)
+            
+            if curr_user.is_seller:
+                if Seller.update_receive_notification(curr_user.id, form.receive_notification.data):
+                    flash('Your user profile has been updated!')
+                    return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller), {"Refresh": "1; url="+str(url_for('index.index'))}
+            else:
+                flash('Your user profile has been updated!')
+                return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller), {"Refresh": "1; url="+str(url_for('index.index'))}
+    return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller)
 
 
 

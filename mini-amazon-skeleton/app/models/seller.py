@@ -35,7 +35,7 @@ class Seller:
         receive_notification=receive_notification
         )
         
-        if len(rows[0]) == 0:
+        if len(rows[0]) > 0:
             if rows[0][0] == sid:
                 return True
         else:
