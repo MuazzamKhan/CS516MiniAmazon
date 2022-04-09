@@ -15,20 +15,14 @@ bp = Blueprint('order', __name__)
 @bp.route('/buyer-order/<bid>/<oid>', methods=['GET'])
 def orderBuyer(bid, oid):
     orders = Order.get_by_bid_oid(bid, oid)
-    print(bid)
-    if orders == None:
-        return "Error! No such buyer exists!"
-    else:
-        return render_template("order.html", orders=orders, bid=bid, oid=oid)
+    #print(bid)
+    return render_template("order.html", orders=orders, bid=bid, oid=oid)
 
 
 @bp.route('/seller-order/<sid>', methods=['GET'])
 def orderSeller(sid):
     orders = Order.get_by_sid(sid)
-    if orders == None:
-        return "Error! No such seller exists!"
-    else:
-        return render_template("order_seller.html", orders=orders, sid=sid)
+    return render_template("order_seller.html", orders=orders, sid=sid)
 
 
 class ItemFufilledForm(FlaskForm):

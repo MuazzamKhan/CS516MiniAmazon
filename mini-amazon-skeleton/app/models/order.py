@@ -2,6 +2,7 @@ from datetime import datetime
 from os import name
 from flask import current_app as app
 from flask_login import current_user
+import numpy as np
 
 class Order:
     def __init__(self, id, uid, pid, sid, category, product_name, price, quantity, placed_datetime, completed_status, completion_datetime, address):
@@ -43,10 +44,7 @@ class Order:
         ORDER BY ORD.placed_datetime DESC
         ''',
         bid=bid)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
+        return [Order(*row) for row in rows]
     
     @staticmethod
     def get_by_bid_oid(bid, oid):
@@ -61,10 +59,7 @@ class Order:
         ''',
         bid=bid,
         oid=oid)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
+        return [Order(*row) for row in rows]
 
     @staticmethod
     def get_by_sid(sid):
@@ -77,10 +72,7 @@ class Order:
         ORDER BY ORD.placed_datetime DESC
         ''',
         sid=sid)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
+        return [Order(*row) for row in rows]
 
     @staticmethod
     def get_by_search(sid, time_placed_start, time_placed_end, product_name, pid, oid, address):
@@ -200,10 +192,7 @@ class Order:
             pid=pid,
             oid=oid,
             address=address)
-            if rows:
-                return [Order(*row) for row in rows]
-            else: 
-                None
+            return [Order(*row) for row in rows]
 
     @staticmethod
     def get_by_sid_status(sid, completed_status):
@@ -218,11 +207,8 @@ class Order:
         ''',
         sid=sid,
         completed_status=completed_status)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
-
+        return [Order(*row) for row in rows]
+        
     def get_by_uid_status(uid):
         rows = app.db.execute('''
         SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
@@ -235,10 +221,7 @@ class Order:
         ''',
         uid=uid,
         completed_status=completed_status)
-        if rows:
-            return [Order(*row) for row in rows]
-        else: 
-            None
+        return [Order(*row) for row in rows]
 
             
     @staticmethod

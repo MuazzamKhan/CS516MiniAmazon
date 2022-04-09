@@ -20,10 +20,7 @@ class Product_Rank:
         ''',
         sid=sid)
 
-        if rows:
-            return [Product_Rank(*row) for row in rows]
-        else: 
-            None
+        return [Product_Rank(*row) for row in rows]
 
     @staticmethod
     def bottom_three_products(sid):
@@ -38,10 +35,8 @@ class Product_Rank:
         ''',
         sid=sid)
 
-        if rows:
-            return [Product_Rank(*row) for row in rows]
-        else: 
-            None
+        return [Product_Rank(*row) for row in rows]
+
 
 class Category_Rank:
 
@@ -62,10 +57,8 @@ class Category_Rank:
         ''',
         sid=sid)
 
-        if rows:
-            return [Category_Rank(*row) for row in rows]
-        else: 
-            None
+        return [Category_Rank(*row) for row in rows]
+
 
     @staticmethod
     def bottom_three_categories(sid):
@@ -79,11 +72,7 @@ class Category_Rank:
         LIMIT 3
         ''',
         sid=sid)
-
-        if rows:
-            return [Category_Rank(*row) for row in rows]
-        else: 
-            None
+        return [Category_Rank(*row) for row in rows]
 
     @staticmethod
     def all_categories(sid):

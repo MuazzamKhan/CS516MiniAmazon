@@ -26,11 +26,7 @@ class Inventory:
         ''',
         pid=pid,
         sid=sid)
-        if rows:
-            return Inventory(*(rows[0]))
-        else:
-            None
-
+        return Inventory(*(rows[0]))
 
     @staticmethod
     def get_with_sid(sid):
@@ -53,10 +49,7 @@ class Inventory:
         AND pid=:pid
         ''',
         pid=pid)
-        if rows:
-            return [Inventory(*row) for row in rows]
-        else: 
-            None
+        return [Inventory(*row) for row in rows]
 
     @staticmethod
     def get_with_price(floor, ceiling):
@@ -68,10 +61,7 @@ class Inventory:
         ''',
         floor=floor,
         ceiling=ceiling)
-        if rows:
-            return [Inventory(*row) for row in rows]
-        else: 
-            None
+        return [Inventory(*row) for row in rows]
 
 
 
@@ -85,10 +75,7 @@ class Inventory:
         ''',
         floor=floor,
         ceiling=ceiling)
-        if rows:
-            return [Inventory(*row) for row in rows]
-        else: 
-            None
+        return [Inventory(*row) for row in rows]
 
 
     @staticmethod
