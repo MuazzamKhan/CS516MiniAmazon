@@ -97,7 +97,7 @@ def gen_orders(num_orders):
         writer = get_csv_writer(f)
         print('Orders...', end=' ', flush=True)
         for id in range(num_orders):
-            id = fake.random_int(min=0, max=num_orders-1)
+            # id = fake.random_int(min=0, max=num_orders-1) # id is primary key so it has to be unique
             bid = fake.random_int(min=0, max=num_users-1)
             address = fake.profile()['address']
             placed_datetime = fake.date_time()
@@ -110,16 +110,28 @@ def gen_orders(num_orders):
 
 def gen_purchases(num_orders, num_purchases, available_pids, dict_pid_sid):
     dict_oid_pid = {}
+
+    oid_pid_sid = set()
+
     with open('Purchases.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Purchases...', end=' ', flush=True)
         for id in range(num_purchases):
             if id % 100 == 0:
                 print(f'{id}', end=' ', flush=True)
+            
             oid = fake.random_int(min=0, max=num_orders-1)
             pid = fake.random_element(elements=available_pids)
-            #print(pid)
             sid = random.choice(dict_pid_sid.get(pid))
+            
+            # we should try a new pair if it is already exists
+            while (oid, pid, sid) in oid_pid_sid:
+                oid = fake.random_int(min=0, max=num_orders-1)
+                pid = fake.random_element(elements=available_pids)
+                sid = random.choice(dict_pid_sid.get(pid))
+            
+            oid_pid_sid.add((oid, pid, sid))
+
             price = f'{str(fake.random_int(max=1000))}.{fake.random_int(max=99):02}'
             quantity = fake.random_int(min=0, max=num_quantity)
             completed_status = fake.random_element(elements=('true', 'false'))
@@ -154,6 +166,9 @@ def gen_inventory(available_pids):
 
 
 def gen_cart(num_carted_products, num_user_carts, dict_pid_sid, available_pids):
+    
+    uid_pid_sid = set()
+
     with open('Cart.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Cart...', end=' ', flush=True)
@@ -163,6 +178,14 @@ def gen_cart(num_carted_products, num_user_carts, dict_pid_sid, available_pids):
             uid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=available_pids)
             sid = random.choice(dict_pid_sid.get(pid))
+
+            while (uid, pid, sid) in uid_pid_sid:
+                uid = fake.random_int(min=0, max=num_users-1)
+                pid = fake.random_element(elements=available_pids)
+                sid = random.choice(dict_pid_sid.get(pid))
+            
+            uid_pid_sid.add((uid, pid, sid))
+
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             quantity = fake.random_int(min=0, max=10)
             wishlist = fake.random_element(elements=('true', 'false'))
