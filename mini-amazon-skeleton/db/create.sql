@@ -65,7 +65,7 @@ CREATE TABLE Cart (
 );
 
 CREATE TABLE Reviews (
-    display_name VARCHAR(25) NOT NULL,
+    display_name VARCHAR(255) NOT NULL,
     pid INT NOT NULL REFERENCES Products(id),
     uid INT NOT NULL REFERENCES Users(id),
     rating INT NOT NULL DEFAULT 5,
@@ -76,7 +76,7 @@ CREATE TABLE Reviews (
 );
 
 CREATE TABLE Reviews_sellers (
-    display_name VARCHAR(25) NOT NULL,
+    display_name VARCHAR(255) NOT NULL,
     sid INT NOT NULL REFERENCES Sellers(id),
     uid INT NOT NULL REFERENCES Users(id),
     rating INT NOT NULL DEFAULT 5,
