@@ -3,7 +3,7 @@
 {% block content %}
 
 <div>
-    <h2>Add New Product</h2>
+    <h2>Add New Unlisted Product to Your Inventory</h2>
     <a href="{{ url_for('inventory.inventory', sid=current_user.id) }}">Back to inventory</a>
 </div>
 
@@ -52,6 +52,16 @@
     {% endfor %}
   </p>
   <p>{{ form.submit() }}</p>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
 </form>
 
 {% endblock %}

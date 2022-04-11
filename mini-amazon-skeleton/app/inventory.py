@@ -68,11 +68,17 @@ def addUnlistedProduct(sid):
     if form.validate_on_submit():
         f = form.image_file.data
         filename = secure_filename(f.filename)
-        image_path = os.path.join('db/images/products', filename)
+        image_path = os.path.join('app/static/images/', filename)
         f.save(image_path)
+        #image_path2 = "../static/images/" + filename
         new_item = Inventory.add_unlisted_item(sid, form.name.data, form.description.data, form.category.data, filename, form.price.data, form.quantity.data)
-        flash('Successfully added new item to inventory!')
-        return redirect(url_for("inventory.inventory", sid=sid))
+
+        if new_item is False:
+            flash('Error adding to inventory: Image file uploaded is likely not valid.')
+            return redirect(url_for('inventory.addListedProduct', sid=sid))
+        
+        flash('Successfully added new unlisted item to inventory!')
+        return redirect(url_for("inventory.addUnlistedProduct", sid=sid))
     return render_template('add_unlisted_product.html', title='Add Unlisted Product', form=form, sid=sid)
 
 class AddListedProductForm(FlaskForm):
@@ -87,8 +93,13 @@ def addListedProduct(sid):
     form = AddListedProductForm()
     if form.validate_on_submit():
         new_item = Inventory.add_listed_item(form.pid.data, sid, form.price.data, form.quantity.data)
-        flash('Successfully added new item to inventory!')
-        return redirect(url_for("inventory.inventory", sid=0))
+
+        if new_item is False:
+            flash('Error adding to inventory: Item is already in your inventory')
+            return redirect(url_for('inventory.addListedProduct', sid=sid))
+
+        flash('Successfully added new listed item to inventory!')
+        return redirect(url_for("inventory.addListedProduct", sid=sid))
     return render_template('add_listed_product.html', title='Add Listed Product', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
