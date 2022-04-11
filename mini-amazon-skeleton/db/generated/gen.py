@@ -33,7 +33,7 @@ fake = Faker()
 
 
 def get_csv_writer(f):
-    return csv.writer(f, dialect="unix")
+    return csv.writer(f, dialect="unix", quoting=csv.QUOTE_MINIMAL, escapechar='|')
 
 
 def gen_users(num_users):
@@ -75,7 +75,7 @@ def gen_users(num_users):
                     lastname,
                     balance,
                     address,
-                    email_confirm,
+                    email_confirm
                 ]
             )
         print(f"{num_users} users generated")
@@ -134,20 +134,22 @@ def gen_orders(num_orders):
             if completed_status == "true":
                 completion_datetime = fake.date_time()
             else:
-                completion_datetime = ''
+                completion_datetime = None
 
             dict_oid_bid[id] = bid
+
             writer.writerow(
                 [
                     id,
                     bid,
                     address,
-                    placed_datetime,
+                    placed_datetime, 
                     completed_status,
-                    completion_datetime,
+                    completion_datetime
                 ]
             )
-        print(f"{num_orders} generated")
+    print(f"{num_orders} generated")
+
     return dict_oid_bid
 
 
@@ -187,7 +189,7 @@ def gen_purchases(
             if completed_status == "true":
                 completion_datetime = fake.date_time()
             else:
-                completion_datetime = ''
+                completion_datetime = None
 
             if oid not in dict_oid_pid:
                 dict_oid_pid[oid] = []
@@ -201,12 +203,28 @@ def gen_purchases(
                 dict_sid_bid[sid] = []
             dict_sid_bid[sid].append(bid)
 
-            writer.writerow(
-                [oid, pid, sid, price, quantity, completed_status, completion_datetime]
-            )
-        print(f"{num_purchases} generated")
+            writer.writerow([oid, pid, sid, price, quantity, completed_status, completion_datetime])
+
     purchase_dicts = [dict_oid_pid, dict_pid_bid, dict_sid_bid]
+
+    print(f"{num_purchases} generated")
     return purchase_dicts
+
+""" def remove_quotes_purchases():
+    with open('Purchases_quotes.csv', 'r') as input:
+        with open('Purhcases.csv', 'a', newline='') as f:
+            output = csv.writer(f, dialect='unix', delimiter=',', quoting=csv.QUOTE_NONE, escapechar='|')
+            for row in input:
+                output.writerow(row.replace('\"\"','').split(','))
+    return
+
+def remove_quotes_orders():
+    with open('Orders_quotes.csv', 'r') as input:
+        with open('Orders.csv', 'a', newline='') as f:
+            output = csv.writer(f, dialect='unix', delimiter=',', quoting=csv.QUOTE_NONE, escapechar='|')
+            for row in input:
+                output.writerow(row.replace('\"\"','').split(','))
+    return """
 
 
 def gen_inventory(available_pids):
@@ -344,3 +362,5 @@ dict_sid_bid = purchase_dicts[2]
 gen_cart(num_carted_products, num_user_carts, dict_pid_sid, available_pids)
 gen_prod_reviews(num_prod_reviews, dict_pid_bid)
 gen_reviews_sellers(num_seller_reviews, dict_sid_bid)
+""" remove_quotes_orders()
+remove_quotes_purchases() """
