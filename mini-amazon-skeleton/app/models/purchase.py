@@ -50,19 +50,19 @@ WHERE id = :id
         #    quantity_check = " AND '%s %s' IN sellersList" % (seller_firstname, seller_lastname)
         # "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) " 
         query = "WITH subquery AS (" \
-                    "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price*quantity) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.completion_datetime " \
+                    "SELECT oid, o.bid, sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(price*quantity) AS total_price, SUM(quantity) AS total_quantity, o.completed_status, o.placed_datetime " \
                     "FROM Purchases AS p, Orders AS o, Users AS u " \
                     "WHERE o.bid = :uid " \
                         "AND o.id = p.oid " \
                         "AND u.id = sid " \
-                        "AND ( ( o.completion_datetime >= :start_date AND o.completion_datetime <= :end_date ) OR o.completion_datetime IS NULL )" \
+                        "AND ( ( o.placed_datetime >= :start_date AND o.placed_datetime <= :end_date ) OR o.placed_datetime IS NULL )" \
                         "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) "\
-                "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.completion_datetime ) "\
-                "SELECT oid, bid, ARRAY_AGG(sid) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, completed_status, completion_datetime "\
+                "GROUP BY oid, o.bid, sid, u.firstname, u.lastname, o.completed_status, o.placed_datetime ) "\
+                "SELECT oid, bid, ARRAY_AGG(sid) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, completed_status, placed_datetime "\
                 "FROM subquery " \
-                "GROUP BY oid, bid, completed_status, completion_datetime "\
+                "GROUP BY oid, bid, completed_status, placed_datetime "\
                 "%s " % (quantity_check) + \
-                "ORDER BY completion_datetime DESC "
+                "ORDER BY placed_datetime DESC "
         rows = app.db.execute(query,
                               uid=uid,
                               start_date=start_date,
