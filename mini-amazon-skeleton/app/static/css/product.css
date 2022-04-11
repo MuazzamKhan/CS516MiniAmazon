@@ -31,6 +31,7 @@ html, body {
   .left-column img {
     width: 50%;
     position: absolute;
+    margin-top: 130px;
     left: 0;
     top: 0;
   }
