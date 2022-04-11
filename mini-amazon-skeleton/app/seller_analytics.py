@@ -11,22 +11,13 @@ from .models.seller_analytics import Product_Rank, Category_Rank, Inventory_Anal
 from flask import Blueprint
 bp = Blueprint('seller_analytics', __name__)
 
-@bp.route('/seller-analytics/<sid>', methods=['GET'])
+@bp.route('/seller-product-analytics/<sid>', methods=['GET'])
 def sellerAnalytics(sid):
     top_products = Product_Rank.top_three_products(sid)
     bottom_products = Product_Rank.bottom_three_products(sid)
     top_categories = Category_Rank.top_three_categories(sid)
     bottom_categories = Category_Rank.bottom_three_categories(sid)
     all_categories = Category_Rank.all_categories(sid)
-    unique_inventory = Inventory_Analytics.calc_unique_items(sid)
-    total_inventory = Inventory_Analytics.calc_total_quantity(sid)
-    avg_price_inventory = Inventory_Analytics.calc_average_price(sid)
-    avg_seller_rating = Seller_Review_Analytics.avg_seller_rating(sid)
-    num_seller_reviews = Seller_Review_Analytics.count_reviews(sid)
-    seller_ratings_breakdown = Seller_Review_Analytics.seller_ratings_breakdown(sid)
-    overall_product_rating = Product_Review_Analytics.overall_product_rating(sid)
-    num_product_reviews = Product_Review_Analytics.count_reviews(sid)
-    product_ratings_breakdown = Product_Review_Analytics.product_ratings_breakdown(sid)
     return render_template("seller_analytics.html", 
     top_products=top_products, 
     bottom_products=bottom_products, 
@@ -35,9 +26,17 @@ def sellerAnalytics(sid):
     all_categories = all_categories,
     all_categories_x = [row[0] for row in all_categories],
     all_categories_y = [row[1] for row in all_categories],
-    total_inventory=total_inventory, 
-    unique_inventory=unique_inventory, 
-    avg_price_inventory=avg_price_inventory,
+    sid=sid)
+
+@bp.route('/seller-review-analytics/<sid>', methods=['GET'])
+def sellerReviewAnalytics(sid):
+    avg_seller_rating = Seller_Review_Analytics.avg_seller_rating(sid)
+    num_seller_reviews = Seller_Review_Analytics.count_reviews(sid)
+    seller_ratings_breakdown = Seller_Review_Analytics.seller_ratings_breakdown(sid)
+    overall_product_rating = Product_Review_Analytics.overall_product_rating(sid)
+    num_product_reviews = Product_Review_Analytics.count_reviews(sid)
+    product_ratings_breakdown = Product_Review_Analytics.product_ratings_breakdown(sid)
+    return render_template("seller_review_analytics.html",
     avg_seller_rating=avg_seller_rating,
     num_seller_reviews = num_seller_reviews,
     seller_ratings_breakdown = seller_ratings_breakdown,

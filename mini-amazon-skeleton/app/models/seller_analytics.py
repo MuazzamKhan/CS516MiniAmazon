@@ -142,11 +142,11 @@ class Inventory_Analytics:
 
 
     @staticmethod
-    def inventory_low(pid, sid):
+    def inventory_level(sid):
         rows = app.db.execute('''
         SELECT quantity
         FROM Inventory
-        WHERE pid=:pid AND sid=:sid
+        WHERE sid=:sid
         ''',
         pid=pid,
         sid=sid)
@@ -203,6 +203,7 @@ class Seller_Review_Analytics:
         FROM Reviews_sellers
         WHERE sid=:sid
         GROUP BY rating
+        ORDER BY rating ASC
         ''',
         sid = sid)
 
@@ -259,6 +260,7 @@ class Product_Review_Analytics:
         AND INV.pid = PROD.id
         AND INV.sid=:sid
         GROUP BY REV.pid, PROD.name
+        ORDER BY REV.pid ASC
         ''',
         sid=sid)
 

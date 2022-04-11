@@ -10,9 +10,9 @@
 <form action="" method="post" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   <p>
-    {{ form.pid.label }}<br/>
-    {{ form.pid(size=32) }}<br/>
-    {% for error in form.pid.errors %}
+    {{ form.confirm.label }}<br/>
+    {{ form.confirm() }}<br/>
+    {% for error in form.confirm.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
   </p>

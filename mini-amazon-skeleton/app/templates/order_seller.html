@@ -19,8 +19,12 @@
   <option>Toys</option>
   <option>Sports</option>
 </select>
-<br><br>
-
+<br>
+<div>
+  <a id="search-orders-button" href="{{ url_for('order.orderSearch', sid=current_user.id) }}" type="button" class="btn btn-dark">Advanced Search</a>
+  <a id="show-all-button" href="{{ url_for('order.orderSeller', sid=current_user.id) }}" type="button" class="btn btn-dark">Show All</a>
+</div>
+<br>
 <p>Click on column name to sort</p>
 <table class='table table-hover table-bordered container', id="seller-order-table">
   <thead class="thead-dark">
@@ -44,7 +48,7 @@
         <td> {{order.id}} </td>
         <td> {{order.pid}} </td>
         <td> {{order.category}} </td>
-        <td> {{order.product_name}} </td>
+        <td><a href="{{ url_for('product.product', pid=order.pid) }}"> {{order.product_name}} </a></td>
         <td> {{order.price}} </td>
         <td> {{order.quantity}} </td>
         <td> {{order.placed_datetime}} </td>
@@ -56,13 +60,6 @@
     {% endfor %}
   </tbody>
 </table>
-
-<br>
-<div>
-  <a id="search-orders-button" href="{{ url_for('order.orderSearch', sid=current_user.id) }}" type="button" class="btn btn-dark">Advanced Search</a>
-  <a id="show-all-button" href="{{ url_for('order.orderSeller', sid=current_user.id) }}" type="button" class="btn btn-dark">Show All</a>
-</div>
-<br>
 
 
 
