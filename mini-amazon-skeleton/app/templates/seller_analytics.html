@@ -17,7 +17,7 @@
     {% for item in top_products%}
       <tr>
         <td> {{item.pid}} </td>
-        <td> {{item.product_name}} </td>
+        <td><a href="{{ url_for('product.product', pid=item.pid) }}"> {{item.product_name}} </a></td>
         <td> {{item.count}} </td>
       </tr>
     {% endfor %}
@@ -37,7 +37,7 @@
     {% for item in bottom_products%}
       <tr>
         <td> {{item.pid}} </td>
-        <td> {{item.product_name}} </td>
+        <td><a href="{{ url_for('product.product', pid=item.pid) }}"> {{item.product_name}} </a></td>
         <td> {{item.count}} </td>
       </tr>
     {% endfor %}
@@ -143,90 +143,6 @@
     });
   </script>
 </body>
-
-<h5>Inventory Summary Statistics:</h5>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-        <th scope="col">Total Stock in Inventory</th>
-        <th scope="col">Total Unique Products</th>
-        <th scope="col">Average Price in Inventory</th>
-    </tr>
-  </thead>
-  <tbody>
-        <td> {{total_inventory}} </td>
-        <td> {{unique_inventory}} </td>
-        <td> {{avg_price_inventory}} </td>
-  </tbody>
-</table>
-
-<h5>Seller Review Summary Statistics:</h5>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-        <th scope="col">Your Average Ratings</th>
-        <th scope="col">Number of Reviews Received</th>
-    </tr>
-  </thead>
-  <tbody>
-        <td> {{avg_seller_rating}} </td>
-        <td> {{num_seller_reviews}} </td>
-  </tbody>
-</table>
-
-<h5>Seller Ratings Breakdown:</h5>
-<table class='table table-hover table-bordered container', id="all-categories">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Rating</th>
-      <th scope="col">Number of Reviews with this Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for rating in seller_ratings_breakdown%}
-      <tr>
-        <td> {{rating.rating}} </td>
-        <td> {{rating.count}} </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<h5>Product Review Summary Statistics:</h5>
-<table class='table table-hover table-bordered container'>
-  <thead class="thead-dark">
-    <tr>
-        <th scope="col">Your Average Ratings</th>
-        <th scope="col">Number of Reviews Received</th>
-    </tr>
-  </thead>
-  <tbody>
-        <td> {{overall_product_rating}} </td>
-        <td> {{num_product_reviews}} </td>
-  </tbody>
-</table>
-
-<h5>Product Ratings Breakdown:</h5>
-<table class='table table-hover table-bordered container', id="all-categories">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Product ID</th>
-      <th scope="col">Product Name</th>
-      <th scope="col">Number of Reviews</th>
-      <th scope="col">Average Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for product in product_ratings_breakdown%}
-      <tr>
-        <td> {{product.pid}} </td>
-        <td> {{product.name}} </td>
-        <td> {{product.count}} </td>
-        <td> {{product.rating}} </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
 
 
 {% endblock %}

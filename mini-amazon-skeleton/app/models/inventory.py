@@ -6,19 +6,24 @@ from .seller import Seller
 
 
 class Inventory:
-    def __init__(this, pid, category, name, sid, price, quantity):
+    def __init__(this, pid, category, name, sid, price, quantity, stock):
         this.pid = pid
         this.category = category
         this.name = name
         this.sid = sid
         this.price = price
         this.quantity = quantity
+        this.stock = stock
         this.sellerName = Seller.getNameFromSid(sid)
     
     @staticmethod
     def get_item(pid, sid):
         rows = app.db.execute('''
-        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity, CASE
+            WHEN quantity < 6 THEN 'Low'
+            WHEN quantity < 20 THEN 'Moderate'
+            ELSE 'High'
+        END AS stock
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND pid=:pid
@@ -31,7 +36,11 @@ class Inventory:
     @staticmethod
     def get_with_sid(sid):
         rows = app.db.execute('''
-        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity, CASE
+            WHEN quantity < 6 THEN 'Low'
+            WHEN quantity < 20 THEN 'Moderate'
+            ELSE 'High'
+        END AS stock
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND inv.sid=:sid
@@ -43,7 +52,11 @@ class Inventory:
     @staticmethod
     def get_with_pid(pid):
         rows = app.db.execute('''
-        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity, CASE
+            WHEN quantity < 6 THEN 'Low'
+            WHEN quantity < 20 THEN 'Moderate'
+            ELSE 'High'
+        END AS stock
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND pid=:pid
@@ -54,7 +67,11 @@ class Inventory:
     @staticmethod
     def get_with_price(floor, ceiling):
         rows = app.db.execute('''
-        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity, CASE
+            WHEN quantity < 6 THEN 'Low'
+            WHEN quantity < 20 THEN 'Moderate'
+            ELSE 'High'
+        END AS stock
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND price>=:floor AND price<=:ceiling
@@ -68,7 +85,11 @@ class Inventory:
     @staticmethod
     def get_with_quantity(floor, ceiling):
         rows = app.db.execute('''
-        SELECT pid, prod.category, prod.name AS name, sid, price, quantity
+        SELECT pid, prod.category, prod.name AS name, sid, price, quantity, CASE
+            WHEN quantity < 6 THEN 'Low'
+            WHEN quantity < 20 THEN 'Moderate'
+            ELSE 'High'
+        END AS stock
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id 
         AND quantity>=:floor AND quantity<=:ceiling
