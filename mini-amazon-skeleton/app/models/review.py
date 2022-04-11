@@ -21,7 +21,4 @@ class Review:
         WHERE pid=:pid
         ''',
         pid=pid)
-        if rows:
-            return [Review(*row) for row in rows]
-        else: 
-            None
+        return [Review(*row) for row in rows]

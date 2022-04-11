@@ -101,15 +101,18 @@ class Inventory:
 
     @staticmethod
     def add_unlisted_item(sid, name, description, category, image_file, price, quantity):
-        pid = Product.add(name, description, category, image_file)
-        rows = app.db.execute('''
-            INSERT INTO Inventory(pid, sid, price, quantity)
-            VALUES(:pid, :sid, :price, :quantity)
-        ''',
-        pid=pid,
-        sid=sid,
-        price=price,
-        quantity=quantity)
+        try:
+            pid = Product.add(name, description, category, image_file)
+            rows = app.db.execute('''
+                INSERT INTO Inventory(pid, sid, price, quantity)
+                VALUES(:pid, :sid, :price, :quantity)
+            ''',
+            pid=pid,
+            sid=sid,
+            price=price,
+            quantity=quantity)
+        except Exception:
+            rows = None
 
         if rows:
             return True
@@ -119,15 +122,18 @@ class Inventory:
     
     @staticmethod
     def add_listed_item(pid, sid, price, quantity):
-        rows = app.db.execute('''
+        try: 
+            rows = app.db.execute('''
             INSERT INTO Inventory(pid, sid, price, quantity)
             VALUES(:pid, :sid, :price, :quantity)
-        ''',
-        pid=pid,
-        sid=sid,
-        price=price,
-        quantity=quantity)
-
+            ''',
+            pid=pid,
+            sid=sid,
+            price=price,
+            quantity=quantity)
+        except Exception:
+            rows = None
+            
         if rows:
             return True
         else: 

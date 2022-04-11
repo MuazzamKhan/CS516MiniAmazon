@@ -17,7 +17,7 @@
     
         <!-- Left Column / Product Image -->
         <div class="left-column">
-        <img data-image="img" class = "active" src={{product.image_file}} alt="No image available">
+        <img data-image="img" class = "active" src={{product.image_file}} onerror="this.src='../static/images/{{product.image_file}}'" alt="No image available">
         </div>
     
     

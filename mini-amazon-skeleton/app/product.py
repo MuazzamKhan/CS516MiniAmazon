@@ -36,6 +36,8 @@ def product(pid):
             if listing.price < min_price or min_price == 0:
                 min_price = listing.price
 
+    print("reviews", reviews)
+
     return render_template("product.html", product=product, stock=stock, display_price=min_price, inventory=inventory, reviews = reviews)
 
 
