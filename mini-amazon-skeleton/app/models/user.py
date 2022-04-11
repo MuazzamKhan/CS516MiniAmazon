@@ -21,14 +21,16 @@ class User(UserMixin):
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
+        
         self.is_seller = True if is_seller is not None else False
         self.email_confirm = False if not email_confirm else True
         self.reviews = []
 
         if self.is_seller:
             for idx, _ in enumerate(title):
-                review = self.Review(title[idx], body[idx], rating[idx], uid[idx])
-                self.reviews.append(review)
+                if _ is not None:
+                    review = self.Review(title[idx], body[idx], rating[idx], uid[idx])
+                    self.reviews.append(review)
         
 
 
@@ -194,7 +196,11 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname, address, sid, email_confirm, ARRAY_AGG(title), ARRAY_AGG(body), ARRAY_AGG(rating), ARRAY_AGG(uid)
+SELECT id, email, firstname, lastname, address, 
+        CASE 
+            WHEN id in (SELECT id FROM Sellers) THEN true ELSE false
+        END AS is_seller,
+       email_confirm, ARRAY_AGG(title), ARRAY_AGG(body), ARRAY_AGG(rating), ARRAY_AGG(uid)
 FROM Users 
 LEFT JOIN Reviews_sellers ON id = sid
 WHERE id = :id

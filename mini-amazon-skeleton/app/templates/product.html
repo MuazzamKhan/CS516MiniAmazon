@@ -13,6 +13,25 @@
   </head>
 
   </body>
+        <h1 style="color:rgb(0, 0, 0)">Mini Amazon</h1>
+        <div style="color: rgb(0, 0, 0); text-align: right; margin-bottom: 25px">
+            {% if current_user.is_authenticated %}
+            <b>Hello {{current_user.firstname}}! </b>
+                <a href="{{ url_for('index.index') }}" type="button" class="btn btn-light">Home Page</a>
+                <a href="{{ url_for('cart.cart') }}" type="button" class="btn btn-light">Cart</a>
+                <a href="{{ url_for('users.balance') }}" type="button" class="btn btn-light">Balance</a>
+                <a href="{{ url_for('users.purchase_history') }}" type="button" class="btn btn-light">Purchase History</a>
+                <a href="{{ url_for('seller.seller', sid=current_user.id) }}" type="button" class="btn btn-light">Seller's Page</a>
+                <a href="{{ url_for('users.user_public_view', id=current_user.id) }}" type="button" class="btn btn-light">Public View</a>
+                <a href="{{ url_for('users.profile') }}" type="button" class="btn btn-light">Profile</a>
+                <a href="{{ url_for('users.password') }}" type="button" class="btn btn-light">Change Password</a>
+                <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
+            {% else %}
+            <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
+            {% endif %}
+        </div>
+
+        <br><br>    
     <main class="container">
     
         <!-- Left Column / Product Image -->

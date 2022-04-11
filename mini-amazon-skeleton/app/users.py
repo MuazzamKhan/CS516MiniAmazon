@@ -196,6 +196,7 @@ def profile():
                          form.address.data):
             
             if curr_user.is_seller:
+                print(curr_user.firstname)
                 if Seller.update_receive_notification(curr_user.id, form.receive_notification.data):
                     flash('Your user profile has been updated!')
                     return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller), {"Refresh": "1; url="+str(url_for('index.index'))}
@@ -383,7 +384,6 @@ def user_public_view(id):
     Public view html        
     """
     user = User.get(id)
-
     return render_template('user_public_view.html', title='Public view', user=user)
 
 
