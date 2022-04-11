@@ -21,11 +21,17 @@ class Order:
     
     @staticmethod
     def add_to_order():
+        id = app.db.execute('''
+            SELECT MAX(id)
+            FROM Orders
+        ''')[0][0]
+
         oid = app.db.execute('''
-            INSERT INTO Orders(bid, address, placed_datetime)
-            VALUES(:bid, :address, :placed_datetime)
+            INSERT INTO Orders(id, bid, address, placed_datetime)
+            VALUES(:id, :bid, :address, :placed_datetime)
             RETURNING id
         ''',
+        id=id+1,
         bid=current_user.id,
         address=current_user.address,
         placed_datetime=datetime.now()
