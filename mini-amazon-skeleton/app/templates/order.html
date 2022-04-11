@@ -24,7 +24,7 @@
         <td> {{item.id}} </td>
         <td> {{item.pid}} </td>
         <td> {{item.sid}} </td>
-        <td> {{item.product_name}} </td>
+        <td><a href="{{ url_for('product.product', pid=item.pid) }}"> {{item.product_name}} </a></td>
         <td> {{item.price}} </td>
         <td> {{item.quantity}} </td>
         <td> {{item.placed_datetime}} </td>

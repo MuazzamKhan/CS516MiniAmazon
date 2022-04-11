@@ -11,7 +11,7 @@
   {{ form.hidden_tag() }}
   <p>
     {{ form.confirm.label }}<br/>
-    {{ form.confirm(size=32) }}<br/>
+    {{ form.confirm() }}<br/>
     {% for error in form.confirm.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}

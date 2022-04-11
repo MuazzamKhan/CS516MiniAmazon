@@ -25,20 +25,20 @@ def orderSeller(sid):
     return render_template("order_seller.html", orders=orders, sid=sid)
 
 
-class ItemFufilledForm(FlaskForm):
-    confirm = StringField('Confirm that this product is fulfilled? (Y/N)')
+class ItemFulfilledForm(FlaskForm):
+    confirm = SelectField('Confirm that this product is fulfilled? (Y/N)', choices=["Yes", "No"])
     submit = SubmitField('Submit')
 
 
 @bp.route('/seller-order/item-fulfilled/<sid>/<oid>/<pid>', methods=['GET','POST'])
 def itemFulfilled(oid, sid, pid):
-    form = ItemFufilledForm()
-    confirmation = request.form.get("confirm")
+    form = ItemFulfilledForm()
+    confirmation = form.confirm.data
     #print("confirmation", confirmation)
-    if confirmation == 'N':
+    if confirmation == "No":
         flash('You indicated that this item is NOT fulfilled.')
         return redirect(url_for("order.orderSeller", sid=sid))
-    else:
+    if confirmation == "Yes":
         if form.validate_on_submit():
             Order.item_fulfilled(oid, pid)
             Order.all_fulfilled_check(oid)

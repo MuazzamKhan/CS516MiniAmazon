@@ -10,6 +10,8 @@ from .models.inventory import Inventory
 from .models.user import User
 from .models.product import Product
 from .models.seller import Seller
+from .models.seller_analytics import Product_Rank, Category_Rank, Inventory_Analytics, Seller_Review_Analytics, Product_Review_Analytics
+
 
 import os
 import app
@@ -22,7 +24,14 @@ categories = [('Books', 'Books'), ('Clothing', 'Clothing'), ('Electronics', 'Ele
 @bp.route('/inventory/<sid>', methods=['GET'])
 def inventory(sid):
     inventory = Inventory.get_with_sid(sid)
-    return render_template("inventory.html", inventory=inventory)
+    unique_inventory = Inventory_Analytics.calc_unique_items(sid)
+    total_inventory = Inventory_Analytics.calc_total_quantity(sid)
+    avg_price_inventory = Inventory_Analytics.calc_average_price(sid)
+    return render_template("inventory.html", 
+    inventory=inventory,
+    total_inventory=total_inventory, 
+    unique_inventory=unique_inventory, 
+    avg_price_inventory=avg_price_inventory)
 
 class EditInventoryForm(FlaskForm):
     price = DecimalField('Enter New Price', validators=[InputRequired(), NumberRange(min=0, message="Price must be >= $0")])
@@ -34,17 +43,8 @@ def editInventory(pid, sid):
     #print(pid)
     inventory = Inventory.get_with_pid(pid)
     form = EditInventoryForm()
-    if request.method=='POST':
-        price = float(request.form.get("price"))
-        if price < 0:
-            flash("Invalid price input")
-            return redirect(url_for('inventory.inventory'))
-        quantity = int(request.form.get("quantity"))
-        if quantity < 0:
-            flash("Invalid quantity input")
-            return redirect(url_for('inventory.inventory'))
     if form.validate_on_submit():
-        print("check 2")
+        #print("check 2")
         Inventory.edit_price(pid, sid, form.price.data)
         Inventory.edit_quantity(pid, sid, form.quantity.data)
         flash("Successfully changed price for product")
@@ -92,13 +92,18 @@ def addListedProduct(sid):
     return render_template('add_listed_product.html', title='Add Listed Product', form=form, sid=sid)
 
 class RemoveInventoryForm(FlaskForm):
-    pid = IntegerField('Reenter Product ID to confirm', validators=[InputRequired()])
+    confirm = SelectField('Confirm that you want to remove this product from inventory? (Y/N)', choices=["Yes", "No"])
     submit = SubmitField('Remove Inventory')
 
 @bp.route('/remove-inventory/<sid>/<pid>', methods=['GET','POST'])
 def removeInventory(sid, pid):
+    #print("pid", pid)
     form = RemoveInventoryForm()
-    if form.validate_on_submit():
+    confirmation = form.confirm.data
+    if confirmation == "No":
+        flash('You indicated that this item is NOT fulfilled.')
+        return redirect(url_for("inventory.inventory", sid=sid))
+    if confirmation == "Yes":
         Inventory.remove_item(sid, pid)
         flash('Successfully removed item from inventory!')
         return redirect(url_for("inventory.inventory", sid=sid))

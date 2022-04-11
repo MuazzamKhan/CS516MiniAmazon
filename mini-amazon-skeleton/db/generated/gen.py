@@ -130,7 +130,12 @@ def gen_orders(num_orders):
             address = fake.profile()["address"]
             placed_datetime = fake.date_time()
             completed_status = fake.random_element(elements=("true", "false"))
-            completion_datetime = fake.date_time()
+            
+            if completed_status == "true":
+                completion_datetime = fake.date_time()
+            else:
+                completion_datetime = ''
+
             dict_oid_bid[id] = bid
             writer.writerow(
                 [
@@ -178,7 +183,11 @@ def gen_purchases(
             price = f"{str(fake.random_int(max=1000))}.{fake.random_int(max=99):02}"
             quantity = fake.random_int(min=0, max=num_quantity)
             completed_status = fake.random_element(elements=("true", "false"))
-            completion_datetime = fake.date_time()
+            
+            if completed_status == "true":
+                completion_datetime = fake.date_time()
+            else:
+                completion_datetime = ''
 
             if oid not in dict_oid_pid:
                 dict_oid_pid[oid] = []
@@ -331,7 +340,7 @@ purchase_dicts = gen_purchases(
 dict_oid_pid = purchase_dicts[0]
 dict_pid_bid = purchase_dicts[1]
 dict_sid_bid = purchase_dicts[2]
-print(dict_pid_bid)
+#print(dict_pid_bid)
 gen_cart(num_carted_products, num_user_carts, dict_pid_sid, available_pids)
 gen_prod_reviews(num_prod_reviews, dict_pid_bid)
 gen_reviews_sellers(num_seller_reviews, dict_sid_bid)
