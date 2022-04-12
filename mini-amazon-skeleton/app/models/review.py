@@ -21,4 +21,33 @@ class Review:
         WHERE pid=:pid
         ''',
         pid=pid)
-        return [Review(*row) for row in rows]
+        if rows:
+            return [Review(*row) for row in rows]
+        else: 
+            None
+
+    @staticmethod
+    def get_reviews_with_uid(uid):
+        rows = app.db.execute('''
+        SELECT display_name, pid, uid, rating, title, body
+        FROM Reviews 
+        WHERE uid=:uid
+        ''',
+        uid=uid)
+        if rows:
+            return [Review(*row) for row in rows]
+        else: 
+            None
+
+    @staticmethod
+    def gets_award(uid):
+        rows = app.db.execute('''
+        SELECT display_name, pid, uid, rating, title, body, 
+        FROM Reviews 
+        WHERE pid=:pid
+        ''',
+        pid=pid)
+        if rows:
+            return [Review(*row) for row in rows]
+        else: 
+            None       
