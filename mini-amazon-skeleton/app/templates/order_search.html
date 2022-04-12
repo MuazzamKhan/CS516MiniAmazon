@@ -10,20 +10,6 @@
 <form action="" method="post" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   <p>
-    {{ form.product_name.label }}<br/>
-    {{ form.product_name(size=32) }}<br/>
-    {% for error in form.product_name.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
-    {{ form.pid.label }}<br/>
-    {{ form.pid(size=64) }}<br/>
-    {% for error in form.pid.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-  </p>
-  <p>
     {{ form.oid.label }}<br/>
     {{ form.oid(size=64) }}<br/>
     {% for error in form.oid.errors %}

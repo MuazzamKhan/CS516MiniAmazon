@@ -6,7 +6,7 @@ from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import InputRequired, NumberRange, Length
 from flask_babel import _, lazy_gettext as _l
 
-from .models.order import Order
+from .models.order import Order, OrderSummary
 from .models.user import User
 
 from flask import Blueprint
@@ -21,8 +21,13 @@ def orderBuyer(bid, oid):
 
 @bp.route('/seller-order/<sid>', methods=['GET'])
 def orderSeller(sid):
-    orders = Order.get_by_sid(sid)
+    orders = OrderSummary.get_by_sid(sid)
     return render_template("order_seller.html", orders=orders, sid=sid)
+
+@bp.route('/seller-order-details/<sid>/<oid>', methods=['GET'])
+def orderSellerDetails(sid, oid):
+    orders = Order.get_by_sid_oid(sid, oid)
+    return render_template("order_seller_detailed.html", orders=orders, sid=sid, oid=oid)
 
 
 class ItemFulfilledForm(FlaskForm):
@@ -43,10 +48,29 @@ def itemFulfilled(oid, sid, pid):
             Order.item_fulfilled(oid, pid)
             Order.all_fulfilled_check(oid)
             flash('You indicated that this item is SUCCESSFULLY fulfilled.')
-            return redirect(url_for("order.orderSeller", sid = sid))
+            return redirect(url_for("order.orderSellerDetails", sid = sid, oid=oid))
     return render_template('item_fulfilled.html', title='Item Fulfilled', form=form, sid=sid, oid=oid, pid=pid)
 
 class SearchForm(FlaskForm):
+    oid = StringField('Order ID (Enter \'NA\' if field not needed)')
+    address = StringField('Address (Enter \'NA\' if field not needed)')
+    time_placed_start = DateTimeLocalField('Time Placed - From', format="%Y-%m-%dT%H:%M")
+    time_placed_end = DateTimeLocalField('Time Placed - To', format="%Y-%m-%dT%H:%M")
+    submit = SubmitField('Submit')
+
+@bp.route('/seller-order/search/<sid>', methods=['GET', 'Post'])
+def orderSearch(sid):
+    form = SearchForm()
+    if form.validate_on_submit():
+        orders = Order.get_by_search(sid, form.time_placed_start.data, form.time_placed_end.data, form.oid.data, form.address.data)
+        if orders == None:
+            return "Error! No orders for your search criteria exists!"
+        if orders == "oid input error":
+            return "Error in Order ID input!"
+        return render_template("order_seller.html", orders=orders, sid=sid)
+    return render_template("order_search.html", title='Search Options', form=form, sid=sid)
+
+""" class SearchForm(FlaskForm):
     product_name = StringField('Product Name (Enter \'NA\' if field not needed)')
     pid = StringField('Product ID (Enter \'NA\' if field not needed)')
     oid = StringField('Order ID (Enter \'NA\' if field not needed)')
@@ -68,3 +92,4 @@ def orderSearch(sid):
             return "Error in Order ID input!"
         return render_template("order_seller.html", orders=orders, sid=sid)
     return render_template("order_search.html", title='Search Options', form=form, sid=sid)
+ """
