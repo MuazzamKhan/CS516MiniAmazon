@@ -22,3 +22,23 @@ class Review:
         ''',
         pid=pid)
         return [Review(*row) for row in rows]
+
+    @staticmethod
+    def get_reviews_with_uid(uid):
+        rows = app.db.execute('''
+        SELECT display_name, pid, uid, rating, title, body
+        FROM Reviews 
+        WHERE uid=:uid
+        ''',
+        uid=uid)
+        return [Review(*row) for row in rows]
+
+    @staticmethod
+    def gets_award(uid):
+        rows = app.db.execute('''
+        SELECT display_name, pid, uid, rating, title, body, 
+        FROM Reviews 
+        WHERE pid=:pid
+        ''',
+        pid=pid)
+        return [Review(*row) for row in rows]
