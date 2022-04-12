@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>Your Orders as a Seller:</h2>
+<h2>Detailed Order Details:</h2>
 <br>
 <h5>Search by Product Name:</h5>
 <input type="text" id="prodname" onkeyup="searchLookup()" placeholder="Search product.." title="Type in a product">
@@ -55,8 +55,12 @@
       </tr>
     {% endfor %}
   </tbody>
-</table>
 
+</table>
+<br>
+<div>
+  <a href="{{ url_for('order.orderSeller', sid=current_user.id) }}">Back to Seller's Orders Page</a>
+</div>
 
 
 <script>

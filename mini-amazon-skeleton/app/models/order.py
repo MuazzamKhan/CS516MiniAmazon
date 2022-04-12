@@ -97,64 +97,6 @@ class Order:
 
 
     @staticmethod
-    def get_by_search(sid, time_placed_start, time_placed_end, oid, address):
-
-        if oid != 'NA' and oid.isnumeric() == False:
-            return "oid input error"
-        elif oid == 'NA':
-            oid = None
-        else:
-            oid = int(oid)
-
-        if address == 'NA':
-            address = '%'
-        
-        if oid is None:
-            rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
-            FROM Orders ORD, Purchases PUR, Products PROD
-            WHERE ORD.id = PUR.oid 
-            AND PUR.pid = PROD.id
-            AND PUR.sid=:sid
-            AND LOWER(ORD.address) LIKE :address
-            AND ORD.placed_datetime >= :time_placed_start
-            AND ORD.placed_datetime <= :time_placed_end
-            ORDER BY ORD.placed_datetime DESC
-            ''',
-            sid=sid,
-            time_placed_start=time_placed_start,
-            time_placed_end=time_placed_end,
-            address=address)
-            if rows:
-                return [Order(*row) for row in rows]
-            else: 
-                return None
-        
-        if oid is not None:
-            rows = app.db.execute('''
-            SELECT ORD.id, ORD.bid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, ORD.placed_datetime, PUR.completed_status, PUR.completion_datetime, ORD.address
-            FROM Orders ORD, Purchases PUR, Products PROD
-            WHERE ORD.id = PUR.oid 
-            AND PUR.pid = PROD.id
-            AND PUR.sid=:sid
-            AND LOWER(PROD.name) LIKE :product_name
-            AND ORD.id =:oid
-            AND LOWER(ORD.address) LIKE :address
-            AND ORD.placed_datetime >= :time_placed_start
-            AND ORD.placed_datetime <= :time_placed_end
-            ORDER BY ORD.placed_datetime DESC
-            ''',
-            sid=sid,
-            time_placed_start=time_placed_start,
-            time_placed_end=time_placed_end,
-            oid=oid,
-            address=address)
-            if rows:
-                return [Order(*row) for row in rows]
-            else: 
-                return None
-
-    @staticmethod
     def get_by_sid_status(sid, completed_status):
         rows = app.db.execute('''
         SELECT PUR.id, PUR.uid, PUR.pid, PUR.sid, PROD.category, PROD.name AS product_name, PUR.price, PUR.quantity, PUR.placed_datetime, PUR.completed_status, PUR.completion_datetime, BUY.address
@@ -283,6 +225,83 @@ class OrderSummary:
         sid=sid)
         return [OrderSummary(*row) for row in rows]
 
+    
+    @staticmethod
+    def get_by_search(sid, time_placed_start, time_placed_end, oid, address):
+
+        if oid != 'NA' and oid.isnumeric() == False:
+            return "oid input error"
+        elif oid == 'NA':
+            oid = None
+        else:
+            oid = int(oid)
+
+        if address == 'NA':
+            address = '%'
+        
+        if oid is None:
+            rows = app.db.execute('''
+            WITH PUR AS (
+                SELECT oid, pid, sid, price, quantity, completion_datetime, CASE
+                    WHEN completed_status IS TRUE THEN 1
+                    ELSE 0
+                END AS status
+                FROM Purchases
+            )
+            SELECT ORD.id, ORD.bid, PUR.sid, COUNT(PUR.pid), ORD.placed_datetime, ORD.address, CASE
+                WHEN SUM(PUR.status) = COUNT(PUR.pid) THEN TRUE
+                ELSE FALSE
+            END AS status
+            FROM Orders ORD, PUR
+            WHERE ORD.id = PUR.oid 
+            AND PUR.sid=:sid
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            GROUP BY ORD.id, ORD.bid, PUR.sid, ORD.placed_datetime, ORD.address
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            address=address)
+            if rows:
+                return [OrderSummary(*row) for row in rows]
+            else: 
+                return None
+        
+        if oid is not None:
+            rows = app.db.execute('''
+            WITH PUR AS (
+                SELECT oid, pid, sid, price, quantity, completion_datetime, CASE
+                    WHEN completed_status IS TRUE THEN 1
+                    ELSE 0
+                END AS status
+                FROM Purchases
+            )
+            SELECT ORD.id, ORD.bid, PUR.sid, COUNT(PUR.pid), ORD.placed_datetime, ORD.address, CASE
+                WHEN SUM(PUR.status) = COUNT(PUR.pid) THEN TRUE
+                ELSE FALSE
+            END AS status
+            FROM Orders ORD, PUR
+            WHERE ORD.id = PUR.oid 
+            AND PUR.sid=:sid
+            AND ORD.id=:oid
+            AND LOWER(ORD.address) LIKE :address
+            AND ORD.placed_datetime >= :time_placed_start
+            AND ORD.placed_datetime <= :time_placed_end
+            GROUP BY ORD.id, ORD.bid, PUR.sid, ORD.placed_datetime, ORD.address
+            ORDER BY ORD.placed_datetime DESC
+            ''',
+            sid=sid,
+            oid=oid,
+            time_placed_start=time_placed_start,
+            time_placed_end=time_placed_end,
+            address=address)
+            if rows:
+                return [OrderSummary(*row) for row in rows]
+            else: 
+                return None
 
 
 """     @staticmethod
