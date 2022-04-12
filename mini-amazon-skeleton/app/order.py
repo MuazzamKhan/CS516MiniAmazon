@@ -62,7 +62,7 @@ class SearchForm(FlaskForm):
 def orderSearch(sid):
     form = SearchForm()
     if form.validate_on_submit():
-        orders = Order.get_by_search(sid, form.time_placed_start.data, form.time_placed_end.data, form.oid.data, form.address.data)
+        orders = OrderSummary.get_by_search(sid, form.time_placed_start.data, form.time_placed_end.data, form.oid.data, form.address.data)
         if orders == None:
             return "Error! No orders for your search criteria exists!"
         if orders == "oid input error":

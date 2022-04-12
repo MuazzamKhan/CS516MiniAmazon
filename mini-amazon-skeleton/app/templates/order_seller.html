@@ -2,13 +2,13 @@
 
 {% block content %}
 
-<h2>Your Orders as a Seller:</h2>
+<h2>Detailed Order Details for Seller:</h2>
 <br>
 <h5>Search by Order ID:</h5>
-<input type="text" id="oid" onkeyup="searchLookup()" placeholder="Search order id.." title="Type in Order ID">
+<input type="text" id="orderid" onkeyup="searchLookup()" placeholder="Search order id.." title="Type in Order ID">
 <br><br>
 <h5>Search by Fulfilment Status:</h5>
-<select id="status" onchange="searchLookup()" class='form-control' placeholder="Search fulfilment status..." title="Enter Fulfilment Status">
+<select id="fulfillstatus" onchange="searchLookup()" class='form-control' placeholder="Search fulfilment status..." title="Enter Fulfilment Status">
   <option value="" selected>All</option>
   <option>True</option>
   <option>False</option>
@@ -19,6 +19,7 @@
   <a id="show-all-button" href="{{ url_for('order.orderSeller', sid=current_user.id) }}" type="button" class="btn btn-dark">Show All</a>
 </div>
 <br>
+
 <p>Click on column name to sort</p>
 <table class='table table-hover table-bordered container', id="seller-order-table">
   <thead class="thead-dark">
@@ -41,29 +42,28 @@
         <td> {{order.placed_datetime}} </td>
         <td> {{order.address}} </td>
         <td> {{order.status}} </td>
-        <td><a id="details-button" href="{{url_for('order.orderSellerDetails', oid=order.id, sid=order.sid)}}" type="button" class="btn btn-light btn-block">More Details</a></td>
+        <td><a id="details-button" href="{{url_for('order.orderSellerDetails', oid=order.id, sid=order.sid)}}" type="button" class="btn btn-light btn-block">Item Fulfilled</a></td>
       </tr>
     {% endfor %}
   </tbody>
+
 </table>
-
-
-
 <script>
 function searchLookup() {
     var input, table, tr, name, filter, category, filter2, i, txtValue;
-    searchInput = document.getElementById("oid");
-    filter = searchInput.value;
-    input = document.getElementById("status");
+    searchInput = document.getElementById("orderid");
+    filter = searchInput.value.toUpperCase();
+    input = document.getElementById("fulfillstatus");
     filter2 = input.value.toUpperCase();
     table = document.getElementById("seller-order-table");
     tr = table.getElementsByTagName("tr");
     for (i = 0; i < tr.length; i++) {
-      oid = tr[i].getElementsByTagName("td")[0];
-      status = tr[i].getElementsByTagName("td")[5];
-      if (oid) {
-        txtValue = oid.textContent || oid.innerText;
-        if (txtValue.indexOf(filter) > -1 && status.innerHTML.toUpperCase().indexOf(filter2) > -1) {
+      name = tr[i].getElementsByTagName("td")[0];
+      category = tr[i].getElementsByTagName("td")[5];
+      if (name) {
+        txtValue = name.textContent || name.innerText;
+        console.log(category.innerHTML)
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && category.innerHTML.toUpperCase().indexOf(filter2) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
