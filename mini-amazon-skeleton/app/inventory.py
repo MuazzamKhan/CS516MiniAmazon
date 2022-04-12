@@ -71,11 +71,14 @@ def addUnlistedProduct(sid):
         image_path = os.path.join('app/static/images/', filename)
         f.save(image_path)
         #image_path2 = "../static/images/" + filename
+        #print("image path", image_path)
         new_item = Inventory.add_unlisted_item(sid, form.name.data, form.description.data, form.category.data, filename, form.price.data, form.quantity.data)
 
+        #print(new_item)
+        
         if new_item is False:
-            flash('Error adding to inventory: Image file uploaded is likely not valid.')
-            return redirect(url_for('inventory.addListedProduct', sid=sid))
+            flash('Error adding to inventory!')
+            return redirect(url_for('inventory.addUnlistedProduct', sid=sid))
         
         flash('Successfully added new unlisted item to inventory!')
         return redirect(url_for("inventory.addUnlistedProduct", sid=sid))
