@@ -44,6 +44,7 @@ class Inventory:
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND inv.sid=:sid
+        ORDER BY pid
         ''',
         sid=sid)
         return [Inventory(*row) for row in rows]

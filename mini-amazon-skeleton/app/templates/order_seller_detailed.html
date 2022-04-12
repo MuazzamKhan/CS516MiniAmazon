@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Your Orders as a Seller:</h2>
+<br>
+<h5>Search by Product Name:</h5>
+<input type="text" id="prodname" onkeyup="searchLookup()" placeholder="Search product.." title="Type in a product">
+<br><br>
+<h5>Search by Category:</h5>
+<select id="category" onchange="searchLookup()" class='form-control' placeholder="Search category..." title="Enter Category">
+  <option value="" selected>All</option>
+  <option>Books</option>
+  <option>Clothing</option>
+  <option>Electronics</option>
+  <option>Food</option>
+  <option>Home</option>
+  <option>Media</option>
+  <option>Toys</option>
+  <option>Sports</option>
+</select>
+<br>
+
+<p>Click on column name to sort</p>
+<table class='table table-hover table-bordered container', id="seller-order-table">
+  <thead class="thead-dark">
+    <tr class = "header">
+      <th onclick="sortColumn(0)" scope="col">Order ID</th>
+      <th onclick="sortColumn(1)" scope="col">Product ID</th>
+      <th onclick="sortColumn(2)" scope="col">Category</th>
+      <th onclick="sortColumn(3)" scope="col">Product Name</th>
+      <th onclick="sortColumn(4)" scope="col">Price</th>
+      <th onclick="sortColumn(5)" scope="col">Quantity</th>
+      <th onclick="sortColumn(6)" scope="col">Time Placed</th>
+      <th onclick="sortColumn(7)" scope="col">Fulfilled?</th>
+      <th onclick="sortColumn(8)" scope="col">Time Fulfilled</th>
+      <th onclick="sortColumn(9)" scope="col">Address</th>
+      <th onclick="sortColumn(10)" scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders%}
+      <tr>
+        <td> {{order.id}} </td>
+        <td> {{order.pid}} </td>
+        <td> {{order.category}} </td>
+        <td><a href="{{ url_for('product.product', pid=order.pid) }}"> {{order.product_name}} </a></td>
+        <td> {{order.price}} </td>
+        <td> {{order.quantity}} </td>
+        <td> {{order.placed_datetime}} </td>
+        <td> {{order.completed_status}} </td>
+        <td> {{order.completion_datetime}} </td>
+        <td> {{order.address}} </td>
+        <td><a id="fulfill-button" href="{{url_for('order.itemFulfilled', oid=order.id, pid=order.pid, sid=order.sid)}}" type="button" class="btn btn-light btn-block">Item Fulfilled</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+<script>
+function searchLookup() {
+    var input, table, tr, name, filter, category, filter2, i, txtValue;
+    searchInput = document.getElementById("prodname");
+    filter = searchInput.value.toUpperCase();
+    input = document.getElementById("category");
+    filter2 = input.value.toUpperCase();
+    table = document.getElementById("seller-order-table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      name = tr[i].getElementsByTagName("td")[3];
+      category = tr[i].getElementsByTagName("td")[2];
+      if (name) {
+        txtValue = name.textContent || name.innerText;
+        console.log(category.innerHTML)
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && category.innerHTML.toUpperCase().indexOf(filter2) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }       
+    }
+}
+
+function sortColumn(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("seller-order-table");
+  switching = true;
+  dir = "asc";
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount ++; 
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+
+{% endblock %}
