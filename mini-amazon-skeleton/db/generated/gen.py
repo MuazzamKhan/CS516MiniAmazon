@@ -4,6 +4,7 @@ import csv
 from faker import Faker
 import random
 import pandas as pd
+import numpy as np
 
 num_users = 100
 num_products = 2000
@@ -343,6 +344,20 @@ def gen_reviews_sellers(num_seller_reviews, dict_sid_bid):
             writer.writerow([display_name, sid, bid, rating, title, body, submitted_ts])
     print("...Sellers Reviews done!")
 
+def gen_upvotes(num_users, num_products):
+    reviews = pd.read_csv('Reviews.csv', usecols = [1,2], names = ['pid', 'uid'])
+    review_parts = []
+    
+    for _ in range(25):
+        reviews['upvoteid'] = np.random.choice(num_users, reviews.shape[0])
+        review_parts.append(reviews)
+        reviews = reviews.drop('upvoteid', axis = 1)
+    
+    upvotes = pd.concat(review_parts).reset_index(drop = True)
+    upvotes = upvotes.drop_duplicates(subset = ['pid', 'uid', 'upvoteid'])
+    upvotes.to_csv('Upvotes.csv', header = False, index = False)
+    
+
 
 gen_users(num_users)
 available_pids = gen_products(num_products)
@@ -364,3 +379,5 @@ gen_prod_reviews(num_prod_reviews, dict_pid_bid)
 gen_reviews_sellers(num_seller_reviews, dict_sid_bid)
 """ remove_quotes_orders()
 remove_quotes_purchases() """
+
+gen_upvotes(num_users, num_products)

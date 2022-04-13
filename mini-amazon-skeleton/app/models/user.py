@@ -243,3 +243,14 @@ WHERE id = :id
 
             return id if rows else None
 
+    @staticmethod
+    def upvote_review(productid, userid, upvoteid):
+            rows = app.db.execute("""
+                    INSERT INTO Upvotes(productid, userid, upvoteid)
+                    VALUES(:productid, :userid, :upvoteid)
+                """,
+                        productid=productid,
+                        userid=userid,
+                        upvoteid=upvoteid)
+            
+            return userid

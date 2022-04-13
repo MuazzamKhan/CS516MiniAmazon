@@ -85,3 +85,9 @@ CREATE TABLE Reviews_sellers (
     submitted_ts TIMESTAMP NOT NULL,
     PRIMARY KEY(sid, uid)
 );
+
+CREATE TABLE Upvotes (
+    productid INT NOT NULL,
+    userid INT NOT NULL,
+    upvoteid INT NOT NULL
+);
