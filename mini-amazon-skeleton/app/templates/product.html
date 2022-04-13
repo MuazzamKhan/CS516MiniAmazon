@@ -122,11 +122,24 @@
             {% endif %}
         {% endfor %}
         </br>
-        <b><u>{{review.title}}</u></b> (review  by:  {{review.display_name}} &#x1F3C5;)</br>
+
+        
+        {% if review.reviewcnt > 14 %} 
+            <b><u>{{review.title}}</u></b> (review  by:  {{review.display_name}} &#x1F3C5;)</br>
+        {% endif %}
+        {% if review.reviewcnt <= 14 %} 
+        <b><u>{{review.title}}</u></b> (review  by:  {{review.display_name}})</br>
+        {% endif %}
+
         {{review.body}} </br>
         <br/></br>
-        <i>Did you find this review helpful?</i> </br>
-        &#x1f44d;
+        {{review.cnt}} people found this review helpful.  </br>
+        <br/></br>
+
+                {% if current_user.is_authenticated %}
+                        <i>Did you find this review helpful?</i> </br>
+                <a href="{{ url_for('users.upvote_review', pid = product.id, uid = review.uid) }}" type="button" class="btn btn-light">Upvote</a>
+                {% endif %}
         
         <br/></br>
     {% endfor %}

@@ -24,3 +24,5 @@ SELECT pg_catalog.setval('public.products_id_seq',
 \COPY Reviews FROM '../generated/Reviews.csv' WITH DELIMITER ',' NULL '' CSV
 
 \COPY Reviews_sellers FROM '../generated/Reviews_sellers.csv' WITH DELIMITER ',' NULL '' CSV
+
+\COPY Upvotes FROM '../generated/Upvotes.csv' WITH DELIMITER ',' NULL '' CSV

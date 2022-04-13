@@ -10,6 +10,7 @@ from .models.user import User
 from .models.seller import Seller
 from .models.purchase import Purchase
 from .models.product import Product
+from .models.inventory import Inventory
 from .models.review import Review
 
 from .order import orderBuyer
@@ -266,8 +267,34 @@ def write_review(pid):
     if form.validate_on_submit():
         if User.leave_review(form.display_name.data, curr_user.id, pid, form.rating.data, form.title.data, form.body.data):
             flash('Thanks for leaving a review!')
-            return render_template('leave_review.html', title='Leave a Review', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
+            return render_template('leave_review.html', title='Leave a Review', form=form), {"Refresh": "1; url="+str(url_for('product.product', pid = pid))}
     return render_template('leave_review.html', title='Leave a Review', form=form)
+
+
+@bp.route('/product/<pid>/<uid>', methods=['GET'])
+def upvote_review(pid, uid):
+    global curr_user
+    User.upvote_review(int(pid), int(uid), curr_user.id)
+    product = Product.get(pid)
+    if product == None:
+        return "Error! No such product exists!"
+
+    inventory = Inventory.get_with_pid(product.id)
+    
+    reviews = Review.get_reviews_with_pid(product.id)
+
+    stock = "In Stock"
+    min_price = 0
+
+    if inventory is None:
+        stock = "Out of Stock"
+    else:
+        for listing in inventory:
+            if listing.price < min_price or min_price == 0:
+                min_price = listing.price
+
+    #return render_template("product.html", product=product, stock=stock, display_price=min_price, inventory=inventory, reviews = reviews)
+    return (''), 204
 
 
 @bp.route('/purchase_history', methods=['GET', 'POST'])
