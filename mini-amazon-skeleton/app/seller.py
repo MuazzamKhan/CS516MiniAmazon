@@ -24,3 +24,25 @@ def seller(sid):
     else:
         reviews = Review.get_reviews_with_uid(sid)
         return render_template("seller_page.html", sid=sid, reviews=reviews)
+
+class beSellerForm(FlaskForm):
+    confirm = SelectField('Do you want to be a seller? (Y/N)', choices=["Yes", "No"])
+    submit = SubmitField('Submit')
+
+@bp.route('/be-seller/<uid>', methods=['GET', 'POST'])
+def beSeller(uid):
+    form = beSellerForm()
+    confirmation = form.confirm.data
+    if form.validate_on_submit():
+        if confirmation == "No":
+            return redirect(url_for("seller.beSeller", uid=uid))
+        else:
+            beSeller = Seller.beSeller(uid)
+            if beSeller == False:
+                flash("You are already a seller!")
+                return redirect(url_for("seller.beSeller", uid=uid))
+            flash("You are now a seller!")
+            return redirect(url_for("seller.beSeller", uid=uid))
+    return render_template("be_seller.html", form=form, uid=uid)
+
+

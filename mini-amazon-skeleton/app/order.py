@@ -40,11 +40,11 @@ def itemFulfilled(oid, sid, pid):
     form = ItemFulfilledForm()
     confirmation = form.confirm.data
     #print("confirmation", confirmation)
-    if confirmation == "No":
-        flash('You indicated that this item is NOT fulfilled.')
-        return redirect(url_for("order.itemFulfilled", sid = sid, oid=oid, pid=pid))
-    if confirmation == "Yes":
-        if form.validate_on_submit():
+    if form.validate_on_submit():
+        if confirmation == "No":
+            flash('You indicated that this item is NOT fulfilled.')
+            return redirect(url_for("order.itemFulfilled", sid = sid, oid=oid, pid=pid))
+        if confirmation == "Yes":
             Order.item_fulfilled(oid, pid)
             Order.all_fulfilled_check(oid)
             flash('You indicated that this item is SUCCESSFULLY fulfilled.')
