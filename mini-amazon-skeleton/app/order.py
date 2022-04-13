@@ -42,13 +42,13 @@ def itemFulfilled(oid, sid, pid):
     #print("confirmation", confirmation)
     if confirmation == "No":
         flash('You indicated that this item is NOT fulfilled.')
-        return redirect(url_for("order.orderSeller", sid=sid))
+        return redirect(url_for("order.itemFulfilled", sid = sid, oid=oid, pid=pid))
     if confirmation == "Yes":
         if form.validate_on_submit():
             Order.item_fulfilled(oid, pid)
             Order.all_fulfilled_check(oid)
             flash('You indicated that this item is SUCCESSFULLY fulfilled.')
-            return redirect(url_for("order.orderSellerDetails", sid = sid, oid=oid))
+            return redirect(url_for("order.itemFulfilled", sid = sid, oid=oid, pid=pid))
     return render_template('item_fulfilled.html', title='Item Fulfilled', form=form, sid=sid, oid=oid, pid=pid)
 
 class SearchForm(FlaskForm):

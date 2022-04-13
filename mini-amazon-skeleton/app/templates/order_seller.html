@@ -30,7 +30,7 @@
       <th onclick="sortColumn(3)" scope="col">Time Placed</th>
       <th onclick="sortColumn(4)" scope="col">Address</th>
       <th onclick="sortColumn(5)" scope="col">Is Order Fulfilled? (Your Items Only)</th>
-      <th onclick="sortColumn(6)" scope="col">More Details</th>
+      <th onclick="sortColumn(6)" scope="col">Remarks</th>
     </tr>
   </thead>
   <tbody>
@@ -42,7 +42,7 @@
         <td> {{order.placed_datetime}} </td>
         <td> {{order.address}} </td>
         <td> {{order.status}} </td>
-        <td><a id="details-button" href="{{url_for('order.orderSellerDetails', oid=order.id, sid=order.sid)}}" type="button" class="btn btn-light btn-block">Item Fulfilled</a></td>
+        <td><a id="details-button" href="{{url_for('order.orderSellerDetails', oid=order.id, sid=order.sid)}}" type="button" class="btn btn-light btn-block">More Details</a></td>
       </tr>
     {% endfor %}
   </tbody>
