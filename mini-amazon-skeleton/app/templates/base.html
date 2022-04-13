@@ -59,6 +59,7 @@
             <a href="{{ url_for('seller.seller', sid=current_user.id) }}" type="button" class="btn btn-light">Seller's Page</a>
             <a href="{{ url_for('users.user_public_view', id=current_user.id) }}" type="button" class="btn btn-light">Public View</a>
             <a href="{{ url_for('users.profile') }}" type="button" class="btn btn-light">Profile</a>
+            <a href="{{ url_for('seller.beSeller', uid=current_user.id) }}" type="button" class="btn btn-light">Become a Seller</a>
             <a href="{{ url_for('users.password') }}" type="button" class="btn btn-light">Change Password</a>
             <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
         {% else %}

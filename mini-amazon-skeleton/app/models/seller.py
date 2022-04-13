@@ -70,3 +70,16 @@ class Seller:
 
 
     
+    @staticmethod
+    def beSeller(id):
+        try:
+            sid = app.db.execute('''
+            INSERT INTO Sellers(id)
+            VALUES(:id)
+            RETURNING id
+            ''',
+            id=id)
+        except:
+            return False
+
+        return sid
