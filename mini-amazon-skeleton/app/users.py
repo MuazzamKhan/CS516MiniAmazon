@@ -10,6 +10,7 @@ from .models.user import User
 from .models.seller import Seller
 from .models.purchase import Purchase
 from .models.product import Product
+from .models.review import Review
 
 from .order import orderBuyer
 from .email import send_email
@@ -385,6 +386,11 @@ def user_public_view(id):
     user = User.get(id)
 
     return render_template('user_public_view.html', title='Public view', user=user)
+
+@bp.route('/submitted-reviews/<id>')
+def submitted_reviews(id):
+    reviews = Review.get_reviews_with_uid(id)
+    return render_template('reviews.html', reviews=reviews, id=id)
 
 
 

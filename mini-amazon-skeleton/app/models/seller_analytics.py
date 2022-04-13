@@ -19,7 +19,6 @@ class Product_Rank:
         LIMIT 3
         ''',
         sid=sid)
-
         return [Product_Rank(*row) for row in rows]
 
     @staticmethod
@@ -86,10 +85,8 @@ class Category_Rank:
         ''',
         sid=sid)
 
-        if rows:
-            return rows
-        else: 
-            None
+        return rows
+        
 
 class Inventory_Analytics:
     def __init__(this, pid, sid, price, quantity):
@@ -206,11 +203,8 @@ class Seller_Review_Analytics:
         ORDER BY rating ASC
         ''',
         sid = sid)
-
-        if rows:
-            return rows
-        else: 
-            None
+        return rows
+        
 
 class Product_Review_Analytics:
     def __init__(this, pid, name, count, rating):

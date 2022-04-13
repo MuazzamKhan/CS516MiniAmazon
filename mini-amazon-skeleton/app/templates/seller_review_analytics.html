@@ -37,6 +37,52 @@
   </tbody>
 </table>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<body>
+  <canvas id="myChart" width="800" height="400"></canvas>
+  <script>
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ seller_ratings_x | safe }},
+        datasets: [
+          {
+            data: {{ seller_ratings_y | safe }},
+            backgroundColor: "rgba(255, 70, 166, 0.8)"
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+                display: true,
+                text: "Count"
+            }
+          },
+          x: {
+            title: {
+                display: true,
+                text: "Seller Ratings"
+            }
+          },
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      },
+
+    });
+  </script>
+</body>
+<link rel="stylesheet" type="text/css" href="style.css">
+
 <h5>Product Review Summary Statistics:</h5>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">

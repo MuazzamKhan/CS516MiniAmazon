@@ -40,6 +40,8 @@ def sellerReviewAnalytics(sid):
     avg_seller_rating=avg_seller_rating,
     num_seller_reviews = num_seller_reviews,
     seller_ratings_breakdown = seller_ratings_breakdown,
+    seller_ratings_x = [row[0] for row in seller_ratings_breakdown],
+    seller_ratings_y = [row[1] for row in seller_ratings_breakdown],
     overall_product_rating=overall_product_rating,
     num_product_reviews=num_product_reviews,
     product_ratings_breakdown=product_ratings_breakdown,
