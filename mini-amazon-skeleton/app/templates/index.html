@@ -23,19 +23,24 @@
   <option>Sports</option>
 </select>
 
-<p>Click on column name to sort</p>
+<!-- <p>Click on column name to sort</p> -->
+<br><br>
 
 <table class='table table-hover table-bordered container', id = "productsTable">
     <tr class = "header">
       <th scope="col"></th>
-      <th onclick="sortTable(1)" scope="col">Product Name</th>
-      <th onclick="sortTable(2)" scope="col">Category</th>
+      <!-- <th onclick="sortTable(1)" scope="col">Product Name</th>
+      <th onclick="sortTable(2)" scope="col">Category</th> -->
+      <th scope="col">Product Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Price starting at</th>
     </tr>
     {% for product in avail_products%}
     <tr>
       <td scope="row"><img data-image="img" class = "active" src={{product.image_file}} alt="No image available" width="100" height="100"></td>
       <td><a href="{{ url_for('product.product', pid=product.id) }}">{{product.name}}</a></td>
       <td> {{product.category}}</td>
+      <td> ${{product.bestprice}} </td>
     </tr>
     {% endfor %}
 </table>
