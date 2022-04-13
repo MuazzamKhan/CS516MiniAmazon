@@ -10,32 +10,6 @@
    <a id="seller-page-inventory-button" href="{{ url_for('inventory.inventory', sid=current_user.id) }}" type="button" class="btn btn-dark">Inventory</a>
    <a id="seller-page-analytics-button" href="{{ url_for('seller_analytics.sellerAnalytics', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller Product Analytics</a>
    <a id="seller-page-review-button" href="{{ url_for('seller_analytics.sellerReviewAnalytics', sid=current_user.id) }}" type="button" class="btn btn-dark">Seller Review Analytics</a>
-
-
-            <table class='table table-hover table-bordered container'>
-                
-                <tr class = "header">
-                    <th scope="col">Reviewer Name</th>
-                    <th scope="col">Rating</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Review</th>
-                    <th scope="col"></th>
-                  </tr>
-
-            {% for review in reviews%}
-            <tr>
-                <td scope="row">{{review.display_name}}</td>
-                <td scope="row">{{review.rating}}</td>
-                <td>{{review.title}}</td>
-                <td>{{review.body}}</td>
-                <td><form action="{{ url_for('users.write_review', pid = review.pid) }}" method="GET">
-                        <input type="submit" value="edit your review">
-                    </form></td>
-            </tr>
-            
-            {% endfor %}
-            </table>
-
 </div>
 
 <br>
