@@ -85,7 +85,7 @@ class Category_Rank:
         ''',
         sid=sid)
 
-        return [Category_Rank(*row) for row in rows]
+        return rows
         
 
 class Inventory_Analytics:
