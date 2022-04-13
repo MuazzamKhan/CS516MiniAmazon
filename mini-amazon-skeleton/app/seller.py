@@ -22,8 +22,7 @@ def seller(sid):
     if isSeller == False:
         return "This user is not a seller. No seller's page can be shown!"
     else:
-        reviews = Review.get_reviews_with_uid(sid)
-        return render_template("seller_page.html", sid=sid, reviews=reviews)
+        return render_template("seller_page.html", sid=sid)
 
 class beSellerForm(FlaskForm):
     confirm = SelectField('Do you want to be a seller? (Y/N)', choices=["Yes", "No"])
