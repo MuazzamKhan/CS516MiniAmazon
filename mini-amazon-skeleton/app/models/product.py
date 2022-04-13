@@ -10,6 +10,12 @@ class Product:
         self.available = available
         self.category = category
         self.image_file = image_file
+        self.bestprice = app.db.execute('''
+            SELECT MIN(price)
+            FROM Inventory
+            WHERE pid = :id
+            ''', 
+            id = id)[0][0]
 
     @staticmethod
     def get(id):
