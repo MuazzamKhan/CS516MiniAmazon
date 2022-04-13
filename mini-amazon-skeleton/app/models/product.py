@@ -48,6 +48,8 @@ class Product:
         description=description,
         category=category,
         image_file=image_file)
+
+        #print("product rows:", rows)
             
         id = rows[0][0]
 

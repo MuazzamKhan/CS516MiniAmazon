@@ -7,6 +7,8 @@ from wtforms.validators import ValidationError, InputRequired, NumberRange, Requ
 from flask_wtf.file import FileField, FileRequired
 
 from .models.seller import Seller
+from .models.review import Review
+
 
 import os
 import app
@@ -20,4 +22,5 @@ def seller(sid):
     if isSeller == False:
         return "This user is not a seller. No seller's page can be shown!"
     else:
-        return render_template("seller_page.html", sid=sid)
+        reviews = Review.get_reviews_with_uid(sid)
+        return render_template("seller_page.html", sid=sid, reviews=reviews)

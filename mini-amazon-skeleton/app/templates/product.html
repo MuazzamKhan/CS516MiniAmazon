@@ -98,25 +98,6 @@
             {% endif %}
 
 
-            <table class='table table-hover table-bordered container'>
-                
-                <tr class = "header">
-                    <th scope="col">Reviewer Name</th>
-                    <th scope="col">Rating</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Review</th>
-                    <th scope="col"></th>
-                  </tr>
-
-            {% for review in reviews%}
-            <tr>
-                <td scope="row">{{review.display_name}}</td>
-                <td scope="row">{{review.rating}}</td>
-                <td>{{review.title}}</td>
-                <td>{{review.body}}</td>
-            </tr>
-                {% endfor %}
-            </table>
         
             
             <div>
@@ -129,5 +110,26 @@
     </main>
 
  </body>
+
+ <ol>
+    {% for review in reviews %}
+    <li>{% for star in range(5) %}
+            {% if star+1 <= review.rating %}
+                &#9733;
+            {% endif %}
+            {% if star+1 > review.rating %}
+                &#9734;
+            {% endif %}
+        {% endfor %}
+        </br>
+        <b><u>{{review.title}}</u></b> (review  by:  {{review.display_name}} &#x1F3C5;)</br>
+        {{review.body}} </br>
+        <br/></br>
+        <i>Did you find this review helpful?</i> </br>
+        &#x1f44d;
+        
+        <br/></br>
+    {% endfor %}
+    </ol>
 
 </html>

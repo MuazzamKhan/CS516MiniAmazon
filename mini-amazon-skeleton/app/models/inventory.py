@@ -44,6 +44,7 @@ class Inventory:
         FROM Inventory inv, Products prod
         WHERE inv.pid = prod.id
         AND inv.sid=:sid
+        ORDER BY pid
         ''',
         sid=sid)
         return [Inventory(*row) for row in rows]
@@ -101,6 +102,10 @@ class Inventory:
 
     @staticmethod
     def add_unlisted_item(sid, name, description, category, image_file, price, quantity):
+        
+        
+        #print(pid)
+        
         try:
             pid = Product.add(name, description, category, image_file)
             rows = app.db.execute('''
@@ -113,6 +118,8 @@ class Inventory:
             quantity=quantity)
         except Exception:
             rows = None
+
+        #print("rows: ", rows)
 
         if rows:
             return True
