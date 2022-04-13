@@ -43,7 +43,7 @@ def login():
         return redirect(url_for('index.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.get_by_auth(form.email.data, form.password.data)
+        user = User.get_by_auth(form.email.data.lower(), form.password.data)
         curr_user = user
         
         if user is None:
@@ -51,7 +51,7 @@ def login():
             return redirect(url_for('users.login'))
         elif not user.email_confirm:
             flash('Please activate your account first. Check confirmation email in your mailbox')
-            return render_template('login.html', title='Sign In', form=form, resend_confirmation=True, input_email=form.email.data)
+            return render_template('login.html', title='Sign In', form=form, resend_confirmation=True, input_email=form.email.data.lower())
         login_user(user)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -98,7 +98,7 @@ class ResendConfirmation(FlaskForm):
     submit = SubmitField('Resend')
     
     def validate_email(self, registered_email):
-        if not User.email_exists(registered_email.data):
+        if not User.email_exists(registered_email.data.lower()):
             flash('Email not found in our system! Please register first.')
             return False
         return True
@@ -118,12 +118,12 @@ def resend_confirmation():
         confirm_url = url_for('users.confirm_email', token=token, _external=True)
         html = render_template('activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(form.registered_email.data, subject, html)
+        send_email(form.registered_email.data.lower(), subject, html)
         flash("Activation email is resent. Please activate before login.")
         
         return redirect(url_for('users.login'))
 
-    return render_template('resend_confirmation.html', title='Resend confirmation Email', form=form, input_email=form.registered_email.data)
+    return render_template('resend_confirmation.html', title='Resend confirmation Email', form=form, input_email=form.registered_email.data.lower())
 
 
 class RegistrationForm(FlaskForm):
@@ -138,7 +138,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_email(self, email):
-        if User.email_exists(email.data):
+        if User.email_exists(email.data.lower()):
             raise ValidationError('Already a user with this email.')
 
 
@@ -149,13 +149,13 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         
-        token = generate_confirmation_token(form.email.data)
+        token = generate_confirmation_token(form.email.data.lower())
         confirm_url = url_for('users.confirm_email', token=token, _external=True)
         html = render_template('activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(form.email.data, subject, html)
+        send_email(form.email.data.lower(), subject, html)
 
-        if User.register(form.email.data,
+        if User.register(form.email.data.lower(),
                          form.password.data,
                          form.firstname.data,
                          form.lastname.data,
@@ -171,12 +171,12 @@ class UpdateProfileForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()], default=curr_user.firstname) 
     lastname = StringField('Last Name', validators=[DataRequired()], default=curr_user.lastname)
     address = StringField('Home Address', validators=[DataRequired()], default=curr_user.address)
-    email = StringField('Email', validators=[DataRequired(), Email()], default=curr_user.email)
+    email = StringField('Email', validators=[DataRequired(), Email()], default=curr_user.email.lower())
     receive_notification = BooleanField("I want to reveive email notification", default=False)
     submit = SubmitField('Update Profile')
 
     def validate_email(self, email):
-        if email.data != curr_user.email and User.email_exists(email.data):
+        if email.data != curr_user.email and User.email_exists(email.data.lower()):
             raise ValidationError('Already a user with this email.')
 
 
@@ -185,24 +185,24 @@ class UpdateProfileForm(FlaskForm):
 def profile():
     global curr_user
     if request.method == "GET":
-        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email, "address": curr_user.address, "receive_notification": Seller.get_if_receive_notification(curr_user.id) }))
+        form = UpdateProfileForm(formdata=MultiDict({"firstname": curr_user.firstname, "lastname": curr_user.lastname, "email": curr_user.email.lower(), "address": curr_user.address, "receive_notification": Seller.get_if_receive_notification(curr_user.id) }))
     elif request.method == "POST":
         form = UpdateProfileForm()
     if form.validate_on_submit():
-        curr_user.set_profile(form.email.data, form.firstname.data, form.lastname.data, form.address.data)
-        if User.update_profile(curr_user.id, form.email.data,
+        curr_user.set_profile(form.email.data.lower(), form.firstname.data, form.lastname.data, form.address.data)
+        if User.update_profile(curr_user.id, form.email.data.lower(),
                          form.firstname.data,
                          form.lastname.data,
                          form.address.data):
-            
-            if curr_user.is_seller:
+            print(Seller.isSeller(curr_user.id), curr_user.id)
+            if Seller.isSeller(curr_user.id):
                 if Seller.update_receive_notification(curr_user.id, form.receive_notification.data):
                     flash('Your user profile has been updated!')
-                    return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller), {"Refresh": "1; url="+str(url_for('index.index'))}
+                    return render_template('profile.html', title='Profile', form=form, is_seller=Seller.isSeller(curr_user.id)), {"Refresh": "1; url="+str(url_for('index.index'))}
             else:
                 flash('Your user profile has been updated!')
-                return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller), {"Refresh": "1; url="+str(url_for('index.index'))}
-    return render_template('profile.html', title='Profile', form=form, is_seller=curr_user.is_seller)
+                return render_template('profile.html', title='Profile', form=form, is_seller=Seller.isSeller(curr_user.id)), {"Refresh": "1; url="+str(url_for('index.index'))}
+    return render_template('profile.html', title='Profile', form=form, is_seller=Seller.isSeller(curr_user.id))
 
 
 
@@ -219,7 +219,7 @@ def password():
     global curr_user
     form = UpdatePasswordForm()
     if form.validate_on_submit():
-        if User.check_password(curr_user.email, form.old_password.data):
+        if User.check_password(curr_user.email.lower(), form.old_password.data):
             
             User.update_password(curr_user.id, form.new_password.data)
             flash('Your password has been changed successfully!')
